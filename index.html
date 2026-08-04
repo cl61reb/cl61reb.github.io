@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Custody Split Tracker</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-claire:  #2a78d6;
+    --series-mat:     #eb6834;
+    --series-unassigned: #c3c2b7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --series-claire:  #3987e5;
+      --series-mat:     #d95926;
+      --series-unassigned: #383835;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --series-claire:  #3987e5;
+    --series-mat:     #d95926;
+    --series-unassigned: #383835;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+  header h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+  }
+  header p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .stat-tile {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .stat-tile .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+  .stat-tile .value {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 4px;
+    font-variant-numeric: proportional-nums;
+  }
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  #chart-container {
+    position: relative;
+    margin-top: 16px;
+  }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bar-seg { cursor: pointer; }
+  .axis-label { fill: var(--text-muted); font-size: 11px; }
+  .month-label { fill: var(--text-secondary); font-size: 12px; }
+  #tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translate(-50%, -110%);
+    white-space: nowrap;
+    transition: opacity 0.1s;
+    z-index: 10;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: right;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gridline);
+    font-variant-numeric: tabular-nums;
+  }
+  th:first-child, td:first-child { text-align: left; }
+  th {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  footer {
+    margin-top: 32px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .note {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Custody Split Tracker</h1>
+    <p id="subtitle">Loading…</p>
+  </header>
+
+  <div class="stat-row" id="stat-row"></div>
+
+  <div class="card">
+    <div class="legend" id="legend"></div>
+    <div id="chart-container">
+      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Monthly custody split"></svg>
+      <div id="tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="data-table">
+      <thead>
+        <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+
+function el(name, attrs) {
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString(undefined, { month: "short" });
+}
+
+async function main() {
+  const res = await fetch("data/custody-data.json", { cache: "no-store" });
+  const data = await res.json();
+  const { months, totals, names, generatedAt, rangeStart, rangeEnd } = data;
+
+  document.getElementById("subtitle").textContent =
+    `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
+  document.getElementById("footer").textContent =
+    `Computed weekly from the "Both of us" Google Calendar. "Unassigned" = days with no matching calendar event.`;
+
+  // Stat tiles
+  const statRow = document.getElementById("stat-row");
+  const tiles = [
+    { label: names.claire, value: `${totals.clairePct}%`, color: "var(--series-claire)" },
+    { label: names.parent2, value: `${totals.parent2Pct}%`, color: "var(--series-mat)" },
+    { label: `${names.claire} nights`, value: totals.claire, color: "var(--series-claire)" },
+    { label: `${names.parent2} nights`, value: totals.parent2, color: "var(--series-mat)" },
+  ];
+  if (totals.unassigned > 0) {
+    tiles.push({ label: "Unassigned days", value: totals.unassigned, color: "var(--series-unassigned)" });
+  }
+  for (const t of tiles) {
+    const tile = document.createElement("div");
+    tile.className = "stat-tile";
+    tile.innerHTML = `<div class="label"><span class="swatch" style="background:${t.color}"></span>${t.label}</div><div class="value">${t.value}</div>`;
+    statRow.appendChild(tile);
+  }
+
+  // Legend
+  const legend = document.getElementById("legend");
+  const legendItems = [
+    [names.claire, "var(--series-claire)"],
+    [names.parent2, "var(--series-mat)"],
+    ["Unassigned", "var(--series-unassigned)"],
+  ];
+  legend.innerHTML = legendItems
+    .map(([label, color]) => `<span class="item"><span class="swatch" style="background:${color}"></span>${label}</span>`)
+    .join("");
+
+  // Chart
+  const svg = document.getElementById("chart");
+  const tooltip = document.getElementById("tooltip");
+  const W = 860, H = 320;
+  const padL = 30, padR = 10, padT = 10, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const maxDays = Math.max(...months.map((m) => m.totalDays), 31);
+  const n = months.length;
+  const gap = 12;
+  const barW = Math.min(48, (plotW - gap * (n - 1)) / n);
+  const totalBarsW = barW * n + gap * (n - 1);
+  const startX = padL + (plotW - totalBarsW) / 2;
+
+  // gridlines
+  [0, 0.25, 0.5, 0.75, 1].forEach((f) => {
+    const y = padT + plotH * (1 - f);
+    svg.appendChild(el("line", { x1: padL, x2: W - padR, y1: y, y2: y, stroke: "var(--gridline)", "stroke-width": 1 }));
+    const label = el("text", { x: padL - 6, y: y + 4, class: "axis-label", "text-anchor": "end" });
+    label.textContent = Math.round(maxDays * f);
+    svg.appendChild(label);
+  });
+
+  months.forEach((m, i) => {
+    const x = startX + i * (barW + gap);
+    const scale = plotH / maxDays;
+    let y = padT + plotH;
+    const segs = [
+      { key: "claire", value: m.claire, color: "var(--series-claire)", label: names.claire },
+      { key: "parent2", value: m.parent2, color: "var(--series-mat)", label: names.parent2 },
+      { key: "unassigned", value: m.unassigned, color: "var(--series-unassigned)", label: "Unassigned" },
+    ].filter((s) => s.value > 0);
+
+    segs.forEach((s, si) => {
+      const segH = Math.max(0, s.value * scale - (si < segs.length - 1 ? 2 : 0));
+      y -= segH + (si > 0 ? 2 : 0);
+      const isTop = si === segs.length - 1;
+      const rect = el("rect", {
+        x, y, width: barW, height: segH,
+        fill: s.color, class: "bar-seg",
+        rx: isTop ? 4 : 0, ry: isTop ? 4 : 0,
+      });
+      rect.addEventListener("mousemove", (ev) => {
+        const pct = m.claire + m.parent2 > 0
+          ? (s.key === "unassigned" ? "" : ` (${s.key === "claire" ? m.clairePct : m.parent2Pct}%)`)
+          : "";
+        tooltip.textContent = `${monthLabel(m.month)} — ${s.label}: ${s.value}${pct}`;
+        const rectBounds = document.getElementById("chart-container").getBoundingClientRect();
+        tooltip.style.left = `${ev.clientX - rectBounds.left}px`;
+        tooltip.style.top = `${ev.clientY - rectBounds.top}px`;
+        tooltip.style.opacity = 1;
+      });
+      rect.addEventListener("mouseleave", () => { tooltip.style.opacity = 0; });
+      svg.appendChild(rect);
+    });
+
+    const label = el("text", { x: x + barW / 2, y: H - 8, class: "month-label", "text-anchor": "middle" });
+    label.textContent = monthLabel(m.month);
+    svg.appendChild(label);
+  });
+
+  // Table
+  const tbody = document.querySelector("#data-table tbody");
+  tbody.innerHTML = months
+    .map(
+      (m) => `<tr>
+        <td>${monthLabel(m.month)} ${m.month.slice(0, 4)}</td>
+        <td>${m.claire}</td>
+        <td>${m.parent2}</td>
+        <td>${m.unassigned}</td>
+        <td>${m.clairePct ?? "–"}</td>
+        <td>${m.parent2Pct ?? "–"}</td>
+      </tr>`
+    )
+    .join("") + `<tr style="font-weight:600">
+      <td>Total</td>
+      <td>${totals.claire}</td>
+      <td>${totals.parent2}</td>
+      <td>${totals.unassigned}</td>
+      <td>${totals.clairePct}</td>
+      <td>${totals.parent2Pct}</td>
+    </tr>`;
+}
+
+main().catch((err) => {
+  document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;
+});
+</script>
+</body>
+</html>
