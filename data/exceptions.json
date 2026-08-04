@@ -1,263 +1,46 @@
 {
-  "generatedAt": "2026-08-04T20:46:51.129Z",
+  "generatedAt": "2026-08-04T20:49:57.092Z",
   "rangeStart": "2026-01-01",
   "rangeEnd": "2026-08-01",
   "summary": {
     "rangeStart": "2026-01-01",
     "rangeEnd": "2026-08-01",
     "totalDays": 212,
-    "exceptionCount": 35,
-    "byType": {
-      "conflict": 27,
-      "calendar_gap": 8,
-      "schedule_gap": 0
-    }
+    "gapDays": 8,
+    "gapRuns": 4
   },
-  "exceptions": [
+  "gaps": [
     {
-      "date": "2026-02-16",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
+      "startDate": "2026-06-12",
+      "endDateExclusive": "2026-06-14",
+      "owner": "claire",
+      "nights": 2,
+      "ownerLabel": "Claire",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Claire%E2%80%99s+nights&dates=20260612%2F20260614&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
     },
     {
-      "date": "2026-02-17",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
+      "startDate": "2026-06-26",
+      "endDateExclusive": "2026-06-28",
+      "owner": "claire",
+      "nights": 2,
+      "ownerLabel": "Claire",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Claire%E2%80%99s+nights&dates=20260626%2F20260628&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
     },
     {
-      "date": "2026-02-23",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
+      "startDate": "2026-07-10",
+      "endDateExclusive": "2026-07-12",
+      "owner": "claire",
+      "nights": 2,
+      "ownerLabel": "Claire",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Claire%E2%80%99s+nights&dates=20260710%2F20260712&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
     },
     {
-      "date": "2026-02-24",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-02-27",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-02-28",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-01",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-04",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-06",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-07",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-25",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-03-26",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-05-22",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-05-25",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-05-26",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-04",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-08",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-10",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-11",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-12",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-06-13",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-06-14",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-21",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-06-26",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-06-27",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-06-28",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-07-05",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-07-08",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-07-09",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-07-10",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-07-11",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-07-12",
-      "calendarOwner": "parent2",
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "conflict"
-    },
-    {
-      "date": "2026-07-15",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-07-16",
-      "calendarOwner": null,
-      "scheduleOwner": "claire",
-      "scheduleComment": null,
-      "type": "calendar_gap"
-    },
-    {
-      "date": "2026-07-19",
-      "calendarOwner": "claire",
-      "scheduleOwner": "parent2",
-      "scheduleComment": null,
-      "type": "conflict"
+      "startDate": "2026-07-15",
+      "endDateExclusive": "2026-07-17",
+      "owner": "claire",
+      "nights": 2,
+      "ownerLabel": "Claire",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Claire%E2%80%99s+nights&dates=20260715%2F20260717&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
     }
   ]
 }

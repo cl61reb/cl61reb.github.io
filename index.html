@@ -158,7 +158,6 @@
   }
   .comment { color: var(--text-muted); }
   .empty { color: var(--text-secondary); padding: 20px 0; }
-  #conflict-table td, #conflict-table th,
   #gap-table td, #gap-table th { text-align: left; font-variant-numeric: tabular-nums; }
   h2.section-title { font-size: 1.1rem; margin: 40px 0 4px; }
 </style>
@@ -193,34 +192,20 @@
   <h2 class="section-title" id="exceptions">Exception report</h2>
   <div class="card">
     <p class="legend-note" style="margin-top:0;">
-      Compares what the calendar says against the <b>usual 3-2-2 rotation</b>
-      (weekend alternates each week; the parent without the weekend gets
-      Mon-Tue, the weekend owner keeps Wed-Thu too - see
-      <code>scripts/usual-schedule.mjs</code>), day by day, so every real-life
-      departure from the normal pattern shows up here for review - holidays,
-      swaps, and away trips included. <b>Conflict</b> = the calendar names a
-      different parent than usual for that date. <b>Calendar gap</b> = no
-      calendar event covers that date at all.
+      Dates with no matching calendar event, with who would normally have the
+      kids based on the <b>usual 3-2-2 rotation</b> (weekend alternates each
+      week; the parent without the weekend gets Mon-Tue, the weekend owner
+      keeps Wed-Thu too - see <code>scripts/usual-schedule.mjs</code>).
+      Click "Add to calendar" to open a prefilled Google Calendar event -
+      double-check the calendar picker is set to "Both of us" before saving.
     </p>
   </div>
 
   <div class="stat-row" id="exception-stat-row"></div>
 
   <div class="card">
-    <h3 style="font-size:1rem;margin:0 0 4px;">Conflicts</h3>
-    <p class="legend-note" style="margin-top:0;">Calendar disagrees with who would normally have the kids that day.</p>
-    <table id="conflict-table">
-      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Calendar says</th><th style="text-align:left">Usual (3-2-2) says</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <p class="empty" id="conflict-empty" hidden>No conflicts 🎉</p>
-  </div>
-
-  <div class="card">
-    <h3 style="font-size:1rem;margin:0 0 4px;">Calendar gaps</h3>
-    <p class="legend-note" style="margin-top:0;">No calendar event covers this date; the usual rotation says who normally would have the kids.</p>
     <table id="gap-table">
-      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Usual (3-2-2) says</th></tr></thead>
+      <thead><tr><th style="text-align:left">Dates</th><th style="text-align:left">Nights</th><th style="text-align:left">Usually</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
     <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
@@ -366,34 +351,24 @@ async function main() {
     </tr>`;
 }
 
-function dayName(dateStr) {
-  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" });
-}
-function ownerLabel(owner, names) {
-  if (owner === "claire") return names.claire;
-  if (owner === "parent2") return names.parent2;
-  return "—";
+function fmtDate(dateStr) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
 }
 function ownerColor(owner) {
   if (owner === "claire") return "var(--series-claire)";
   if (owner === "parent2") return "var(--series-mat)";
   return "var(--text-muted)";
 }
-function ownerBadge(owner, names) {
-  return `<span class="badge"><span class="dot" style="background:${ownerColor(owner)}"></span>${ownerLabel(owner, names)}</span>`;
-}
 
 async function mainExceptions() {
   const res = await fetch("data/exceptions.json", { cache: "no-store" });
   const data = await res.json();
-  const names = { claire: "Claire", parent2: "Mat" };
-  const { summary, exceptions } = data;
+  const { summary, gaps } = data;
 
   const statRow = document.getElementById("exception-stat-row");
   const tiles = [
     { label: "Days compared", value: summary.totalDays, color: "var(--text-muted)" },
-    { label: "Conflicts", value: summary.byType.conflict, color: "#d03b3b" },
-    { label: "Calendar gaps", value: summary.byType.calendar_gap, color: "#b8860b" },
+    { label: "Calendar gaps (nights)", value: summary.gapDays, color: "#b8860b" },
   ];
   for (const t of tiles) {
     const tile = document.createElement("div");
@@ -402,32 +377,19 @@ async function mainExceptions() {
     statRow.appendChild(tile);
   }
 
-  const conflicts = exceptions.filter((e) => e.type === "conflict");
-  const gaps = exceptions.filter((e) => e.type === "calendar_gap");
-
-  const conflictBody = document.querySelector("#conflict-table tbody");
-  conflictBody.innerHTML = conflicts
-    .map(
-      (e) => `<tr>
-        <td>${e.date}</td>
-        <td>${dayName(e.date)}</td>
-        <td>${ownerBadge(e.calendarOwner, names)}</td>
-        <td>${ownerBadge(e.scheduleOwner, names)}</td>
-      </tr>`
-    )
-    .join("");
-  document.getElementById("conflict-empty").hidden = conflicts.length > 0;
-  document.getElementById("conflict-table").hidden = conflicts.length === 0;
-
   const gapBody = document.querySelector("#gap-table tbody");
   gapBody.innerHTML = gaps
-    .map(
-      (e) => `<tr>
-        <td>${e.date}</td>
-        <td>${dayName(e.date)}</td>
-        <td>${ownerBadge(e.scheduleOwner, names)}</td>
-      </tr>`
-    )
+    .map((g) => {
+      const lastNight = new Date(`${g.endDateExclusive}T00:00:00Z`);
+      lastNight.setUTCDate(lastNight.getUTCDate() - 1);
+      const rangeLabel = g.nights > 1 ? `${fmtDate(g.startDate)} – ${fmtDate(lastNight.toISOString().slice(0, 10))}` : fmtDate(g.startDate);
+      return `<tr>
+        <td>${rangeLabel}</td>
+        <td>${g.nights}</td>
+        <td><span class="badge"><span class="dot" style="background:${ownerColor(g.owner)}"></span>${g.ownerLabel}</span></td>
+        <td><a href="${g.googleCalendarLink}" target="_blank" rel="noopener">Add to calendar →</a></td>
+      </tr>`;
+    })
     .join("");
   document.getElementById("gap-empty").hidden = gaps.length > 0;
   document.getElementById("gap-table").hidden = gaps.length === 0;

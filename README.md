@@ -22,11 +22,13 @@ month (the current, still-incomplete month is excluded).
 
 ## Exception report
 
-The bottom of `index.html` (reading `data/exceptions.json`) cross-checks the
-calendar against the **usual 3-2-2 rotation** - not a spreadsheet - day by
-day, and lists every date where they disagree. Since the usual schedule is a
-pure recurring pattern, every real-life departure from it (holidays, swaps,
-away trips, genuine calendar mistakes) shows up as an exception to review.
+The bottom of `index.html` (reading `data/exceptions.json`) lists every
+**calendar gap** - a date range with no matching calendar event - alongside
+who would normally have the kids per the **usual 3-2-2 rotation**, with a
+one-click "Add to calendar" link to close the gap. Conflicts (calendar and
+usual schedule both have an answer but disagree - typically a deliberate
+exception like a holiday or swap) are intentionally not reported; only
+missing entries are, since those are the ones worth fixing.
 
 - `scripts/usual-schedule.mjs` defines the rotation: the weekend (Fri-Sat-Sun,
   3 nights) alternates each week; the parent without the weekend gets Mon-Tue
@@ -38,14 +40,12 @@ away trips, genuine calendar mistakes) shows up as an exception to review.
 - `scripts/generate-usual-schedule.mjs <start> <end>` writes a ground-truth-shaped
   JSON file from that rotation.
 - `scripts/build-exception-report.mjs <raw-events.json> <ground-truth.json> <start> <end>`
-  diffs the calendar classification against it and writes
-  `data/exceptions.json`, distinguishing **conflicts** (calendar names a
-  different parent than usual) from **calendar gaps** (no calendar event
-  covers the date at all).
+  finds calendar gaps, groups consecutive same-owner gap days into a single
+  run, and builds a Google Calendar "create event" link (`action=TEMPLATE`)
+  for each run, writing it all to `data/exceptions.json`.
 - `scripts/extract-schedule-ground-truth.py` (reads an uploaded schedule
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
-  are kept for reference but are no longer what the exception report compares
-  against.
+  are kept for reference but are no longer used.
 
 ## Known open item
 
