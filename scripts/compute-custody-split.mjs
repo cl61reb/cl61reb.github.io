@@ -163,9 +163,13 @@ function main() {
     process.exit(1);
   }
 
+  // Default range: Jan 1 of the current year through the end of the
+  // *previous* month - the current, still-incomplete month is excluded so
+  // partial-month numbers never show up in the breakdown.
   const today = new Date().toISOString().slice(0, 10);
+  const firstOfThisMonth = `${today.slice(0, 7)}-01`;
   const rangeStart = rangeStartArg || `${today.slice(0, 4)}-01-01`;
-  const rangeEnd = rangeEndArg || addDays(today, 1); // rangeEnd is exclusive -> include today
+  const rangeEnd = rangeEndArg || firstOfThisMonth; // exclusive -> covers through last day of previous month
 
   const events = loadEvents(inputPath);
   const result = computeSplit(events, rangeStart, rangeEnd, { claire: "Claire", parent2: "Mat" });

@@ -138,6 +138,29 @@
     font-size: 0.85rem;
     margin-top: 12px;
   }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .legend-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .legend-note b { color: var(--text-primary); }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    padding: 2px 8px 2px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .comment { color: var(--text-muted); }
+  .empty { color: var(--text-secondary); padding: 20px 0; }
+  #conflict-table td, #conflict-table th,
+  #gap-table td, #gap-table th { text-align: left; font-variant-numeric: tabular-nums; }
+  h2.section-title { font-size: 1.1rem; margin: 40px 0 4px; }
 </style>
 </head>
 <body>
@@ -145,7 +168,7 @@
   <header>
     <h1>Custody Split Tracker</h1>
     <p id="subtitle">Loading…</p>
-    <p><a href="exceptions.html">View exception report →</a></p>
+    <p><a href="#exceptions">Jump to exception report ↓</a></p>
   </header>
 
   <div class="stat-row" id="stat-row"></div>
@@ -165,6 +188,39 @@
       </thead>
       <tbody></tbody>
     </table>
+  </div>
+
+  <h2 class="section-title" id="exceptions">Exception report</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;">
+      Compares what the calendar says against the agreed schedule spreadsheet,
+      day by day. <b>Conflict</b> = the two sources name different parents for
+      the same date. <b>Calendar gap</b> = the schedule names a parent but the
+      calendar has no matching event for that date. Resolve by either fixing
+      the calendar entry or confirming the schedule is out of date for that day.
+    </p>
+  </div>
+
+  <div class="stat-row" id="exception-stat-row"></div>
+
+  <div class="card">
+    <h3 style="font-size:1rem;margin:0 0 4px;">Conflicts</h3>
+    <p class="legend-note" style="margin-top:0;">Calendar and schedule disagree on who has the kids.</p>
+    <table id="conflict-table">
+      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Calendar says</th><th style="text-align:left">Schedule says</th><th style="text-align:left">Schedule note</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="conflict-empty" hidden>No conflicts 🎉</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:1rem;margin:0 0 4px;">Calendar gaps</h3>
+    <p class="legend-note" style="margin-top:0;">Schedule names a parent; no calendar event covers this date.</p>
+    <table id="gap-table">
+      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Schedule says</th><th style="text-align:left">Schedule note</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
   </div>
 
   <footer id="footer"></footer>
@@ -192,7 +248,7 @@ async function main() {
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `Computed weekly from the "Both of us" Google Calendar. "Unassigned" = days with no matching calendar event.`;
+    `Computed from the "Both of us" Google Calendar, through the end of the previous month. "Unassigned" = days with no matching calendar event. Ground truth for the exception report below: the agreed schedule spreadsheet.`;
 
   // Stat tiles
   const statRow = document.getElementById("stat-row");
@@ -307,8 +363,80 @@ async function main() {
     </tr>`;
 }
 
+function dayName(dateStr) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" });
+}
+function ownerLabel(owner, names) {
+  if (owner === "claire") return names.claire;
+  if (owner === "parent2") return names.parent2;
+  return "—";
+}
+function ownerColor(owner) {
+  if (owner === "claire") return "var(--series-claire)";
+  if (owner === "parent2") return "var(--series-mat)";
+  return "var(--text-muted)";
+}
+function ownerBadge(owner, names) {
+  return `<span class="badge"><span class="dot" style="background:${ownerColor(owner)}"></span>${ownerLabel(owner, names)}</span>`;
+}
+
+async function mainExceptions() {
+  const res = await fetch("data/exceptions.json", { cache: "no-store" });
+  const data = await res.json();
+  const names = { claire: "Claire", parent2: "Mat" };
+  const { summary, exceptions } = data;
+
+  const statRow = document.getElementById("exception-stat-row");
+  const tiles = [
+    { label: "Days compared", value: summary.totalDays, color: "var(--text-muted)" },
+    { label: "Conflicts", value: summary.byType.conflict, color: "#d03b3b" },
+    { label: "Calendar gaps", value: summary.byType.calendar_gap, color: "#b8860b" },
+  ];
+  for (const t of tiles) {
+    const tile = document.createElement("div");
+    tile.className = "stat-tile";
+    tile.innerHTML = `<div class="label"><span class="dot" style="background:${t.color}"></span>${t.label}</div><div class="value">${t.value}</div>`;
+    statRow.appendChild(tile);
+  }
+
+  const conflicts = exceptions.filter((e) => e.type === "conflict");
+  const gaps = exceptions.filter((e) => e.type === "calendar_gap");
+
+  const conflictBody = document.querySelector("#conflict-table tbody");
+  conflictBody.innerHTML = conflicts
+    .map(
+      (e) => `<tr>
+        <td>${e.date}</td>
+        <td>${dayName(e.date)}</td>
+        <td>${ownerBadge(e.calendarOwner, names)}</td>
+        <td>${ownerBadge(e.scheduleOwner, names)}</td>
+        <td class="comment">${e.scheduleComment || ""}</td>
+      </tr>`
+    )
+    .join("");
+  document.getElementById("conflict-empty").hidden = conflicts.length > 0;
+  document.getElementById("conflict-table").hidden = conflicts.length === 0;
+
+  const gapBody = document.querySelector("#gap-table tbody");
+  gapBody.innerHTML = gaps
+    .map(
+      (e) => `<tr>
+        <td>${e.date}</td>
+        <td>${dayName(e.date)}</td>
+        <td>${ownerBadge(e.scheduleOwner, names)}</td>
+        <td class="comment">${e.scheduleComment || ""}</td>
+      </tr>`
+    )
+    .join("");
+  document.getElementById("gap-empty").hidden = gaps.length > 0;
+  document.getElementById("gap-table").hidden = gaps.length === 0;
+}
+
 main().catch((err) => {
   document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;
+});
+mainExceptions().catch((err) => {
+  document.getElementById("exception-stat-row").textContent = "Failed to load exception data: " + err.message;
 });
 </script>
 </body>

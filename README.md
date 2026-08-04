@@ -2,8 +2,9 @@
 
 ## Custody Split Tracker
 
-`index.html` reads `data/custody-data.json` and shows the year-to-date 50/50
-custody split with Mat, broken down by month.
+`index.html` reads `data/custody-data.json` and shows the 50/50 custody split
+with Mat, broken down by month, from Jan 1 through the end of the *previous*
+month (the current, still-incomplete month is excluded).
 
 - **Source:** the "Both of us" joint Google Calendar, events named like
   "Claire's nights" / "Mats nights" / "Claire have kids (Mat away)". A parent
@@ -21,9 +22,9 @@ custody split with Mat, broken down by month.
 
 ## Exception report
 
-`exceptions.html` (linked from the tracker) cross-checks the calendar-derived
-split against an authoritative schedule spreadsheet, day by day, and lists
-every date where they disagree.
+The bottom of `index.html` (reading `data/exceptions.json`) cross-checks the
+calendar-derived split against an authoritative schedule spreadsheet, day by
+day, and lists every date where they disagree.
 
 - `scripts/extract-schedule-ground-truth.py <schedule.xlsx> <start> <end> <out.json>`
   pulls a per-day Mat/Claire owner map from the "Data" tab of the schedule
