@@ -99,7 +99,26 @@ function isSunday(dateStr) {
   return new Date(`${dateStr}T00:00:00Z`).getUTCDay() === 0;
 }
 
-export function buildDateOwnerMap(events, rangeStart, rangeEnd) {
+// Loads data/corrections.json - a short, explicit list of days where the
+// calendar is demonstrably wrong and the schedule spreadsheet records what
+// actually happened. Returns [] if the file is absent.
+//
+// The spreadsheet is only authoritative up to its `validBefore` date, so
+// corrections on or after it are dropped rather than trusted: past that
+// point the calendar is the only source.
+export function loadCorrections(path) {
+  const file = path || new URL("../data/corrections.json", import.meta.url);
+  let parsed;
+  try {
+    parsed = JSON.parse(readFileSync(file, "utf8"));
+  } catch {
+    return [];
+  }
+  const cutoff = parsed.validBefore;
+  return (parsed.corrections || []).filter((c) => !cutoff || c.date < cutoff);
+}
+
+export function buildDateOwnerMap(events, rangeStart, rangeEnd, corrections = []) {
   const sorted = [...events].sort((a, b) => a.updated.localeCompare(b.updated));
   const map = new Map();
   for (const ev of sorted) {
@@ -133,6 +152,12 @@ export function buildDateOwnerMap(events, rangeStart, rangeEnd) {
     if (!claimedByOther) map.set(sunday, ev.owner === "claire" ? "parent2" : "claire");
   }
 
+  // Manual corrections win over everything - they are the recorded truth for
+  // days the calendar gets wrong. Already filtered by validBefore on load.
+  for (const c of corrections) {
+    if (c.date >= rangeStart && c.date < rangeEnd) map.set(c.date, c.owner);
+  }
+
   return map;
 }
 
@@ -140,8 +165,8 @@ function monthKey(dateStr) {
   return dateStr.slice(0, 7); // "YYYY-MM"
 }
 
-function computeSplit(events, rangeStart, rangeEnd, names) {
-  const ownerByDate = buildDateOwnerMap(events, rangeStart, rangeEnd);
+function computeSplit(events, rangeStart, rangeEnd, names, corrections = []) {
+  const ownerByDate = buildDateOwnerMap(events, rangeStart, rangeEnd, corrections);
   const months = new Map();
 
   let d = rangeStart;
@@ -209,7 +234,7 @@ function main() {
   const rangeEnd = rangeEndArg || firstOfThisMonth; // exclusive -> covers through last day of previous month
 
   const events = loadEvents(inputPath);
-  const result = computeSplit(events, rangeStart, rangeEnd, { claire: "Claire", parent2: "Mat" });
+  const result = computeSplit(events, rangeStart, rangeEnd, { claire: "Claire", parent2: "Mat" }, loadCorrections());
 
   const outPath = process.env.OUT_PATH;
   const json = JSON.stringify(result, null, 2);

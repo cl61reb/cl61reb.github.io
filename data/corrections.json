@@ -1,0 +1,22 @@
+{
+  "source": "schedule.01062026.xlsx, 'Data' tab - the agreed schedule spreadsheet",
+  "validBefore": "2026-08-01",
+  "note": "Manual corrections for days where the joint calendar is demonstrably wrong and the schedule spreadsheet records what actually happened. The spreadsheet is authoritative ONLY for dates before validBefore; corrections dated on or after it are ignored, and no new ones should be added from this spreadsheet. Anything from 2026-08-01 onward must come from the calendar itself.",
+  "corrections": [
+    {
+      "date": "2026-02-15",
+      "owner": "parent2",
+      "reason": "Half term: Mat had the kids for a continuous 7 nights, 13-19 Feb. The calendar only has a 'Mats Weekends' entry, which makes it look like an ordinary weekend, so the Sunday correction wrongly reassigned it."
+    },
+    {
+      "date": "2026-03-21",
+      "owner": "parent2",
+      "reason": "Kids were with Claire until 6pm, then handed to Mat - so the night is Mat's. The calendar event title says 'until 6pm Saturday' but its dates cover the whole Saturday."
+    },
+    {
+      "date": "2026-03-22",
+      "owner": "parent2",
+      "reason": "Part of the 9-night Mat block, 21-29 Mar, while Claire was away."
+    }
+  ]
+}

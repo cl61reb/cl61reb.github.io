@@ -13,7 +13,7 @@
 // ground-truth.json shape: { "YYYY-MM-DD": { "owner": "claire"|"parent2"|null, "comment": string|null }, ... }
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { loadEvents, buildDateOwnerMap, addDays } from "./compute-custody-split.mjs";
+import { loadEvents, buildDateOwnerMap, addDays, loadCorrections } from "./compute-custody-split.mjs";
 
 const [, , eventsPath, truthPath, rangeStartArg, rangeEndArg] = process.argv;
 if (!eventsPath || !truthPath) {
@@ -26,7 +26,7 @@ const rangeStart = rangeStartArg || `${today.slice(0, 4)}-01-01`;
 const rangeEnd = rangeEndArg || addDays(today, 1);
 
 const events = loadEvents(eventsPath);
-const calendarMap = buildDateOwnerMap(events, rangeStart, rangeEnd);
+const calendarMap = buildDateOwnerMap(events, rangeStart, rangeEnd, loadCorrections());
 const truth = JSON.parse(readFileSync(truthPath, "utf8"));
 
 const OWNER_TITLE = { claire: "Claire’s nights", parent2: "Mats nights" };

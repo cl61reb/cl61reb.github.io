@@ -50,6 +50,20 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
+## Corrections (`data/corrections.json`)
+
+A short, explicit list of days where the joint calendar is demonstrably wrong
+and the schedule spreadsheet records what actually happened. Applied last, so
+they win over both the calendar and the weekend-Sunday rule.
+
+**The spreadsheet is authoritative only up to `validBefore` (2026-08-01).**
+Corrections dated on or after it are dropped on load, and no new ones should
+be added from that spreadsheet - from 2026-08-01 onward the calendar is the
+only source. Currently three entries, all Feb/Mar 2026: a half-term week, and
+a Sat/Sun pair during a trip where the calendar's dates contradict its own
+title. With these applied the split matches the spreadsheet on all 212 days
+of Jan-Jul 2026.
+
 ## Known open item
 
 Automating the weekly refresh (a Claude Routine) hit a permission error when
