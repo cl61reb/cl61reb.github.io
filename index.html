@@ -229,7 +229,10 @@ function monthLabel(key) {
 }
 
 async function main() {
-  const res = await fetch("data/custody-data.json", { cache: "no-store" });
+  // Cache-bust: `cache: "no-store"` only bypasses the browser cache, not the
+  // GitHub Pages CDN, which would otherwise serve stale data for minutes
+  // after a deploy. The query param makes each load a distinct edge key.
+  const res = await fetch(`data/custody-data.json?v=${Date.now()}`, { cache: "no-store" });
   const data = await res.json();
   const { months, totals, names, generatedAt, rangeStart, rangeEnd } = data;
 
@@ -361,7 +364,7 @@ function ownerColor(owner) {
 }
 
 async function mainExceptions() {
-  const res = await fetch("data/exceptions.json", { cache: "no-store" });
+  const res = await fetch(`data/exceptions.json?v=${Date.now()}`, { cache: "no-store" });
   const data = await res.json();
   const { summary, gaps } = data;
 
