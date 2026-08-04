@@ -19,37 +19,6 @@
     --series-mat:     #eb6834;
     --series-unassigned: #c3c2b7;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) {
-      color-scheme: dark;
-      --surface-1:      #1a1a19;
-      --page:           #0d0d0d;
-      --text-primary:   #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted:     #898781;
-      --gridline:       #2c2c2a;
-      --baseline:       #383835;
-      --border:         rgba(255,255,255,0.10);
-      --series-claire:  #3987e5;
-      --series-mat:     #d95926;
-      --series-unassigned: #383835;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --surface-1:      #1a1a19;
-    --page:           #0d0d0d;
-    --text-primary:   #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #898781;
-    --gridline:       #2c2c2a;
-    --baseline:       #383835;
-    --border:         rgba(255,255,255,0.10);
-    --series-claire:  #3987e5;
-    --series-mat:     #d95926;
-    --series-unassigned: #383835;
-  }
-
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -71,6 +40,8 @@
     color: var(--text-secondary);
     font-size: 0.95rem;
   }
+  header p + p { margin-top: 8px; }
+  a { color: var(--series-claire); }
   .card {
     background: var(--surface-1);
     border: 1px solid var(--border);
@@ -174,6 +145,7 @@
   <header>
     <h1>Custody Split Tracker</h1>
     <p id="subtitle">Loading…</p>
+    <p><a href="exceptions.html">View exception report →</a></p>
   </header>
 
   <div class="stat-row" id="stat-row"></div>

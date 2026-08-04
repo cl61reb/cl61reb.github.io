@@ -10,7 +10,15 @@
 //     the two parents (CLAIRE_PATTERN / PARENT2_PATTERN) AND contains one of
 //     the custody keywords below (night/weekend/have kids/kids away). This
 //     filters out unrelated events that merely mention a name (birthdays,
-//     "Mat Away", "Claire in Uni", school pickups, etc.)
+//     "Claire in Uni", school pickups, etc.)
+//   - Away-inversion: an event naming a parent and "away" but with no other
+//     custody keyword (e.g. "Mat Away", "Mat Away back for 5", "Claire Away")
+//     is attributed to the OTHER parent - "Mat away" means it's Claire's
+//     nights, and vice versa. This does not apply when "kids" is also in the
+//     summary ("Claire weekends - Claire and kids away..." already matches
+//     the "weekend" keyword above and means Claire has the kids herself;
+//     "kids away with Mat" matches the "kids away" keyword above and means
+//     Mat has the kids).
 //   - All-day events use Google Calendar's [start, end) convention: the
 //     event covers every date from start up to but excluding end.
 //   - Overlapping custody events (rare, e.g. an explicit "kids away" block
@@ -26,34 +34,44 @@ import { readFileSync, writeFileSync } from "node:fs";
 const CLAIRE_NAME = /claire/i;
 const PARENT2_NAME = /\bmats?\b/i;
 const CUSTODY_KEYWORD = /night|weekend|have kids|kids away/i;
+const AWAY_ONLY = /\baway\b/i;
 
 function toDateOnly(value) {
   // "2026-07-01" or "2026-07-26T00:00:00+01:00" -> "2026-07-01"
   return value.slice(0, 10);
 }
 
-function addDays(dateStr, n) {
+export function addDays(dateStr, n) {
   const d = new Date(`${dateStr}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
 
-function classifyOwner(summary) {
-  if (!CUSTODY_KEYWORD.test(summary)) return null;
+export function classifyOwner(summary) {
   const claireMatch = summary.match(CLAIRE_NAME);
   const parent2Match = summary.match(PARENT2_NAME);
-  if (claireMatch && !parent2Match) return "claire";
-  if (parent2Match && !claireMatch) return "parent2";
-  if (claireMatch && parent2Match) {
-    // Both names appear (e.g. "Mats nights Claire Away..." or "Claire have
-    // kids (Mat away)") - the parent whose name is mentioned first owns the
-    // event; the other name is incidental context.
-    return claireMatch.index < parent2Match.index ? "claire" : "parent2";
+
+  if (CUSTODY_KEYWORD.test(summary)) {
+    if (claireMatch && !parent2Match) return "claire";
+    if (parent2Match && !claireMatch) return "parent2";
+    if (claireMatch && parent2Match) {
+      // Both names appear (e.g. "Mats nights Claire Away..." or "Claire have
+      // kids (Mat away)") - the parent whose name is mentioned first owns
+      // the event; the other name is incidental context.
+      return claireMatch.index < parent2Match.index ? "claire" : "parent2";
+    }
+    return null; // neither name mentioned
   }
-  return null; // neither name mentioned
+
+  if (AWAY_ONLY.test(summary) && !/kids/i.test(summary)) {
+    if (claireMatch && !parent2Match) return "parent2"; // Claire away -> Mat's nights
+    if (parent2Match && !claireMatch) return "claire"; // Mat away -> Claire's nights
+  }
+
+  return null;
 }
 
-function loadEvents(path) {
+export function loadEvents(path) {
   const raw = JSON.parse(readFileSync(path, "utf8"));
   return raw
     .map((e) => {
@@ -67,7 +85,7 @@ function loadEvents(path) {
     .filter(Boolean);
 }
 
-function buildDateOwnerMap(events, rangeStart, rangeEnd) {
+export function buildDateOwnerMap(events, rangeStart, rangeEnd) {
   const sorted = [...events].sort((a, b) => a.updated.localeCompare(b.updated));
   const map = new Map();
   for (const ev of sorted) {
@@ -138,20 +156,24 @@ function round1(n) {
   return Math.round(n * 10) / 10;
 }
 
-const [, , inputPath, rangeStartArg, rangeEndArg] = process.argv;
-if (!inputPath) {
-  console.error("Usage: compute-custody-split.mjs <raw-events.json> [rangeStart] [rangeEnd]");
-  process.exit(1);
+function main() {
+  const [, , inputPath, rangeStartArg, rangeEndArg] = process.argv;
+  if (!inputPath) {
+    console.error("Usage: compute-custody-split.mjs <raw-events.json> [rangeStart] [rangeEnd]");
+    process.exit(1);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const rangeStart = rangeStartArg || `${today.slice(0, 4)}-01-01`;
+  const rangeEnd = rangeEndArg || addDays(today, 1); // rangeEnd is exclusive -> include today
+
+  const events = loadEvents(inputPath);
+  const result = computeSplit(events, rangeStart, rangeEnd, { claire: "Claire", parent2: "Mat" });
+
+  const outPath = process.env.OUT_PATH;
+  const json = JSON.stringify(result, null, 2);
+  if (outPath) writeFileSync(outPath, json);
+  else process.stdout.write(json + "\n");
 }
 
-const today = new Date().toISOString().slice(0, 10);
-const rangeStart = rangeStartArg || `${today.slice(0, 4)}-01-01`;
-const rangeEnd = rangeEndArg || addDays(today, 1); // rangeEnd is exclusive -> include today
-
-const events = loadEvents(inputPath);
-const result = computeSplit(events, rangeStart, rangeEnd, { claire: "Claire", parent2: "Mat" });
-
-const outPath = process.env.OUT_PATH;
-const json = JSON.stringify(result, null, 2);
-if (outPath) writeFileSync(outPath, json);
-else process.stdout.write(json + "\n");
+if (import.meta.url === `file://${process.argv[1]}`) main();

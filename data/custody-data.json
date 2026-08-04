@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T20:23:48.955Z",
+  "generatedAt": "2026-08-04T20:33:55.838Z",
   "rangeStart": "2026-01-01",
   "rangeEnd": "2026-08-05",
   "names": {
@@ -28,11 +28,11 @@
     {
       "month": "2026-03",
       "claire": 12,
-      "parent2": 15,
-      "unassigned": 4,
+      "parent2": 17,
+      "unassigned": 2,
       "totalDays": 31,
-      "clairePct": 44.4,
-      "parent2Pct": 55.6
+      "clairePct": 41.4,
+      "parent2Pct": 58.6
     },
     {
       "month": "2026-04",
@@ -82,9 +82,9 @@
   ],
   "totals": {
     "claire": 81,
-    "parent2": 104,
-    "unassigned": 31,
-    "clairePct": 43.8,
-    "parent2Pct": 56.2
+    "parent2": 106,
+    "unassigned": 29,
+    "clairePct": 43.3,
+    "parent2Pct": 56.7
   }
 }

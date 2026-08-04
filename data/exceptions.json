@@ -1,0 +1,326 @@
+{
+  "generatedAt": "2026-08-04T20:33:55.895Z",
+  "rangeStart": "2026-01-01",
+  "rangeEnd": "2026-08-05",
+  "summary": {
+    "rangeStart": "2026-01-01",
+    "rangeEnd": "2026-08-05",
+    "totalDays": 216,
+    "exceptionCount": 44,
+    "byType": {
+      "conflict": 15,
+      "calendar_gap": 29,
+      "schedule_gap": 0
+    }
+  },
+  "exceptions": [
+    {
+      "date": "2026-01-01",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-01-04",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-01-11",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-01-14",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-01-15",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-01-18",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-01-25",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-01-28",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-01-29",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-02-01",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-02-08",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-02-11",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-02-12",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-03-11",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-03-12",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-03-15",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-03-21",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": "With Claire until 6pm",
+      "type": "conflict"
+    },
+    {
+      "date": "2026-03-22",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-04-08",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-04-09",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-04-12",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-04-19",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-04-22",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-04-23",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-04-26",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-05-03",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-05-06",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-05-07",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-05-10",
+      "calendarOwner": "parent2",
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-05-17",
+      "calendarOwner": "claire",
+      "scheduleOwner": "parent2",
+      "scheduleComment": null,
+      "type": "conflict"
+    },
+    {
+      "date": "2026-05-20",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-05-21",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-12",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-13",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-17",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-18",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-26",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-06-27",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-01",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-02",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-10",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-11",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-15",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    },
+    {
+      "date": "2026-07-16",
+      "calendarOwner": null,
+      "scheduleOwner": "claire",
+      "scheduleComment": null,
+      "type": "calendar_gap"
+    }
+  ]
+}
