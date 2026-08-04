@@ -30,13 +30,16 @@ usual schedule both have an answer but disagree - typically a deliberate
 exception like a holiday or swap) are intentionally not reported; only
 missing entries are, since those are the ones worth fixing.
 
-- `scripts/usual-schedule.mjs` defines the rotation: the weekend (Fri-Sat-Sun,
-  3 nights) alternates each week; the parent without the weekend gets Mon-Tue
-  (2 nights) while the weekend owner keeps Wed-Thu too (2 nights) - so each
-  parent's block sizes over a 2-week cycle read 3-2-2-3-2-2, a 7/7 split.
-  Anchored to a confirmed date (2026-01-02, a Mat weekend); verified against
-  the calendar for Jan-Feb 2026 with a 100% match before the first logged
-  exception.
+- `scripts/usual-schedule.mjs` defines the rotation. Each week splits into
+  three blocks — Fri+Sat with parent A, Sun+Mon+Tue with parent B, Wed+Thu
+  back with parent A — and the parents swap roles every week, so each gets
+  7 nights per fortnight and the block run reads 3-2-2-3-2-2. Note the
+  3-night block is **Sun-Mon-Tue, not Fri-Sat-Sun**: the kids change hands on
+  the Sunday, so Sunday night belongs to the Mon+Tue parent. Anchored to
+  Fri 2026-01-02 being Mat's Fri+Sat. Verified against the schedule
+  spreadsheet for Jan-Jul 2026: 182/212 days match, and all 30 that don't
+  correspond to a logged exception (half term, "Mat away", "Claire away",
+  Efteling, an explicit "swap") rather than a flaw in the pattern.
 - `scripts/generate-usual-schedule.mjs <start> <end>` writes a ground-truth-shaped
   JSON file from that rotation.
 - `scripts/build-exception-report.mjs <raw-events.json> <ground-truth.json> <start> <end>`

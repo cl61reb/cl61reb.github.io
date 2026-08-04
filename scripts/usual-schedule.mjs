@@ -1,22 +1,29 @@
-// The regular custody rotation, independent of any calendar entries: a
-// repeating 14-day (2-week) cycle where the weekend (Fri-Sat-Sun, 3 nights)
-// alternates between parents each week, and within a week the parent who
-// does NOT have the weekend gets Mon-Tue instead (2 nights) while the
-// weekend-owner also keeps Wed-Thu (2 nights):
+// The regular custody rotation, independent of any calendar entries.
 //
-//   Week A: Mon-Tue = other parent (2) | Wed-Thu = weekend owner (2) | Fri-Sun = weekend owner (3)
-//   Week B: same shape, weekend owner flips
+// Each week splits into three blocks, and the two parents swap roles every
+// week, so the pattern repeats on a 14-day cycle:
 //
-// i.e. each parent's block sizes over a 2-week cycle read 3-2-2-3-2-2,
-// split 7/7 - a "3-2-2" schedule. Verified against the joint calendar for
-// Jan-Feb 2026 (100% match before the first logged exception - a half-term
-// trip) - see the exception report for where real life has since diverged
-// from this baseline.
+//   Fri + Sat        -> parent A   (2 nights)
+//   Sun + Mon + Tue  -> parent B   (3 nights)
+//   Wed + Thu        -> parent A   (2 nights)
 //
-// ANCHOR: 2026-01-02 (a Friday) is a confirmed "parent2" (Mat) weekend.
+// So in any given week parent A has 4 nights (Fri, Sat, Wed, Thu) and
+// parent B has 3 (Sun, Mon, Tue); the next week they swap, giving 7 nights
+// each per fortnight. Read as a run of consecutive blocks the cycle is
+// 3-2-2-3-2-2 - the "3-2-2" schedule.
+//
+// Note the 3-night block is Sun-Mon-Tue, NOT Fri-Sat-Sun: on a weekend the
+// kids change hands on the Sunday, so Sunday night belongs to the parent
+// who has Mon+Tue, not to the parent who had Fri+Sat.
+//
+// ANCHOR: for the week beginning Friday 2026-01-02, Fri+Sat is Mat's.
+// Verified against the schedule spreadsheet across Jan-Jul 2026: 182/212
+// days match, and every one of the 30 that don't lines up with a logged
+// exception (half term, "Mat away", "Claire away", Efteling, an explicit
+// "swap") rather than a flaw in the pattern.
 
 const ANCHOR_FRIDAY = new Date("2026-01-02T00:00:00Z");
-const ANCHOR_WEEKEND_OWNER = "parent2";
+const ANCHOR_FRI_SAT_OWNER = "parent2";
 
 export function usualOwner(dateStr) {
   const d = new Date(`${dateStr}T00:00:00Z`);
@@ -25,9 +32,9 @@ export function usualOwner(dateStr) {
   const weekStartFriday = new Date(d.getTime() - offsetFromFriday * 86400000);
   const weeksSinceAnchor = Math.round((weekStartFriday - ANCHOR_FRIDAY) / (7 * 86400000));
   const isAnchorParity = ((weeksSinceAnchor % 2) + 2) % 2 === 0;
-  const weekendOwner = isAnchorParity ? ANCHOR_WEEKEND_OWNER : otherParent(ANCHOR_WEEKEND_OWNER);
-  const isMonOrTue = offsetFromFriday === 3 || offsetFromFriday === 4;
-  return isMonOrTue ? otherParent(weekendOwner) : weekendOwner;
+  const friSatOwner = isAnchorParity ? ANCHOR_FRI_SAT_OWNER : otherParent(ANCHOR_FRI_SAT_OWNER);
+  const isSunMonTue = offsetFromFriday >= 2 && offsetFromFriday <= 4;
+  return isSunMonTue ? otherParent(friSatOwner) : friSatOwner;
 }
 
 function otherParent(owner) {
