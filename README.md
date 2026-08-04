@@ -23,20 +23,29 @@ month (the current, still-incomplete month is excluded).
 ## Exception report
 
 The bottom of `index.html` (reading `data/exceptions.json`) cross-checks the
-calendar-derived split against an authoritative schedule spreadsheet, day by
-day, and lists every date where they disagree.
+calendar against the **usual 3-2-2 rotation** - not a spreadsheet - day by
+day, and lists every date where they disagree. Since the usual schedule is a
+pure recurring pattern, every real-life departure from it (holidays, swaps,
+away trips, genuine calendar mistakes) shows up as an exception to review.
 
-- `scripts/extract-schedule-ground-truth.py <schedule.xlsx> <start> <end> <out.json>`
-  pulls a per-day Mat/Claire owner map from the "Data" tab of the schedule
-  workbook (columns: Day, Date, Mat, Claire, Comments).
+- `scripts/usual-schedule.mjs` defines the rotation: the weekend (Fri-Sat-Sun,
+  3 nights) alternates each week; the parent without the weekend gets Mon-Tue
+  (2 nights) while the weekend owner keeps Wed-Thu too (2 nights) - so each
+  parent's block sizes over a 2-week cycle read 3-2-2-3-2-2, a 7/7 split.
+  Anchored to a confirmed date (2026-01-02, a Mat weekend); verified against
+  the calendar for Jan-Feb 2026 with a 100% match before the first logged
+  exception.
+- `scripts/generate-usual-schedule.mjs <start> <end>` writes a ground-truth-shaped
+  JSON file from that rotation.
 - `scripts/build-exception-report.mjs <raw-events.json> <ground-truth.json> <start> <end>`
-  diffs it against the calendar classification and writes
-  `data/exceptions.json`, distinguishing **conflicts** (both sources have an
-  answer but disagree) from **calendar gaps** (schedule has an answer, no
-  calendar event covers the date).
-- The ground-truth extraction is a manual step (re-run it when a new schedule
-  spreadsheet is provided) — it isn't pulled automatically like the calendar
-  is.
+  diffs the calendar classification against it and writes
+  `data/exceptions.json`, distinguishing **conflicts** (calendar names a
+  different parent than usual) from **calendar gaps** (no calendar event
+  covers the date at all).
+- `scripts/extract-schedule-ground-truth.py` (reads an uploaded schedule
+  spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
+  are kept for reference but are no longer what the exception report compares
+  against.
 
 ## Known open item
 

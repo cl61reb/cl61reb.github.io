@@ -193,11 +193,14 @@
   <h2 class="section-title" id="exceptions">Exception report</h2>
   <div class="card">
     <p class="legend-note" style="margin-top:0;">
-      Compares what the calendar says against the agreed schedule spreadsheet,
-      day by day. <b>Conflict</b> = the two sources name different parents for
-      the same date. <b>Calendar gap</b> = the schedule names a parent but the
-      calendar has no matching event for that date. Resolve by either fixing
-      the calendar entry or confirming the schedule is out of date for that day.
+      Compares what the calendar says against the <b>usual 3-2-2 rotation</b>
+      (weekend alternates each week; the parent without the weekend gets
+      Mon-Tue, the weekend owner keeps Wed-Thu too - see
+      <code>scripts/usual-schedule.mjs</code>), day by day, so every real-life
+      departure from the normal pattern shows up here for review - holidays,
+      swaps, and away trips included. <b>Conflict</b> = the calendar names a
+      different parent than usual for that date. <b>Calendar gap</b> = no
+      calendar event covers that date at all.
     </p>
   </div>
 
@@ -205,9 +208,9 @@
 
   <div class="card">
     <h3 style="font-size:1rem;margin:0 0 4px;">Conflicts</h3>
-    <p class="legend-note" style="margin-top:0;">Calendar and schedule disagree on who has the kids.</p>
+    <p class="legend-note" style="margin-top:0;">Calendar disagrees with who would normally have the kids that day.</p>
     <table id="conflict-table">
-      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Calendar says</th><th style="text-align:left">Schedule says</th><th style="text-align:left">Schedule note</th></tr></thead>
+      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Calendar says</th><th style="text-align:left">Usual (3-2-2) says</th></tr></thead>
       <tbody></tbody>
     </table>
     <p class="empty" id="conflict-empty" hidden>No conflicts 🎉</p>
@@ -215,9 +218,9 @@
 
   <div class="card">
     <h3 style="font-size:1rem;margin:0 0 4px;">Calendar gaps</h3>
-    <p class="legend-note" style="margin-top:0;">Schedule names a parent; no calendar event covers this date.</p>
+    <p class="legend-note" style="margin-top:0;">No calendar event covers this date; the usual rotation says who normally would have the kids.</p>
     <table id="gap-table">
-      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Schedule says</th><th style="text-align:left">Schedule note</th></tr></thead>
+      <thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Day</th><th style="text-align:left">Usual (3-2-2) says</th></tr></thead>
       <tbody></tbody>
     </table>
     <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
@@ -248,7 +251,7 @@ async function main() {
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `Computed from the "Both of us" Google Calendar, through the end of the previous month. "Unassigned" = days with no matching calendar event. Ground truth for the exception report below: the agreed schedule spreadsheet.`;
+    `Computed from the "Both of us" Google Calendar, through the end of the previous month. "Unassigned" = days with no matching calendar event. The exception report below compares against the usual 3-2-2 rotation, not the calendar itself.`;
 
   // Stat tiles
   const statRow = document.getElementById("stat-row");
@@ -410,7 +413,6 @@ async function mainExceptions() {
         <td>${dayName(e.date)}</td>
         <td>${ownerBadge(e.calendarOwner, names)}</td>
         <td>${ownerBadge(e.scheduleOwner, names)}</td>
-        <td class="comment">${e.scheduleComment || ""}</td>
       </tr>`
     )
     .join("");
@@ -424,7 +426,6 @@ async function mainExceptions() {
         <td>${e.date}</td>
         <td>${dayName(e.date)}</td>
         <td>${ownerBadge(e.scheduleOwner, names)}</td>
-        <td class="comment">${e.scheduleComment || ""}</td>
       </tr>`
     )
     .join("");
