@@ -50,6 +50,21 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
+## 12-month projection
+
+The last section of `index.html` (reading `data/projection.json`) projects the
+split forward over the 12 months from the start of the current month.
+
+- `scripts/build-projection.mjs <raw-future-events.json> <start> <end>` uses
+  the calendar entry for each day where one exists (**confirmed**) and falls
+  back to the usual 3-2-2 rotation where none does (**projected**). Each month
+  reports its confirmed/total ratio so the reader can see how much of the
+  number is actually agreed versus assumed.
+- It also lists gaps — runs of days with no calendar entry — with the same
+  prefilled "add to calendar" links the exception report uses.
+- `data/corrections.json` never applies here: it is bounded to before
+  2026-08-01, which is at or before every projection window.
+
 ## Corrections (`data/corrections.json`)
 
 A short, explicit list of days where the joint calendar is demonstrably wrong

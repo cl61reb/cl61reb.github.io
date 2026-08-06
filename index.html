@@ -158,7 +158,23 @@
   }
   .comment { color: var(--text-muted); }
   .empty { color: var(--text-secondary); padding: 20px 0; }
-  #gap-table td, #gap-table th { text-align: left; font-variant-numeric: tabular-nums; }
+  #gap-table td, #gap-table th,
+  #projection-gap-table td, #projection-gap-table th { text-align: left; font-variant-numeric: tabular-nums; }
+  #projection-chart-container { position: relative; margin-top: 16px; }
+  #projection-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translate(-50%, -110%);
+    white-space: nowrap;
+    transition: opacity 0.1s;
+    z-index: 10;
+  }
   h2.section-title { font-size: 1.1rem; margin: 40px 0 4px; }
 </style>
 </head>
@@ -167,7 +183,7 @@
   <header>
     <h1>Custody Split Tracker</h1>
     <p id="subtitle">Loading…</p>
-    <p><a href="#exceptions">Jump to exception report ↓</a></p>
+    <p><a href="#exceptions">Exception report ↓</a> &nbsp;·&nbsp; <a href="#projection">Next 12 months ↓</a></p>
   </header>
 
   <div class="stat-row" id="stat-row"></div>
@@ -211,6 +227,46 @@
     <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
   </div>
 
+  <h2 class="section-title" id="projection">Next 12 months (projected)</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;">
+      Where the calendar has an entry, that entry is used
+      (<b>confirmed</b>). Any day without one falls back to the usual 3-2-2
+      rotation (<b>projected</b>) — so the more projected days a month has,
+      the more provisional its number is. Plans change, so treat this as the
+      shape of the year ahead rather than a commitment.
+    </p>
+  </div>
+
+  <div class="stat-row" id="projection-stat-row"></div>
+
+  <div class="card">
+    <div class="legend" id="projection-legend"></div>
+    <div id="projection-chart-container">
+      <svg id="projection-chart" viewBox="0 0 860 320" role="img" aria-label="Projected monthly custody split"></svg>
+      <div id="projection-tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="projection-table">
+      <thead>
+        <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Claire %</th><th>Mat %</th><th>Confirmed</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:1rem;margin:0 0 4px;">Gaps in the next 12 months</h3>
+    <p class="legend-note" style="margin-top:0;">Days with no calendar entry, with the rotation's prediction of who would have the kids.</p>
+    <table id="projection-gap-table">
+      <thead><tr><th style="text-align:left">Dates</th><th style="text-align:left">Nights</th><th style="text-align:left">Predicted</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="projection-gap-empty" hidden>No gaps — every day in the next 12 months already has a calendar entry 🎉</p>
+  </div>
+
   <footer id="footer"></footer>
 </div>
 
@@ -239,7 +295,7 @@ async function main() {
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `Computed from the "Both of us" Google Calendar, through the end of the previous month. "Unassigned" = days with no matching calendar event. The exception report below compares against the usual 3-2-2 rotation, not the calendar itself.`;
+    `Computed from the "Both of us" Google Calendar. The split covers Jan 1 through the end of the previous month; the projection covers the 12 months from the start of the current month. "Unassigned" = days with no matching calendar event. The exception report and the projection's gap list both fall back to the usual 3-2-2 rotation where the calendar is silent.`;
 
   // Stat tiles
   const statRow = document.getElementById("stat-row");
@@ -398,11 +454,137 @@ async function mainExceptions() {
   document.getElementById("gap-table").hidden = gaps.length === 0;
 }
 
+async function mainProjection() {
+  const res = await fetch(`data/projection.json?v=${Date.now()}`, { cache: "no-store" });
+  const data = await res.json();
+  const { months, totals, names, gaps, gapSummary } = data;
+
+  // Stat tiles
+  const statRow = document.getElementById("projection-stat-row");
+  const tiles = [
+    { label: names.claire, value: `${totals.clairePct}%`, color: "var(--series-claire)" },
+    { label: names.parent2, value: `${totals.parent2Pct}%`, color: "var(--series-mat)" },
+    { label: `${names.claire} nights`, value: totals.claire, color: "var(--series-claire)" },
+    { label: `${names.parent2} nights`, value: totals.parent2, color: "var(--series-mat)" },
+  ];
+  if (totals.projected > 0) {
+    tiles.push({ label: "Projected days", value: totals.projected, color: "var(--text-muted)" });
+  }
+  for (const t of tiles) {
+    const tile = document.createElement("div");
+    tile.className = "stat-tile";
+    tile.innerHTML = `<div class="label"><span class="swatch" style="background:${t.color}"></span>${t.label}</div><div class="value">${t.value}</div>`;
+    statRow.appendChild(tile);
+  }
+
+  document.getElementById("projection-legend").innerHTML = [
+    [names.claire, "var(--series-claire)"],
+    [names.parent2, "var(--series-mat)"],
+  ]
+    .map(([label, color]) => `<span class="item"><span class="swatch" style="background:${color}"></span>${label}</span>`)
+    .join("");
+
+  // Chart — same geometry as the historic chart above
+  const svg = document.getElementById("projection-chart");
+  const tooltip = document.getElementById("projection-tooltip");
+  const W = 860, H = 320, padL = 30, padR = 10, padT = 10, padB = 30;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const maxDays = Math.max(...months.map((m) => m.totalDays), 31);
+  const n = months.length, gapPx = 10;
+  const barW = Math.min(48, (plotW - gapPx * (n - 1)) / n);
+  const startX = padL + (plotW - (barW * n + gapPx * (n - 1))) / 2;
+
+  [0, 0.25, 0.5, 0.75, 1].forEach((f) => {
+    const y = padT + plotH * (1 - f);
+    svg.appendChild(el("line", { x1: padL, x2: W - padR, y1: y, y2: y, stroke: "var(--gridline)", "stroke-width": 1 }));
+    const label = el("text", { x: padL - 6, y: y + 4, class: "axis-label", "text-anchor": "end" });
+    label.textContent = Math.round(maxDays * f);
+    svg.appendChild(label);
+  });
+
+  months.forEach((m, i) => {
+    const x = startX + i * (barW + gapPx);
+    const scale = plotH / maxDays;
+    let y = padT + plotH;
+    const segs = [
+      { key: "claire", value: m.claire, color: "var(--series-claire)", label: names.claire },
+      { key: "parent2", value: m.parent2, color: "var(--series-mat)", label: names.parent2 },
+    ].filter((s) => s.value > 0);
+
+    segs.forEach((s, si) => {
+      const segH = Math.max(0, s.value * scale - (si < segs.length - 1 ? 2 : 0));
+      y -= segH + (si > 0 ? 2 : 0);
+      const isTop = si === segs.length - 1;
+      const rect = el("rect", {
+        x, y, width: barW, height: segH, fill: s.color, class: "bar-seg",
+        rx: isTop ? 4 : 0, ry: isTop ? 4 : 0,
+      });
+      rect.addEventListener("mousemove", (ev) => {
+        const pct = s.key === "claire" ? m.clairePct : m.parent2Pct;
+        const prov = m.projected > 0 ? ` · ${m.projected} projected` : "";
+        tooltip.textContent = `${monthLabel(m.month)} ${m.month.slice(0, 4)} — ${s.label}: ${s.value} (${pct}%)${prov}`;
+        const b = document.getElementById("projection-chart-container").getBoundingClientRect();
+        tooltip.style.left = `${ev.clientX - b.left}px`;
+        tooltip.style.top = `${ev.clientY - b.top}px`;
+        tooltip.style.opacity = 1;
+      });
+      rect.addEventListener("mouseleave", () => { tooltip.style.opacity = 0; });
+      svg.appendChild(rect);
+    });
+
+    const label = el("text", { x: x + barW / 2, y: H - 8, class: "month-label", "text-anchor": "middle" });
+    label.textContent = monthLabel(m.month);
+    svg.appendChild(label);
+  });
+
+  // Table
+  document.querySelector("#projection-table tbody").innerHTML =
+    months
+      .map(
+        (m) => `<tr>
+          <td>${monthLabel(m.month)} ${m.month.slice(0, 4)}</td>
+          <td>${m.claire}</td>
+          <td>${m.parent2}</td>
+          <td>${m.clairePct}</td>
+          <td>${m.parent2Pct}</td>
+          <td>${m.confirmed}/${m.totalDays}</td>
+        </tr>`
+      )
+      .join("") +
+    `<tr style="font-weight:600">
+      <td>Total</td><td>${totals.claire}</td><td>${totals.parent2}</td>
+      <td>${totals.clairePct}</td><td>${totals.parent2Pct}</td>
+      <td>${totals.confirmed}/${totals.totalDays}</td>
+    </tr>`;
+
+  // Gaps
+  document.querySelector("#projection-gap-table tbody").innerHTML = gaps
+    .map((g) => {
+      const last = new Date(`${g.endDateExclusive}T00:00:00Z`);
+      last.setUTCDate(last.getUTCDate() - 1);
+      const range = g.nights > 1
+        ? `${fmtDate(g.startDate)} – ${fmtDate(last.toISOString().slice(0, 10))}`
+        : fmtDate(g.startDate);
+      return `<tr>
+        <td>${range}</td>
+        <td>${g.nights}</td>
+        <td><span class="badge"><span class="dot" style="background:${ownerColor(g.owner)}"></span>${g.ownerLabel}</span></td>
+        <td><a href="${g.googleCalendarLink}" target="_blank" rel="noopener">Add to calendar →</a></td>
+      </tr>`;
+    })
+    .join("");
+  document.getElementById("projection-gap-empty").hidden = gapSummary.gapRuns > 0;
+  document.getElementById("projection-gap-table").hidden = gapSummary.gapRuns === 0;
+}
+
 main().catch((err) => {
   document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;
 });
 mainExceptions().catch((err) => {
   document.getElementById("exception-stat-row").textContent = "Failed to load exception data: " + err.message;
+});
+mainProjection().catch((err) => {
+  document.getElementById("projection-stat-row").textContent = "Failed to load projection data: " + err.message;
 });
 </script>
 </body>
