@@ -24,14 +24,20 @@ BACKGROUND: index.html reads data/custody-data.json (the month-by-month custody 
 
 STEPS:
 1. Clone/pull latest main.
-2. Work out the date range: rangeStart = January 1 of the current year; rangeEnd = the FIRST DAY OF THE CURRENT MONTH (exclusive). The current, incomplete month is deliberately excluded. E.g. running on 12 Sep 2026 gives 2026-01-01 to 2026-09-01.
-3. Via the Google Calendar connector, list events on calendar u69j9parrfr023fp7r6gu2s098@group.calendar.google.com for that range, pageSize 250. If the response is too large to return inline it gets saved to a file — locate and read that file.
+2. Work out TWO date ranges.
+   HISTORIC: histStart = January 1 of the current year; histEnd = the FIRST DAY OF THE CURRENT MONTH (exclusive). The current, incomplete month is deliberately excluded. E.g. running on 12 Sep 2026 gives 2026-01-01 to 2026-09-01.
+   FORECAST: fcStart = the FIRST DAY OF NEXT MONTH; fcEnd = exactly 12 months after fcStart. E.g. running on 12 Sep 2026 gives 2026-10-01 to 2027-10-01.
+3. Via the Google Calendar connector, list events on calendar u69j9parrfr023fp7r6gu2s098@group.calendar.google.com covering histStart through fcEnd, pageSize 250. The full span exceeds what one call returns inline, so make several calls over sub-ranges and combine them; when a response is too large to return inline it gets saved to a file — locate and read that file.
 4. Reduce to a JSON array with only these fields per event: summary, start (date or dateTime), end (date or dateTime), updated. e.g.
    jq -c '.events[] | {summary, start: (.start.date // .start.dateTime), end: (.end.date // .end.dateTime), updated}' SRC | jq -s '.' > /tmp/raw-events.json
-5. From the repo root run:
-   OUT_PATH=data/usual-schedule.json node scripts/generate-usual-schedule.mjs <rangeStart> <rangeEnd>
-   OUT_PATH=data/custody-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <rangeStart> <rangeEnd>
-   OUT_PATH=data/exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/usual-schedule.json <rangeStart> <rangeEnd>
+5. From the repo root run, for the HISTORIC page:
+   OUT_PATH=data/usual-schedule.json node scripts/generate-usual-schedule.mjs <histStart> <histEnd>
+   OUT_PATH=data/custody-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <histStart> <histEnd>
+   OUT_PATH=data/exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/usual-schedule.json <histStart> <histEnd>
+   and for the FORECAST page (same scripts, different dates):
+   OUT_PATH=data/forecast-usual-schedule.json node scripts/generate-usual-schedule.mjs <fcStart> <fcEnd>
+   OUT_PATH=data/forecast-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <fcStart> <fcEnd>
+   OUT_PATH=data/forecast-exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/forecast-usual-schedule.json <fcStart> <fcEnd>
 6. If git diff shows changes, commit them (e.g. "Weekly custody split refresh") and push to main. If nothing changed, do not commit — and do not push an empty commit.
 7. VERIFY THE DEPLOY — do not skip this. GitHub Pages intermittently builds the PREVIOUS commit instead of the one just pushed, which silently leaves the site showing stale data. After pushing, wait ~90s, then list recent workflow runs for the repo and confirm a "pages build and deployment" run exists with head_sha equal to the commit you just pushed AND conclusion "success". If the newest run has a different head_sha, push an empty commit (git commit --allow-empty) to force a rebuild and check again. Repeat up to 3 times.
 
@@ -40,7 +46,7 @@ IMPORTANT CONSTRAINTS:
 - Do NOT add entries to data/corrections.json. It is bounded by "validBefore": 2026-08-01; the schedule spreadsheet behind it is NOT valid on or after that date. From 2026-08-01 onward the calendar is the only source of truth.
 - Do NOT edit the user's Google Calendar. Read only.
 
-REPORT: state the split (Claire vs Mat nights and percentages), any calendar gaps found in the exception report, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
+REPORT: state BOTH splits (historic and forecast - Claire vs Mat nights and percentages), any calendar gaps found in either exception report, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
 ```
 
 ## Why each constraint is there

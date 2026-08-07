@@ -50,20 +50,21 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
-## 12-month projection
+## The two pages
 
-The last section of `index.html` (reading `data/projection.json`) projects the
-split forward over the 12 months from the start of the current month.
+Both pages are the *same report over different date ranges* — same scripts,
+same logic, same layout. They share `assets/report.css` and
+`assets/report.js`; each page just sets `window.REPORT` to point at its own
+data files.
 
-- `scripts/build-projection.mjs <raw-future-events.json> <start> <end>` uses
-  the calendar entry for each day where one exists (**confirmed**) and falls
-  back to the usual 3-2-2 rotation where none does (**projected**). Each month
-  reports its confirmed/total ratio so the reader can see how much of the
-  number is actually agreed versus assumed.
-- It also lists gaps — runs of days with no calendar entry — with the same
-  prefilled "add to calendar" links the exception report uses.
-- `data/corrections.json` never applies here: it is bounded to before
-  2026-08-01, which is at or before every projection window.
+| Page | Range | Data |
+|---|---|---|
+| `index.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
+| `forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
+
+`forecast.html` covers plans rather than history, so its numbers can still
+change. `data/corrections.json` never applies to it: it is bounded to before
+2026-08-01, which is at or before any forecast window.
 
 ## Corrections (`data/corrections.json`)
 
