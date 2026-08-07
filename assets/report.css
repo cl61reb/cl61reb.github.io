@@ -34,6 +34,7 @@
     font-size: 0.95rem;
   }
   header p + p { margin-top: 8px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 2px; align-items: baseline; }
   a { color: var(--series-claire); }
   .card {
     background: var(--surface-1);

@@ -50,21 +50,27 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
-## The two pages
+## The three pages
 
-Both pages are the *same report over different date ranges* — same scripts,
+All three are the *same report over different date ranges* — same scripts,
 same logic, same layout. They share `assets/report.css` and
 `assets/report.js`; each page just sets `window.REPORT` to point at its own
-data files.
+data files, so adding a fourth range would only mean a new HTML shell and a
+new data set.
 
 | Page | Range | Data |
 |---|---|---|
 | `index.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
+| `month.html` | the **current** calendar month | `data/month-data.json`, `data/month-exceptions.json` |
 | `forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
 
-`forecast.html` covers plans rather than history, so its numbers can still
-change. `data/corrections.json` never applies to it: it is bounded to before
-2026-08-01, which is at or before any forecast window.
+The three windows are contiguous and don't overlap: year-to-date stops where
+the current month begins, and the forecast starts where it ends.
+
+`month.html` and `forecast.html` cover plans as much as history, so their
+numbers can still change. `data/corrections.json` applies only to
+`index.html`: it is bounded to before 2026-08-01, which is at or before both
+other windows.
 
 ## Corrections (`data/corrections.json`)
 

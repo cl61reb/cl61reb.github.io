@@ -24,9 +24,11 @@ BACKGROUND: index.html reads data/custody-data.json (the month-by-month custody 
 
 STEPS:
 1. Clone/pull latest main.
-2. Work out TWO date ranges.
-   HISTORIC: histStart = January 1 of the current year; histEnd = the FIRST DAY OF THE CURRENT MONTH (exclusive). The current, incomplete month is deliberately excluded. E.g. running on 12 Sep 2026 gives 2026-01-01 to 2026-09-01.
-   FORECAST: fcStart = the FIRST DAY OF NEXT MONTH; fcEnd = exactly 12 months after fcStart. E.g. running on 12 Sep 2026 gives 2026-10-01 to 2027-10-01.
+2. Work out THREE date ranges. Taking 12 Sep 2026 as the example run date:
+   HISTORIC: histStart = January 1 of the current year; histEnd = the FIRST DAY OF THE CURRENT MONTH (exclusive) -> 2026-01-01 to 2026-09-01.
+   MONTH:    monStart = the FIRST DAY OF THE CURRENT MONTH; monEnd = the first day of next month -> 2026-09-01 to 2026-10-01.
+   FORECAST: fcStart = the FIRST DAY OF NEXT MONTH; fcEnd = exactly 12 months after fcStart -> 2026-10-01 to 2027-10-01.
+   The three windows are contiguous and must not overlap: histEnd == monStart, and monEnd == fcStart.
 3. Via the Google Calendar connector, list events on calendar u69j9parrfr023fp7r6gu2s098@group.calendar.google.com covering histStart through fcEnd, pageSize 250. The full span exceeds what one call returns inline, so make several calls over sub-ranges and combine them; when a response is too large to return inline it gets saved to a file — locate and read that file.
 4. Reduce to a JSON array with only these fields per event: summary, start (date or dateTime), end (date or dateTime), updated. e.g.
    jq -c '.events[] | {summary, start: (.start.date // .start.dateTime), end: (.end.date // .end.dateTime), updated}' SRC | jq -s '.' > /tmp/raw-events.json
@@ -34,7 +36,11 @@ STEPS:
    OUT_PATH=data/usual-schedule.json node scripts/generate-usual-schedule.mjs <histStart> <histEnd>
    OUT_PATH=data/custody-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <histStart> <histEnd>
    OUT_PATH=data/exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/usual-schedule.json <histStart> <histEnd>
-   and for the FORECAST page (same scripts, different dates):
+   for the CURRENT MONTH page (same scripts, different dates):
+   OUT_PATH=data/month-usual-schedule.json node scripts/generate-usual-schedule.mjs <monStart> <monEnd>
+   OUT_PATH=data/month-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <monStart> <monEnd>
+   OUT_PATH=data/month-exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/month-usual-schedule.json <monStart> <monEnd>
+   and for the FORECAST page:
    OUT_PATH=data/forecast-usual-schedule.json node scripts/generate-usual-schedule.mjs <fcStart> <fcEnd>
    OUT_PATH=data/forecast-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <fcStart> <fcEnd>
    OUT_PATH=data/forecast-exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/forecast-usual-schedule.json <fcStart> <fcEnd>
@@ -46,7 +52,7 @@ IMPORTANT CONSTRAINTS:
 - Do NOT add entries to data/corrections.json. It is bounded by "validBefore": 2026-08-01; the schedule spreadsheet behind it is NOT valid on or after that date. From 2026-08-01 onward the calendar is the only source of truth.
 - Do NOT edit the user's Google Calendar. Read only.
 
-REPORT: state BOTH splits (historic and forecast - Claire vs Mat nights and percentages), any calendar gaps found in either exception report, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
+REPORT: state ALL THREE splits (year-to-date, current month, forecast - Claire vs Mat nights and percentages), any calendar gaps found in any of the exception reports, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
 ```
 
 ## Why each constraint is there

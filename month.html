@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Custody Split Tracker — next 12 months</title>
+<title>Custody Split Tracker — this month</title>
 <link rel="stylesheet" href="assets/report.css" />
 </head>
 <body>
@@ -13,8 +13,8 @@
     <p id="subtitle">Loading…</p>
     <p class="nav">
       <a href="index.html">Year to date</a> &nbsp;·&nbsp;
-      <a href="month.html">This month</a> &nbsp;·&nbsp;
-      <b>Next 12 months</b>
+      <b>This month</b> &nbsp;·&nbsp;
+      <a href="forecast.html">Next 12 months</a>
     </p>
   </header>
 
@@ -23,7 +23,7 @@
   <div class="card">
     <div class="legend" id="legend"></div>
     <div id="chart-container">
-      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Monthly custody split, next 12 months"></svg>
+      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Custody split for the current month"></svg>
       <div id="tooltip"></div>
     </div>
   </div>
@@ -64,9 +64,9 @@
 
 <script>
 window.REPORT = {
-  dataUrl: "data/forecast-data.json",
-  exceptionsUrl: "data/forecast-exceptions.json",
-  rangeNote: 'Computed from the "Both of us" Google Calendar, covering a rolling 12 months starting from the first day of next month. These are plans, not history - they can still change.',
+  dataUrl: "data/month-data.json",
+  exceptionsUrl: "data/month-exceptions.json",
+  rangeNote: 'Computed from the "Both of us" Google Calendar, covering the current calendar month. The month is still in progress, so later dates are planned rather than settled.',
 };
 </script>
 <script src="assets/report.js"></script>

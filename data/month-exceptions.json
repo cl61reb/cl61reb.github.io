@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-08-07T12:48:05.674Z",
+  "rangeStart": "2026-08-01",
+  "rangeEnd": "2026-09-01",
+  "summary": {
+    "rangeStart": "2026-08-01",
+    "rangeEnd": "2026-09-01",
+    "totalDays": 31,
+    "gapDays": 0,
+    "gapRuns": 0
+  },
+  "gaps": []
+}
