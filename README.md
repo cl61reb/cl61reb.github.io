@@ -132,6 +132,26 @@ cloud environment needs `allsaintsttl.greenhousecms.co.uk` under **Network
 access → Custom → Allowed domains** (keeping the default package-manager list
 ticked). Without it the fetch fails with a 403 from the egress proxy.
 
+## Night-by-night check (this month)
+
+The bottom of `month.html` (reading `data/month-nights.json`) lists every night
+of the month with who actually has the children and who the usual 3-2-2
+rotation would give it to.
+
+Departures from the rotation normally come in pairs — one parent takes a night
+and gives one back — so they cancel. `scripts/build-nightly-detail.mjs` pairs
+them off in date order; whatever is left in the longer list is a night gained
+and not returned, flagged in red as an **unswapped extra night**. The latest
+such nights are the ones flagged, since the earlier ones had a counterpart
+available to pair with.
+
+A night the calendar says nothing about is reported as unassigned rather than
+counted as a departure — a missing entry is not a swap.
+
+The table is registry-driven: it appears only on reports whose entry in
+`assets/reports.js` sets `nightsUrl`, which is why the year-to-date and
+forecast pages do not grow one.
+
 ### Adding a new report
 
 1. Add an entry to `assets/reports.js` (id, href, title, blurb, and the three

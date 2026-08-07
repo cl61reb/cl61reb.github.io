@@ -195,11 +195,73 @@ async function renderExceptions() {
   document.getElementById("gap-table").hidden = gaps.length === 0;
 }
 
+// Night-by-night table, for reports that configure one.
+async function renderNights() {
+  if (!REPORT.nightsUrl) return;
+  const data = await fetchJson(REPORT.nightsUrl);
+  const { nights, summary, names } = data;
+  const label = (o) => (o === "claire" ? names.claire : o === "parent2" ? names.parent2 : "—");
+  const colour = (o) =>
+    o === "claire" ? "var(--series-claire)" : o === "parent2" ? "var(--series-mat)" : "var(--text-muted)";
+  const badge = (o) =>
+    `<span class="badge"><span class="dot" style="background:${colour(o)}"></span>${label(o)}</span>`;
+
+  const u = summary.unswapped;
+  document.getElementById("nights-note").innerHTML =
+    `Every night of the month, against who the <b>usual 3-2-2 rotation</b> would give it to. ` +
+    `Departures from the rotation normally come in pairs — one parent takes a night and gives one back — ` +
+    `so they cancel out. A departure with no matching one the other way is a night gained and not returned, ` +
+    `flagged below as an <b>unswapped extra night</b>.`;
+
+  document.getElementById("nights-summary").innerHTML = `
+    <div class="nights-tally">
+      <span>Actual <b>${names.claire} ${summary.actual.claire}</b> / <b>${names.parent2} ${summary.actual.parent2}</b></span>
+      <span>Usual <b>${names.claire} ${summary.usual.claire}</b> / <b>${names.parent2} ${summary.usual.parent2}</b></span>
+      <span>${summary.swapped} swapped ${summary.swapped === 1 ? "night" : "nights"}</span>
+    </div>
+    ${
+      u.count
+        ? `<p class="nights-alert"><b>${u.count} unswapped extra ${u.count === 1 ? "night" : "nights"} for ${label(u.owner)}.</b>
+             ${label(u.owner)} has taken ${u.count === 1 ? "a night" : `${u.count} nights`} that the rotation gives to
+             ${label(u.owner === "claire" ? "parent2" : "claire")}, without one coming back the other way
+             — which is why the month reads ${summary.actual.claire}/${summary.actual.parent2}
+             rather than ${summary.usual.claire}/${summary.usual.parent2}.</p>`
+        : `<p class="nights-ok">The month balances — every departure from the rotation has a matching one the other way.</p>`
+    }`;
+
+  document.querySelector("#nights-table tbody").innerHTML = nights
+    .map((n) => {
+      const d = new Date(`${n.date}T00:00:00Z`);
+      const when = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+      const flag =
+        n.status === "unswapped"
+          ? `<span class="badge badge-unswapped">Unswapped extra night</span>`
+          : n.status === "swapped"
+          ? `<span class="badge badge-reduced">Swapped</span>`
+          : n.status === "unassigned"
+          ? `<span class="badge badge-warn">No calendar entry</span>`
+          : "";
+      const note = n.note ? `<div class="comment">${n.note}</div>` : "";
+      return `<tr class="${n.status === "unswapped" ? "row-unswapped" : ""}">
+        <td class="date">${when}</td>
+        <td>${badge(n.actual)}</td>
+        <td>${badge(n.usual)}</td>
+        <td>${flag}${note}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
 window.renderReportNav(REPORT.id);
 
 renderSplit().catch((err) => {
   document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;
 });
+renderNights().catch((err) => {
+  const el = document.getElementById("nights-summary");
+  if (el) el.textContent = "Failed to load night-by-night data: " + err.message;
+});
+
 renderExceptions().catch((err) => {
   document.getElementById("exception-stat-row").textContent = "Failed to load exception data: " + err.message;
 });

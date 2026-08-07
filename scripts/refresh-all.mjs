@@ -133,17 +133,20 @@ if (shortfall.length) {
 // --- custody reports --------------------------------------------------------
 
 const custody = [
-  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json"],
-  ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json"],
-  ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json"],
+  // label, range key, rotation file, split file, exceptions file, nightly file (optional)
+  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null],
+  ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json", "month-nights.json"],
+  ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json", null],
 ];
 
 let ok = true;
-for (const [label, key, usualFile, dataFile, excFile] of custody) {
+for (const [label, key, usualFile, dataFile, excFile, nightsFile] of custody) {
   const { start, end } = ranges[key];
   ok = run(`${label} · rotation`, usualFile, "generate-usual-schedule.mjs", [start, end]) && ok;
   ok = run(`${label} · split`, dataFile, "compute-custody-split.mjs", [eventsPath, start, end]) && ok;
   ok = run(`${label} · exceptions`, excFile, "build-exception-report.mjs", [eventsPath, join(DATA, usualFile), start, end]) && ok;
+  if (nightsFile)
+    ok = run(`${label} · nights`, nightsFile, "build-nightly-detail.mjs", [eventsPath, join(DATA, usualFile), start, end]) && ok;
 }
 
 // --- childcare costs --------------------------------------------------------
@@ -214,6 +217,15 @@ if (!dryRun) {
                   (d.totals.unassigned ? `  ${d.totals.unassigned} unassigned` : ""));
     } catch { /* reported above */ }
   }
+  try {
+    const n = JSON.parse(readFileSync(join(DATA, "month-nights.json"), "utf8")).summary;
+    if (n.unswapped.count) {
+      const who = n.unswapped.owner === "claire" ? "Claire" : "Mat";
+      console.log(`  ${"Unswapped".padEnd(16)} ${n.unswapped.count} extra night(s) for ${who}: ${n.unswapped.dates.join(", ")}`);
+    } else {
+      console.log(`  ${"Unswapped".padEnd(16)} none — this month balances against the rotation`);
+    }
+  } catch { /* reported above */ }
   try {
     const c = JSON.parse(readFileSync(join(DATA, "childcare-data.json"), "utf8"));
     const avg = c.totals.cost / c.months.length;

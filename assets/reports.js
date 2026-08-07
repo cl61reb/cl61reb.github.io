@@ -38,6 +38,9 @@ window.REPORTS = [
     dataUrl: "data/month-data.json",
     exceptionsUrl: "data/month-exceptions.json",
     usualScheduleUrl: "data/month-usual-schedule.json",
+    // Optional: a night-by-night table of actual vs the usual rotation.
+    // Only reports that set this render one.
+    nightsUrl: "data/month-nights.json",
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering the current calendar month. The month is still in progress, so later dates are planned rather than settled.',
   },

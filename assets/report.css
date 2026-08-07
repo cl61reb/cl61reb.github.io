@@ -250,3 +250,23 @@
 .day-free { color: var(--text-muted); }
 .day-note { margin-top: 4px; font-size: 0.78rem; }
 .badge-shut { color: var(--text-muted); border-style: dashed; margin-top: 4px; }
+
+/* night-by-night table (this month) */
+#nights-table td, #nights-table th { text-align: left; }
+#nights-table td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row-unswapped { background: rgba(208,59,59,0.06); }
+.badge-unswapped {
+  color: #a32020; border-color: rgba(208,59,59,0.45); background: rgba(208,59,59,0.10);
+  font-weight: 600;
+}
+.nights-tally {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 4px;
+}
+.nights-tally b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.nights-alert {
+  margin: 10px 0 0; padding: 10px 12px; border-radius: 8px;
+  background: rgba(208,59,59,0.08); border: 1px solid rgba(208,59,59,0.30);
+  color: #a32020; font-size: 0.88rem; line-height: 1.55;
+}
+.nights-ok { margin: 10px 0 0; color: var(--text-secondary); font-size: 0.88rem; }

@@ -1,0 +1,219 @@
+{
+  "generatedAt": "2026-08-07T15:28:00.036Z",
+  "rangeStart": "2026-08-01",
+  "rangeEnd": "2026-09-01",
+  "names": {
+    "claire": "Claire",
+    "parent2": "Mat"
+  },
+  "summary": {
+    "nights": 31,
+    "actual": {
+      "claire": 17,
+      "parent2": 14
+    },
+    "usual": {
+      "claire": 16,
+      "parent2": 15
+    },
+    "matching": 30,
+    "swapped": 0,
+    "unassigned": 0,
+    "unswapped": {
+      "count": 1,
+      "owner": "claire",
+      "dates": [
+        "2026-08-23"
+      ]
+    }
+  },
+  "nights": [
+    {
+      "date": "2026-08-01",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-02",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-03",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-04",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-05",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-06",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-07",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-08",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-09",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-10",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-11",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-12",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-13",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-14",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-15",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-16",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-17",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-18",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-19",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-20",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-21",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-22",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-23",
+      "actual": "claire",
+      "usual": "parent2",
+      "status": "unswapped",
+      "note": "Claire’s nights"
+    },
+    {
+      "date": "2026-08-24",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-25",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-26",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-27",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-28",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-29",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-30",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-08-31",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    }
+  ]
+}
