@@ -49,20 +49,24 @@ async function main() {
   document.getElementById("subtitle").textContent =
     `${fmtDate(rangeStart)} to ${fmtDate(rangeEnd)} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `${REPORT.rangeNote} Weeks that straddle a month are split across both months by weekday, so each month is charged pro rata rather than counted whole.`;
+    `${REPORT.rangeNote} Every charge belongs to a dated day, so months add up exactly - no week is split across a month boundary. Where a holiday week runs longer than the ${rates.holidayClubDaysPerWeek} club days, the charge falls on the first ${rates.holidayClubDaysPerWeek} weekdays of that week.`;
 
   document.getElementById("rates").innerHTML = `
-    Holiday week <b>${gbp(rates.holidayWeek)}</b> ·
-    School week <b>${gbp(rates.schoolWeek)}</b> ·
-    Each day the school is shut in a term week <b>−${gbp(rates.dayDiscount)}</b>`;
+    Costed per day. <b>School holidays</b> — kids club at
+    <b>${gbp(rates.kidsClubDay)}</b> a day, ${rates.holidayClubDaysPerWeek} days a week.
+    <b>Term time</b> — after school club at <b>${gbp(rates.afterSchoolDay)}</b> a day,
+    Monday to Thursday; no Friday club.
+    <b>Bank holidays and inset days</b> — nothing, the children are at home.
+    So a full holiday week is ${gbp(rates.holidayClubDaysPerWeek * rates.kidsClubDay)}
+    and an ordinary school week ${gbp(rates.afterSchoolWeekdays * rates.afterSchoolDay)}.`;
 
   // --- stat tiles ---
   const monthlyAvg = totals.cost / months.length;
   const tiles = [
     { label: `Total, ${months.length} months`, value: gbp(totals.cost), color: "var(--series-claire)" },
     { label: "Average per month", value: gbp(monthlyAvg), color: "var(--series-claire)" },
-    { label: "Holiday weeks", value: totals.holidayWeeks, color: "var(--series-mat)" },
-    { label: "Days school is shut", value: totals.closedDays, color: "var(--text-muted)" },
+    { label: `Kids club days · ${gbp(rates.kidsClubDay)}`, value: totals.kidsClubDays, color: "var(--series-mat)" },
+    { label: `After school days · ${gbp(rates.afterSchoolDay)}`, value: totals.afterSchoolDays, color: "var(--series-claire)" },
   ];
   if (reviews.length) {
     tiles.push({ label: "Need checking", value: reviews.length, color: "#b8860b" });
@@ -106,7 +110,7 @@ async function main() {
     rect.addEventListener("mousemove", (ev) => {
       tooltip.textContent =
         `${monthLabel(m.month)} ${m.month.slice(0, 4)} — ${gbp(m.cost, true)}` +
-        (m.closedDays ? ` · ${m.closedDays} day${m.closedDays === 1 ? "" : "s"} shut` : "");
+        (m.schoolShutDays ? ` · ${m.schoolShutDays} day${m.schoolShutDays === 1 ? "" : "s"} school shut` : "");
       const b = document.getElementById("chart-container").getBoundingClientRect();
       tooltip.style.left = `${ev.clientX - b.left}px`;
       tooltip.style.top = `${ev.clientY - b.top}px`;
@@ -131,30 +135,42 @@ async function main() {
         (m) => `<tr>
           <td>${monthLabel(m.month)} ${m.month.slice(0, 4)}</td>
           <td>${gbp(m.cost, true)}</td>
-          <td>${m.weekdays}</td>
-          <td>${m.closedDays}</td>
-          <td>${m.holidayWeekdays}</td>
+          <td>${m.kidsClubDays || ""}</td>
+          <td>${m.afterSchoolDays}</td>
+          <td>${m.schoolShutDays}</td>
           <td>${m.needsReview ? '<span class="badge badge-warn">check</span>' : ""}</td>
         </tr>`
       )
       .join("") +
     `<tr style="font-weight:600">
-      <td>Total</td><td>${gbp(totals.cost, true)}</td><td>${totals.weekdays}</td>
-      <td>${totals.closedDays}</td><td>—</td><td></td>
+      <td>Total</td><td>${gbp(totals.cost, true)}</td><td>${totals.kidsClubDays}</td>
+      <td>${totals.afterSchoolDays}</td><td>${totals.schoolShutDays}</td><td></td>
     </tr>`;
 
   // --- week detail ---
+  const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   document.querySelector("#week-table tbody").innerHTML = weeks
     .map((w) => {
-      const closed = w.closedDays.length
-        ? w.closedDays.map((d) => `${new Date(`${d.date}T00:00:00Z`).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })} — ${d.label}`).join("<br>")
-        : "<span class='comment'>—</span>";
+      const chips = w.days
+        .map((d, i) => {
+          const cls = d.charge === rates.kidsClubDay ? "day-club"
+                    : d.charge === rates.afterSchoolDay ? "day-as"
+                    : "day-free";
+          const amount = d.charge ? gbp(d.charge) : "—";
+          const why = d.label ? `${d.label} — ${d.basis}` : d.basis;
+          return `<span class="day-chip ${cls}" title="${d.date}: ${why}">
+                    <span class="day-name">${DAY_NAMES[i]}</span> ${amount}</span>`;
+        })
+        .join("");
+      const note = w.days
+        .filter((d) => d.label)
+        .map((d) => `${DAY_NAMES[w.days.indexOf(d)]} ${d.label}`)
+        .join(" · ");
       return `<tr>
         <td>${fmtDate(w.weekStart)}</td>
         <td><span class="badge ${w.type === "holiday" ? "badge-holiday" : w.type === "reduced" ? "badge-reduced" : ""}">${WEEK_LABEL[w.type]}</span></td>
-        <td>${gbp(w.cost)}</td>
-        <td>${w.weekdaysInRange < 5 ? `${w.weekdaysInRange}/5 in range → ${gbp(w.costInRange, true)}` : ""}</td>
-        <td class="closed-cell">${closed}</td>
+        <td>${gbp(w.cost)}${w.daysInRange < 5 ? `<div class="comment">${gbp(w.costInRange, true)} in range</div>` : ""}</td>
+        <td class="day-cell">${chips}${note ? `<div class="comment day-note">${note}</div>` : ""}</td>
       </tr>`;
     })
     .join("");

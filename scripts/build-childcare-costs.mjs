@@ -1,48 +1,43 @@
 #!/usr/bin/env node
 // Estimates the childcare bill month by month from the school's iCal feed.
 //
-// Usage:
 //   node scripts/build-childcare-costs.mjs <school.ics> [rangeStart] [rangeEnd]
 //
-// CHARGING RULES (as given):
-//   - A school-holiday week (half term, Easter, Christmas, summer) costs
-//     HOLIDAY_WEEK.
-//   - A normal school week costs SCHOOL_WEEK.
-//   - An inset day or a one-or-two-day holiday in an otherwise normal week
-//     does not make it a holiday week: it stays a school week, less
-//     DAY_DISCOUNT for each closed day.
-//   - A bank holiday in a normal school week likewise takes DAY_DISCOUNT off
-//     for each closed day.
+// CHARGING RULES — costed per DAY, not per week:
 //
-// So a week is priced off how many of its FIVE WEEKDAYS the school is shut:
-//   0 closed          -> SCHOOL_WEEK
-//   1-2 closed        -> SCHOOL_WEEK - DAY_DISCOUNT * closed
-//   3 or more closed  -> HOLIDAY_WEEK  (the week has become a holiday)
+//   School holiday   kids club, KIDS_CLUB_DAY a day, for
+//                    HOLIDAY_CLUB_DAYS_PER_WEEK days of that week
+//   Normal school day, Mon-Thu   after school club, AFTER_SCHOOL_DAY a day
+//   Normal school day, Friday    nothing — no Friday club
+//   Bank holiday                 nothing — the children are at home
+//   Inset day                    nothing — the children are at home
 //
-// The 1-2 vs 3+ boundary is the rule "one/two days ... with no other holiday
-// entries for the rest of the week" read as a threshold. In this feed no week
-// actually lands on 3 or 4 - holiday weeks close all five weekdays - so the
-// boundary never decides a real price here. Weeks are Monday-Sunday.
+// So a full holiday week is 3 x KIDS_CLUB_DAY and an ordinary school week is
+// 4 x AFTER_SCHOOL_DAY. A closure inside a school week simply drops that day's
+// charge, because the children are at home instead: an inset day or bank
+// holiday on a Mon-Thu saves AFTER_SCHOOL_DAY, and one on a Friday costs
+// nothing either way since Friday was never chargeable.
 //
-// MONTH ALLOCATION: a week that straddles a month boundary is classified as a
-// whole (so a half-term week is a half-term week regardless of where the
-// month ends), then its cost is spread evenly across its five weekdays and
-// each weekday's share is booked to its own month. Weekdays outside the
-// reporting range are dropped, so a part-week at either end is charged pro
-// rata rather than counted whole.
+// WHICH THREE HOLIDAY DAYS: in a week with more than three holiday weekdays
+// the charge lands on the FIRST three. That only matters for a holiday week
+// split across two months, where it decides which month is billed. Stated
+// here because it is a convention, not something the calendar tells us.
 //
-// WHEN IN DOUBT: a day is only treated as a closure if the feed says so;
-// anything unrecognised is treated as a normal school day, which is the
-// cheaper, more conservative assumption. Weeks where that assumption looks
-// unsafe are listed in `reviews` rather than silently priced - see
+// Because every charge belongs to one dated day, months add up exactly — no
+// week is pro-rated across a month boundary.
+//
+// WHEN IN DOUBT: a day counts as a closure only if the feed says so; anything
+// unrecognised is treated as a normal school day. Weeks where that assumption
+// looks unsafe are listed in `reviews` rather than silently priced — see
 // findReviewFlags below.
 
 import { readFileSync, writeFileSync } from "node:fs";
 
-const HOLIDAY_WEEK = 255;
-const SCHOOL_WEEK = 85;
-const DAY_DISCOUNT = 21;
-const HOLIDAY_WEEK_THRESHOLD = 3; // closed weekdays at which a week becomes a holiday week
+const KIDS_CLUB_DAY = 85;          // holiday kids club, per day
+const AFTER_SCHOOL_DAY = 21;       // after school club, per day, Mon-Thu
+const HOLIDAY_CLUB_DAYS_PER_WEEK = 3;
+const AFTER_SCHOOL_WEEKDAYS = 4;   // Mon-Thu; no Friday club
+const HOLIDAY_WEEK_THRESHOLD = 3;  // holiday weekdays at which a week reads as a holiday week
 const LONG_TERM_WEEKS = 9; // a run of school weeks this long suggests a missing half term
 
 // --- iCal parsing -----------------------------------------------------------
@@ -116,15 +111,23 @@ export function classifyDay(summaries) {
 
 // --- costing ----------------------------------------------------------------
 
-function priceWeek(closedCount) {
-  if (closedCount >= HOLIDAY_WEEK_THRESHOLD) return { cost: HOLIDAY_WEEK, type: "holiday" };
-  if (closedCount > 0)
-    return { cost: SCHOOL_WEEK - DAY_DISCOUNT * closedCount, type: "reduced" };
-  return { cost: SCHOOL_WEEK, type: "school" };
-}
-
 function round2(n) {
   return Math.round(n * 100) / 100;
+}
+
+// Charge for one weekday. `holidayBudget` is how many kids-club days are left
+// in this week; it is decremented as holiday days consume it.
+function chargeFor(kind, dayOffset, holidayBudget) {
+  if (kind === "holiday") {
+    return holidayBudget > 0
+      ? { charge: KIDS_CLUB_DAY, basis: "kids club", usesBudget: true }
+      : { charge: 0, basis: "holiday, beyond the " + HOLIDAY_CLUB_DAYS_PER_WEEK + " club days", usesBudget: false };
+  }
+  if (kind === "inset") return { charge: 0, basis: "inset day, at home", usesBudget: false };
+  if (kind === "bankHoliday") return { charge: 0, basis: "bank holiday, at home", usesBudget: false };
+  if (dayOffset < AFTER_SCHOOL_WEEKDAYS)
+    return { charge: AFTER_SCHOOL_DAY, basis: "after school club", usesBudget: false };
+  return { charge: 0, basis: "school day, no Friday club", usesBudget: false };
 }
 
 function buildWeeks(dayIndex, rangeStart, rangeEnd) {
@@ -132,24 +135,47 @@ function buildWeeks(dayIndex, rangeStart, rangeEnd) {
   let weekStart = mondayOf(rangeStart);
   const lastMonday = mondayOf(addDays(rangeEnd, -1));
   while (weekStart <= lastMonday) {
-    const weekdays = [];
+    // Classify the whole week first: a week is a holiday week on its own
+    // shape, regardless of how much of it falls inside the reporting range.
+    const raw = [];
     for (let i = 0; i < 5; i++) {
       const date = addDays(weekStart, i);
       const { kind, label } = classifyDay(dayIndex.get(date) || []);
-      weekdays.push({ date, kind, label, inRange: date >= rangeStart && date < rangeEnd });
+      raw.push({ date, kind, label, offset: i });
     }
-    const closed = weekdays.filter((d) => d.kind !== "school");
-    const { cost, type } = priceWeek(closed.length);
-    const inRange = weekdays.filter((d) => d.inRange);
+    const holidayCount = raw.filter((d) => d.kind === "holiday").length;
+
+    let budget = HOLIDAY_CLUB_DAYS_PER_WEEK;
+    const days = raw.map((d) => {
+      const { charge, basis, usesBudget } = chargeFor(d.kind, d.offset, budget);
+      if (usesBudget) budget--;
+      return {
+        date: d.date,
+        kind: d.kind,
+        label: d.label,
+        charge,
+        basis,
+        inRange: d.date >= rangeStart && d.date < rangeEnd,
+      };
+    });
+
+    const type =
+      holidayCount >= HOLIDAY_WEEK_THRESHOLD
+        ? "holiday"
+        : days.some((d) => d.kind !== "school")
+        ? "reduced"
+        : "school";
+
     weeks.push({
       weekStart,
       type,
-      cost,
-      perWeekday: round2(cost / 5),
-      weekdays,
-      closedDays: closed.map((d) => ({ date: d.date, kind: d.kind, label: d.label })),
-      weekdaysInRange: inRange.length,
-      costInRange: round2((cost / 5) * inRange.length),
+      days,
+      cost: round2(days.reduce((n, d) => n + d.charge, 0)),
+      costInRange: round2(days.filter((d) => d.inRange).reduce((n, d) => n + d.charge, 0)),
+      daysInRange: days.filter((d) => d.inRange).length,
+      closedDays: days
+        .filter((d) => d.kind !== "school")
+        .map((d) => ({ date: d.date, kind: d.kind, label: d.label, charge: d.charge })),
     });
     weekStart = addDays(weekStart, 7);
   }
@@ -176,15 +202,15 @@ function findReviewFlags(weeks, allWeeks, rangeStart, rangeEnd) {
   const reviews = [];
 
   for (const week of weeks) {
-    if (week.type === "holiday" || week.weekdaysInRange === 0) continue;
+    if (week.type === "holiday" || week.daysInRange === 0) continue;
     const closedSaysShut = week.closedDays.find((d) => /closed/i.test(d.label || ""));
     if (closedSaysShut) {
       reviews.push({
         weekStart: week.weekStart,
         kind: "closure-in-school-week",
-        detail: `"${closedSaysShut.label}" on ${closedSaysShut.date} says the school is closed, but the rest of the week has no holiday entries, so it is priced as a school week (£${week.cost}). If it is really a holiday week the cost would be £${HOLIDAY_WEEK}.`,
+        detail: `"${closedSaysShut.label}" on ${closedSaysShut.date} says the school is closed, but the rest of the week has no holiday entries, so the week is charged as school days (£${week.cost}). If it is really a holiday week it would be ${HOLIDAY_CLUB_DAYS_PER_WEEK} kids club days, £${HOLIDAY_CLUB_DAYS_PER_WEEK * KIDS_CLUB_DAY}.`,
         costedAt: week.cost,
-        couldBe: HOLIDAY_WEEK,
+        couldBe: HOLIDAY_CLUB_DAYS_PER_WEEK * KIDS_CLUB_DAY,
       });
     }
   }
@@ -260,27 +286,27 @@ function main() {
   const reviews = findReviewFlags(weeks, allWeeks, rangeStart, rangeEnd);
   const reviewWeeks = new Set(reviews.map((r) => r.weekStart));
 
-  // Month roll-up, from each weekday's share of its week's cost.
+  // Month roll-up. Every charge sits on a dated day, so months are exact.
   const months = new Map();
   for (const week of weeks) {
-    for (const day of week.weekdays) {
+    for (const day of week.days) {
       if (!day.inRange) continue;
       const key = day.date.slice(0, 7);
       if (!months.has(key))
         months.set(key, {
-          month: key,
-          cost: 0,
-          weekdays: 0,
-          closedDays: 0,
-          holidayWeekdays: 0,
-          needsReview: false,
+          month: key, cost: 0, weekdays: 0,
+          kidsClubDays: 0, afterSchoolDays: 0, schoolShutDays: 0, needsReview: false,
         });
-      const bucket = months.get(key);
-      bucket.cost += week.perWeekday;
-      bucket.weekdays++;
-      if (day.kind !== "school") bucket.closedDays++;
-      if (week.type === "holiday") bucket.holidayWeekdays++;
-      if (reviewWeeks.has(week.weekStart)) bucket.needsReview = true;
+      const m = months.get(key);
+      m.cost += day.charge;
+      m.weekdays++;
+      if (day.charge === KIDS_CLUB_DAY) m.kidsClubDays++;
+      else if (day.charge === AFTER_SCHOOL_DAY) m.afterSchoolDays++;
+      // Counted separately from the charge: a shut day may be a paid kids-club
+      // day, or free because it is past the weekly club allowance or the
+      // children are at home.
+      if (day.kind !== "school") m.schoolShutDays++;
+      if (reviewWeeks.has(week.weekStart)) m.needsReview = true;
     }
   }
   const monthList = [...months.values()]
@@ -290,29 +316,36 @@ function main() {
   const totals = {
     cost: round2(monthList.reduce((n, m) => n + m.cost, 0)),
     weekdays: monthList.reduce((n, m) => n + m.weekdays, 0),
-    closedDays: monthList.reduce((n, m) => n + m.closedDays, 0),
-    holidayWeeks: weeks.filter((w) => w.type === "holiday" && w.weekdaysInRange > 0).length,
-    reducedWeeks: weeks.filter((w) => w.type === "reduced" && w.weekdaysInRange > 0).length,
-    schoolWeeks: weeks.filter((w) => w.type === "school" && w.weekdaysInRange > 0).length,
+    kidsClubDays: monthList.reduce((n, m) => n + m.kidsClubDays, 0),
+    afterSchoolDays: monthList.reduce((n, m) => n + m.afterSchoolDays, 0),
+    schoolShutDays: monthList.reduce((n, m) => n + m.schoolShutDays, 0),
+    holidayWeeks: weeks.filter((w) => w.type === "holiday" && w.daysInRange > 0).length,
+    reducedWeeks: weeks.filter((w) => w.type === "reduced" && w.daysInRange > 0).length,
+    schoolWeeks: weeks.filter((w) => w.type === "school" && w.daysInRange > 0).length,
   };
 
   const result = {
     generatedAt: new Date().toISOString(),
     rangeStart,
     rangeEnd,
-    rates: { holidayWeek: HOLIDAY_WEEK, schoolWeek: SCHOOL_WEEK, dayDiscount: DAY_DISCOUNT },
+    rates: {
+      kidsClubDay: KIDS_CLUB_DAY,
+      afterSchoolDay: AFTER_SCHOOL_DAY,
+      holidayClubDaysPerWeek: HOLIDAY_CLUB_DAYS_PER_WEEK,
+      afterSchoolWeekdays: AFTER_SCHOOL_WEEKDAYS,
+    },
     source: { feedStart, feedEnd, events: events.length },
     months: monthList,
     totals,
     weeks: weeks
-      .filter((w) => w.weekdaysInRange > 0)
+      .filter((w) => w.daysInRange > 0)
       .map((w) => ({
         weekStart: w.weekStart,
         type: w.type,
         cost: w.cost,
         costInRange: w.costInRange,
-        weekdaysInRange: w.weekdaysInRange,
-        closedDays: w.closedDays,
+        daysInRange: w.daysInRange,
+        days: w.days.map((d) => ({ date: d.date, kind: d.kind, label: d.label, charge: d.charge, basis: d.basis })),
         needsReview: reviewWeeks.has(w.weekStart),
       })),
     reviews,

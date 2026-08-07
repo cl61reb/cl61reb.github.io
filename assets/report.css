@@ -235,3 +235,17 @@
 .review-item:last-child { border-bottom: none; }
 .review-head { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
 .review-item p { margin: 6px 0 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.55; }
+
+/* day-by-day chips on the childcare week table */
+.day-cell { min-width: 320px; }
+.day-chip {
+  display: inline-flex; align-items: baseline; gap: 5px;
+  font-size: 0.78rem; padding: 2px 7px; margin: 2px 4px 2px 0;
+  border-radius: 6px; border: 1px solid var(--border); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.day-name { color: var(--text-muted); font-size: 0.72rem; }
+.day-club { background: rgba(235,104,52,0.10); border-color: rgba(235,104,52,0.35); }
+.day-as   { background: rgba(42,120,214,0.08); border-color: rgba(42,120,214,0.30); }
+.day-free { color: var(--text-muted); }
+.day-note { margin-top: 4px; font-size: 0.78rem; }

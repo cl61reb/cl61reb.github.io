@@ -92,19 +92,24 @@ own iCal feed (`https://allsaintsttl.greenhousecms.co.uk/ical.ics`) — a
 different source and a different shape from the custody reports, so it has its
 own renderer in `assets/childcare.js`.
 
-`scripts/build-childcare-costs.mjs <school.ics> <start> <end>` prices each
-Monday–Sunday week off how many of its five weekdays the school is shut:
+`scripts/build-childcare-costs.mjs <school.ics> <start> <end>` costs each day:
 
-| Weekdays shut | Charge |
+| Day | Charge |
 |---|---|
-| 0 | £85 (school week) |
-| 1–2 | £85 − £21 per shut day |
-| 3+ | £255 (holiday week) |
+| School holiday | £85 kids club — but only 3 days per week |
+| School day, Mon–Thu | £21 after school club |
+| School day, Friday | £0 — no Friday club |
+| Bank holiday | £0 — children at home |
+| Inset day | £0 — children at home |
 
-A week straddling a month is classified whole, then its cost is split across
-its five weekdays and each weekday booked to its own month — so part-weeks at
-either end are charged pro rata. Verified by hand against September and
-December 2026.
+So a full holiday week is 3 × £85 = £255 and an ordinary school week
+4 × £21 = £84. A closure inside a term week simply drops that day's charge.
+
+Because every charge sits on a dated day, months add up exactly — nothing is
+pro-rated across a month boundary. Where a holiday week has more than three
+holiday weekdays the charge lands on the **first three**; that is a convention,
+not something the calendar states, and it only matters for a holiday week split
+across two months.
 
 **When the feed is unclear, a day is treated as a normal school day** — the
 cheaper assumption — and the week is added to a review list shown on the page

@@ -58,10 +58,10 @@ window.REPORTS = [
     id: "childcare",
     href: "childcare.html",
     title: "Childcare costs",
-    blurb: "Estimated childcare bill by month, priced off the school calendar: holiday weeks, term weeks, and days the school is shut.",
+    blurb: "Estimated childcare bill by month, costed per day off the school calendar — kids club in the holidays, after school club in term time.",
     dataUrl: "data/childcare-data.json",
     rangeNote:
-      "Estimated from the All Saints' school calendar feed. Holiday weeks are charged at the holiday rate; a term week with one or two closed days is charged at the school rate less a day discount for each.",
+      "Estimated from the All Saints' school calendar feed, costed per day: kids club during school holidays, after school club Monday to Thursday in term time, and nothing on bank holidays or inset days when the children are at home.",
   },
 ];
 
