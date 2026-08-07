@@ -33,8 +33,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const CLAIRE_NAME = /claire/i;
 const PARENT2_NAME = /\bmats?\b/i;
-const CUSTODY_KEYWORD = /night|weekend|have kids|kids away/i;
+// "ha(s|ve) kids" catches both "Claire have kids (Mat away)" and
+// "Mat has kids - swaps". "away with kids/children" is a custody block, not
+// an away-inversion: the named parent is away *with* the children, so they
+// have them ("Mat - away with kids").
+const CUSTODY_KEYWORD = /night|weekend|ha(?:s|ve) kids|kids away|away with (?:kids|children)/i;
 const AWAY_ONLY = /\baway\b/i;
+const WITH_CHILDREN = /kids|children/i;
 
 function toDateOnly(value) {
   // "2026-07-01" or "2026-07-26T00:00:00+01:00" -> "2026-07-01"
@@ -63,7 +68,7 @@ export function classifyOwner(summary) {
     return null; // neither name mentioned
   }
 
-  if (AWAY_ONLY.test(summary) && !/kids/i.test(summary)) {
+  if (AWAY_ONLY.test(summary) && !WITH_CHILDREN.test(summary)) {
     if (claireMatch && !parent2Match) return "parent2"; // Claire away -> Mat's nights
     if (parent2Match && !claireMatch) return "claire"; // Mat away -> Claire's nights
   }

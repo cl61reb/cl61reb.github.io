@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-08-07T12:48:05.598Z",
+  "rangeStart": "2026-08-01",
+  "rangeEnd": "2026-09-01",
+  "names": {
+    "claire": "Claire",
+    "parent2": "Mat"
+  },
+  "months": [
+    {
+      "month": "2026-08",
+      "claire": 17,
+      "parent2": 14,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 54.8,
+      "parent2Pct": 45.2
+    }
+  ],
+  "totals": {
+    "claire": 17,
+    "parent2": 14,
+    "unassigned": 0,
+    "clairePct": 54.8,
+    "parent2Pct": 45.2
+  }
+}
