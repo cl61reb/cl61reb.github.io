@@ -220,3 +220,18 @@
 .menu-flag { margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
 .menu-flag-warn { color: #b8860b; }
 #menu-footer { margin-top: 28px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; }
+
+/* --- childcare cost report --- */
+.bar-value { fill: var(--text-secondary); font-size: 11px; font-variant-numeric: tabular-nums; }
+#month-table td, #week-table td, #month-table th, #week-table th { text-align: left; }
+#month-table td:nth-child(n+2), #month-table th:nth-child(n+2) { text-align: right; }
+#month-table td:last-child, #month-table th:last-child { text-align: left; }
+#week-table td { vertical-align: top; font-size: 0.85rem; }
+.closed-cell { color: var(--text-secondary); line-height: 1.6; }
+.badge-warn { color: #8a6508; border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.08); }
+.badge-holiday { color: #9a3d16; border-color: rgba(235,104,52,0.4); background: rgba(235,104,52,0.08); }
+.badge-reduced { color: #1c5cab; border-color: rgba(42,120,214,0.35); background: rgba(42,120,214,0.07); }
+.review-item { padding: 12px 0; border-bottom: 1px solid var(--gridline); }
+.review-item:last-child { border-bottom: none; }
+.review-head { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
+.review-item p { margin: 6px 0 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.55; }

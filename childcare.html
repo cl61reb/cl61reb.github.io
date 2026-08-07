@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Childcare cost estimate</title>
+<link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Childcare cost estimate</h1>
+    <p id="subtitle">Loading…</p>
+    <p class="nav"></p>
+  </header>
+
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;" id="rates"></p>
+  </div>
+
+  <div class="stat-row" id="stat-row"></div>
+
+  <div class="card">
+    <div id="chart-container">
+      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Estimated childcare cost by month"></svg>
+      <div id="tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="month-table">
+      <thead>
+        <tr><th>Month</th><th>Cost</th><th>Weekdays</th><th>Days shut</th><th>Holiday weekdays</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Anything that might be wrong</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;">
+      Where the school calendar is unclear, a day is treated as a normal school
+      day — the cheaper assumption — rather than guessed as a holiday. Any week
+      where that assumption looks unsafe is listed here instead of being quietly
+      priced.
+    </p>
+    <div id="reviews"></div>
+  </div>
+
+  <h2 class="section-title">Week by week</h2>
+  <div class="card">
+    <table id="week-table">
+      <thead>
+        <tr><th>Week beginning</th><th>Type</th><th>Cost</th><th>Part weeks</th><th>Days the school is shut</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script src="assets/reports.js"></script>
+<script src="assets/childcare.js"></script>
+</body>
+</html>

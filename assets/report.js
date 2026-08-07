@@ -18,18 +18,6 @@ if (!REPORT) {
   );
 }
 
-// Nav is generated from the registry so adding a report updates every page.
-function renderNav() {
-  const nav = document.querySelector(".nav");
-  if (!nav) return;
-  nav.innerHTML =
-    `<a href="index.html">All reports</a>` +
-    window.REPORTS.map(
-      (r) =>
-        `<span class="nav-sep">·</span>` +
-        (r.id === REPORT.id ? `<b>${r.title}</b>` : `<a href="${r.href}">${r.title}</a>`)
-    ).join("");
-}
 
 function el(name, attrs) {
   const e = document.createElementNS(NS, name);
@@ -207,7 +195,7 @@ async function renderExceptions() {
   document.getElementById("gap-table").hidden = gaps.length === 0;
 }
 
-renderNav();
+window.renderReportNav(REPORT.id);
 
 renderSplit().catch((err) => {
   document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;

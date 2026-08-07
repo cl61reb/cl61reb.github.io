@@ -11,6 +11,7 @@ deleted or needs editing.
 | Schedule | Weekly, Monday morning (08:00 Europe/London) |
 | Mode | Start a **new session** each time |
 | Connector | **Google Calendar** must be enabled for the Routine |
+| Network | The environment must allow `allsaintsttl.greenhousecms.co.uk` (Network access → Custom), for the school calendar |
 | Repository | `cl61reb/cl61reb.github.io` |
 
 ## Prompt
@@ -44,15 +45,20 @@ STEPS:
    OUT_PATH=data/forecast-usual-schedule.json node scripts/generate-usual-schedule.mjs <fcStart> <fcEnd>
    OUT_PATH=data/forecast-data.json node scripts/compute-custody-split.mjs /tmp/raw-events.json <fcStart> <fcEnd>
    OUT_PATH=data/forecast-exceptions.json node scripts/build-exception-report.mjs /tmp/raw-events.json data/forecast-usual-schedule.json <fcStart> <fcEnd>
-6. If git diff shows changes, commit them (e.g. "Weekly custody split refresh") and push to main. If nothing changed, do not commit — and do not push an empty commit.
-7. VERIFY THE DEPLOY — do not skip this. GitHub Pages intermittently builds the PREVIOUS commit instead of the one just pushed, which silently leaves the site showing stale data. After pushing, wait ~90s, then list recent workflow runs for the repo and confirm a "pages build and deployment" run exists with head_sha equal to the commit you just pushed AND conclusion "success". If the newest run has a different head_sha, push an empty commit (git commit --allow-empty) to force a rebuild and check again. Repeat up to 3 times.
+6. Rebuild the CHILDCARE COST report. Fetch the school calendar:
+   curl -sS -L https://allsaintsttl.greenhousecms.co.uk/ical.ics -o /tmp/school.ics
+   Its range runs from 2026-09-01 to the first day of the month 9 months after the current month (running on 12 Sep 2026 that is 2026-09-01 to 2027-07-01):
+   OUT_PATH=data/childcare-data.json node scripts/build-childcare-costs.mjs /tmp/school.ics 2026-09-01 <ccEnd>
+   If the curl fails with a 403 the environment is missing the allowed domain — say so in your report rather than leaving the costs stale without comment.
+7. If git diff shows changes, commit them (e.g. "Weekly custody split refresh") and push to main. If nothing changed, do not commit — and do not push an empty commit.
+8. VERIFY THE DEPLOY — do not skip this. GitHub Pages intermittently builds the PREVIOUS commit instead of the one just pushed, which silently leaves the site showing stale data. After pushing, wait ~90s, then list recent workflow runs for the repo and confirm a "pages build and deployment" run exists with head_sha equal to the commit you just pushed AND conclusion "success". If the newest run has a different head_sha, push an empty commit (git commit --allow-empty) to force a rebuild and check again. Repeat up to 3 times.
 
 IMPORTANT CONSTRAINTS:
 - Do NOT modify any logic in scripts/ — this job only regenerates data.
 - Do NOT add entries to data/corrections.json. It is bounded by "validBefore": 2026-08-01; the schedule spreadsheet behind it is NOT valid on or after that date. From 2026-08-01 onward the calendar is the only source of truth.
 - Do NOT edit the user's Google Calendar. Read only.
 
-REPORT: state ALL THREE splits (year-to-date, current month, forecast - Claire vs Mat nights and percentages), any calendar gaps found in any of the exception reports, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
+REPORT: state ALL THREE splits (year-to-date, current month, forecast - Claire vs Mat nights and percentages), the childcare total and monthly average plus anything on its review list, any calendar gaps found in any of the exception reports, whether you pushed, and the confirmed deploy SHA. If a step fails, say so plainly rather than glossing over it.
 ```
 
 ## Why each constraint is there

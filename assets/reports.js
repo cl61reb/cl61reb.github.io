@@ -18,6 +18,7 @@
 
 window.REPORTS = [
   {
+    kind: "custody",
     id: "ytd",
     href: "year-to-date.html",
     title: "Year to date",
@@ -29,6 +30,7 @@ window.REPORTS = [
       'Computed from the "Both of us" Google Calendar, covering Jan 1 through the end of the previous month (the current, incomplete month is excluded).',
   },
   {
+    kind: "custody",
     id: "month",
     href: "month.html",
     title: "This month",
@@ -40,6 +42,7 @@ window.REPORTS = [
       'Computed from the "Both of us" Google Calendar, covering the current calendar month. The month is still in progress, so later dates are planned rather than settled.',
   },
   {
+    kind: "custody",
     id: "forecast",
     href: "forecast.html",
     title: "Next 12 months",
@@ -50,4 +53,28 @@ window.REPORTS = [
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering a rolling 12 months starting from the first day of next month. These are plans, not history - they can still change.',
   },
+  {
+    kind: "cost",
+    id: "childcare",
+    href: "childcare.html",
+    title: "Childcare costs",
+    blurb: "Estimated childcare bill by month, priced off the school calendar: holiday weeks, term weeks, and days the school is shut.",
+    dataUrl: "data/childcare-data.json",
+    rangeNote:
+      "Estimated from the All Saints' school calendar feed. Holiday weeks are charged at the holiday rate; a term week with one or two closed days is charged at the school rate less a day discount for each.",
+  },
 ];
+
+// Nav is generated from the registry, so adding a report above puts it in the
+// nav of every page automatically. Shared by all report renderers.
+window.renderReportNav = function (currentId) {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+  nav.innerHTML =
+    `<a href="index.html">All reports</a>` +
+    window.REPORTS.map(
+      (r) =>
+        `<span class="nav-sep">·</span>` +
+        (r.id === currentId ? `<b>${r.title}</b>` : `<a href="${r.href}">${r.title}</a>`)
+    ).join("");
+};

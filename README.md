@@ -62,6 +62,7 @@ doubles as a dashboard.
 | `year-to-date.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
 | `month.html` | the **current** calendar month | `data/month-data.json`, `data/month-exceptions.json` |
 | `forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
+| `childcare.html` | Sept 2026 → end of the month **9 months out** | `data/childcare-data.json` |
 
 The report windows are contiguous and don't overlap: year-to-date stops where
 the current month begins, and the forecast starts where it ends.
@@ -83,6 +84,45 @@ same logic, same layout — so they share one renderer:
   `window.REPORT_ID = "month";` and this looks the rest up in the registry.
 - **`assets/menu.js`** — renders the menu cards on `index.html`.
 - **`assets/report.css`** — shared styles.
+
+## Childcare costs
+
+`childcare.html` estimates the childcare bill month by month from the school's
+own iCal feed (`https://allsaintsttl.greenhousecms.co.uk/ical.ics`) — a
+different source and a different shape from the custody reports, so it has its
+own renderer in `assets/childcare.js`.
+
+`scripts/build-childcare-costs.mjs <school.ics> <start> <end>` prices each
+Monday–Sunday week off how many of its five weekdays the school is shut:
+
+| Weekdays shut | Charge |
+|---|---|
+| 0 | £85 (school week) |
+| 1–2 | £85 − £21 per shut day |
+| 3+ | £255 (holiday week) |
+
+A week straddling a month is classified whole, then its cost is split across
+its five weekdays and each weekday booked to its own month — so part-weeks at
+either end are charged pro rata. Verified by hand against September and
+December 2026.
+
+**When the feed is unclear, a day is treated as a normal school day** — the
+cheaper assumption — and the week is added to a review list shown on the page
+rather than silently priced. Two things trigger a review:
+
+- a day the feed says is *closed* sitting in an otherwise normal week (the
+  shape a half term takes when only its bank holiday made it into the feed);
+- a run of 9+ school weeks with no holiday, which is what a whole missing half
+  term looks like from outside. English terms run to about eight weeks, so the
+  threshold sits just above.
+
+Both were tested by deleting a half term from a copy of the feed and confirming
+they fire; on the real feed neither does.
+
+**Network access:** the school domain is not in the default allowlist, so the
+cloud environment needs `allsaintsttl.greenhousecms.co.uk` under **Network
+access → Custom → Allowed domains** (keeping the default package-manager list
+ticked). Without it the fetch fails with a 403 from the egress proxy.
 
 ### Adding a new report
 

@@ -20,6 +20,32 @@ function fmtRange(startStr, endExclusiveStr) {
   return `${start.toLocaleDateString(undefined, opts)} – ${end.toLocaleDateString(undefined, opts)}`;
 }
 
+function gbp(n) {
+  return n.toLocaleString(undefined, {
+    style: "currency", currency: "GBP",
+    minimumFractionDigits: 0, maximumFractionDigits: 0,
+  });
+}
+
+// A cost report has no two-way split, so its card shows the total, the
+// monthly average, and whether anything needs a human eye.
+async function renderCostFigures(report, figures) {
+  const data = await fetchJson(report.dataUrl);
+  const avg = data.totals.cost / data.months.length;
+  const flagged = (data.reviews || []).length;
+  figures.innerHTML = `
+    <div class="menu-range">${fmtRange(data.rangeStart, data.rangeEnd)}</div>
+    <div class="menu-split">
+      <span class="menu-stat">Total <b>${gbp(data.totals.cost)}</b></span>
+      <span class="menu-stat">Average <b>${gbp(avg)}</b> <span class="menu-nights">a month</span></span>
+    </div>
+    ${
+      flagged > 0
+        ? `<div class="menu-flag menu-flag-warn">${flagged} week${flagged === 1 ? "" : "s"} to check</div>`
+        : `<div class="menu-flag">Every week priced from the school calendar</div>`
+    }`;
+}
+
 async function renderCard(report) {
   const card = document.createElement("a");
   card.className = "menu-card";
@@ -35,6 +61,7 @@ async function renderCard(report) {
 
   const figures = card.querySelector(".menu-figures");
   try {
+    if (report.kind === "cost") return await renderCostFigures(report, figures);
     const [data, exceptions] = await Promise.all([
       fetchJson(report.dataUrl),
       fetchJson(report.exceptionsUrl).catch(() => null),
