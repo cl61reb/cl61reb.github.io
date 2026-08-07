@@ -71,8 +71,10 @@ from it; no PR).
 
 ## 4. Verify the deploy — do not skip
 
-GitHub Pages intermittently builds the **previous** commit, which leaves the
-site silently stale. This has happened repeatedly on this repo.
+GitHub Pages on this repo frequently builds the **previous** commit rather
+than the one just pushed, leaving the site silently stale while the push and
+the build both report success. This is not a rare edge case: it happened on
+five of nine pushes in one session. Assume it will happen and check.
 
 Wait ~90s, then list recent workflow runs and confirm a "pages build and
 deployment" run exists whose `head_sha` equals the commit you just pushed
