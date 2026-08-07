@@ -96,20 +96,23 @@ own renderer in `assets/childcare.js`.
 
 | Day | Charge |
 |---|---|
-| School holiday | £85 kids club — but only 3 days per week |
+| School holiday, **Tue/Wed/Thu** | £85 kids club |
+| School holiday, Mon or Fri | £0 — club only runs Tue–Thu |
+| **Christmas and New Year weeks** | £0 — kids club shut |
 | School day, Mon–Thu | £21 after school club |
 | School day, Friday | £0 — no Friday club |
 | Bank holiday | £0 — children at home |
 | Inset day | £0 — children at home |
 
 So a full holiday week is 3 × £85 = £255 and an ordinary school week
-4 × £21 = £84. A closure inside a term week simply drops that day's charge.
+4 × £21 = £84. A closure inside a term week simply drops that day's charge, and
+a bank holiday landing on a club day just means the children are at home.
 
-Because every charge sits on a dated day, months add up exactly — nothing is
-pro-rated across a month boundary. Where a holiday week has more than three
-holiday weekdays the charge lands on the **first three**; that is a convention,
-not something the calendar states, and it only matters for a holiday week split
-across two months.
+Because the club days are specific weekdays rather than a weekly allowance,
+every charge sits on a dated day and months add up exactly — nothing is
+pro-rated across a month boundary. The two shut weeks are found as the week
+containing 25 December and the week containing 1 January; those dates are seven
+days apart, so they are always two distinct adjacent weeks.
 
 **When the feed is unclear, a day is treated as a normal school day** — the
 cheaper assumption — and the week is added to a review list shown on the page

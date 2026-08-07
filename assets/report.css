@@ -249,3 +249,4 @@
 .day-as   { background: rgba(42,120,214,0.08); border-color: rgba(42,120,214,0.30); }
 .day-free { color: var(--text-muted); }
 .day-note { margin-top: 4px; font-size: 0.78rem; }
+.badge-shut { color: var(--text-muted); border-style: dashed; margin-top: 4px; }

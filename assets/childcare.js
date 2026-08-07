@@ -49,14 +49,15 @@ async function main() {
   document.getElementById("subtitle").textContent =
     `${fmtDate(rangeStart)} to ${fmtDate(rangeEnd)} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `${REPORT.rangeNote} Every charge belongs to a dated day, so months add up exactly - no week is split across a month boundary. Where a holiday week runs longer than the ${rates.holidayClubDaysPerWeek} club days, the charge falls on the first ${rates.holidayClubDaysPerWeek} weekdays of that week.`;
+    `${REPORT.rangeNote} Every charge belongs to a dated day, so months add up exactly and no week is split across a month boundary.`;
 
   document.getElementById("rates").innerHTML = `
     Costed per day. <b>School holidays</b> — kids club at
-    <b>${gbp(rates.kidsClubDay)}</b> a day, ${rates.holidayClubDaysPerWeek} days a week.
+    <b>${gbp(rates.kidsClubDay)}</b> a day, ${rates.kidsClubDayNames.join("/")} only.
     <b>Term time</b> — after school club at <b>${gbp(rates.afterSchoolDay)}</b> a day,
     Monday to Thursday; no Friday club.
     <b>Bank holidays and inset days</b> — nothing, the children are at home.
+    <b>Christmas and New Year weeks</b> — nothing, the kids club is shut.
     So a full holiday week is ${gbp(rates.holidayClubDaysPerWeek * rates.kidsClubDay)}
     and an ordinary school week ${gbp(rates.afterSchoolWeekdays * rates.afterSchoolDay)}.`;
 
@@ -168,7 +169,7 @@ async function main() {
         .join(" · ");
       return `<tr>
         <td>${fmtDate(w.weekStart)}</td>
-        <td><span class="badge ${w.type === "holiday" ? "badge-holiday" : w.type === "reduced" ? "badge-reduced" : ""}">${WEEK_LABEL[w.type]}</span></td>
+        <td><span class="badge ${w.type === "holiday" ? "badge-holiday" : w.type === "reduced" ? "badge-reduced" : ""}">${WEEK_LABEL[w.type]}</span>${w.clubShut ? '<div><span class="badge badge-shut">club shut</span></div>' : ""}</td>
         <td>${gbp(w.cost)}${w.daysInRange < 5 ? `<div class="comment">${gbp(w.costInRange, true)} in range</div>` : ""}</td>
         <td class="day-cell">${chips}${note ? `<div class="comment day-note">${note}</div>` : ""}</td>
       </tr>`;

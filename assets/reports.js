@@ -61,7 +61,7 @@ window.REPORTS = [
     blurb: "Estimated childcare bill by month, costed per day off the school calendar — kids club in the holidays, after school club in term time.",
     dataUrl: "data/childcare-data.json",
     rangeNote:
-      "Estimated from the All Saints' school calendar feed, costed per day: kids club during school holidays, after school club Monday to Thursday in term time, and nothing on bank holidays or inset days when the children are at home.",
+      "Estimated from the All Saints' school calendar feed, costed per day: kids club Tue/Wed/Thu during school holidays, after school club Monday to Thursday in term time, and nothing on bank holidays, inset days, or the Christmas and New Year weeks when the club is shut.",
   },
 ];
 

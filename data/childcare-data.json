@@ -1,11 +1,16 @@
 {
-  "generatedAt": "2026-08-07T13:47:48.093Z",
+  "generatedAt": "2026-08-07T13:56:13.444Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-06-01",
   "rates": {
     "kidsClubDay": 85,
     "afterSchoolDay": 21,
     "holidayClubDaysPerWeek": 3,
+    "kidsClubDayNames": [
+      "Tue",
+      "Wed",
+      "Thu"
+    ],
     "afterSchoolWeekdays": 4
   },
   "source": {
@@ -43,9 +48,9 @@
     },
     {
       "month": "2026-12",
-      "cost": 741,
+      "cost": 231,
       "weekdays": 23,
-      "kidsClubDays": 6,
+      "kidsClubDays": 0,
       "afterSchoolDays": 11,
       "schoolShutDays": 9,
       "needsReview": false
@@ -97,9 +102,9 @@
     }
   ],
   "totals": {
-    "cost": 4197,
+    "cost": 3687,
     "weekdays": 195,
-    "kidsClubDays": 18,
+    "kidsClubDays": 12,
     "afterSchoolDays": 127,
     "schoolShutDays": 36,
     "holidayWeeks": 7,
@@ -113,6 +118,7 @@
       "cost": 42,
       "costInRange": 42,
       "daysInRange": 4,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-08-31",
@@ -158,6 +164,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-09-07",
@@ -203,6 +210,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-09-14",
@@ -248,6 +256,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-09-21",
@@ -293,6 +302,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-09-28",
@@ -338,6 +348,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-10-05",
@@ -383,6 +394,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-10-12",
@@ -428,6 +440,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-10-19",
@@ -473,13 +486,14 @@
       "cost": 255,
       "costInRange": 255,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-10-26",
           "kind": "holiday",
           "label": "Half Term Holiday",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, no club this day"
         },
         {
           "date": "2026-10-27",
@@ -499,15 +513,15 @@
           "date": "2026-10-29",
           "kind": "holiday",
           "label": "Half Term Holiday",
-          "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "charge": 85,
+          "basis": "kids club"
         },
         {
           "date": "2026-10-30",
           "kind": "holiday",
           "label": "Half Term Holiday",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, no club this day"
         }
       ],
       "needsReview": false
@@ -518,6 +532,7 @@
       "cost": 63,
       "costInRange": 63,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-11-02",
@@ -563,6 +578,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-11-09",
@@ -608,6 +624,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-11-16",
@@ -653,6 +670,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-11-23",
@@ -698,6 +716,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-11-30",
@@ -743,6 +762,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-12-07",
@@ -788,6 +808,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2026-12-14",
@@ -830,44 +851,45 @@
     {
       "weekStart": "2026-12-21",
       "type": "holiday",
-      "cost": 255,
-      "costInRange": 255,
+      "cost": 0,
+      "costInRange": 0,
       "daysInRange": 5,
+      "clubShut": true,
       "days": [
         {
           "date": "2026-12-21",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-22",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-23",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-24",
           "kind": "holiday",
           "label": "Christmas Holidays",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-25",
           "kind": "holiday",
           "label": "Christmas Holidays",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, kids club shut this week"
         }
       ],
       "needsReview": false
@@ -875,44 +897,45 @@
     {
       "weekStart": "2026-12-28",
       "type": "holiday",
-      "cost": 255,
-      "costInRange": 255,
+      "cost": 0,
+      "costInRange": 0,
       "daysInRange": 5,
+      "clubShut": true,
       "days": [
         {
           "date": "2026-12-28",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-29",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-30",
           "kind": "holiday",
           "label": "Christmas Holidays",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2026-12-31",
           "kind": "holiday",
           "label": "Christmas Holidays",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, kids club shut this week"
         },
         {
           "date": "2027-01-01",
           "kind": "holiday",
           "label": "Christmas Holidays",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, kids club shut this week"
         }
       ],
       "needsReview": false
@@ -923,6 +946,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-01-04",
@@ -968,6 +992,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-01-11",
@@ -1013,6 +1038,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-01-18",
@@ -1058,6 +1084,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-01-25",
@@ -1103,6 +1130,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-02-01",
@@ -1148,6 +1176,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-02-08",
@@ -1193,13 +1222,14 @@
       "cost": 255,
       "costInRange": 255,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-02-15",
           "kind": "holiday",
           "label": "February Half Term Holiday",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, no club this day"
         },
         {
           "date": "2027-02-16",
@@ -1219,15 +1249,15 @@
           "date": "2027-02-18",
           "kind": "holiday",
           "label": "February Half Term Holiday",
-          "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "charge": 85,
+          "basis": "kids club"
         },
         {
           "date": "2027-02-19",
           "kind": "holiday",
           "label": "February Half Term Holiday",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, no club this day"
         }
       ],
       "needsReview": false
@@ -1238,6 +1268,7 @@
       "cost": 63,
       "costInRange": 63,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-02-22",
@@ -1283,6 +1314,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-03-01",
@@ -1328,6 +1360,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-03-08",
@@ -1373,6 +1406,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-03-15",
@@ -1418,6 +1452,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-03-22",
@@ -1463,6 +1498,7 @@
       "cost": 255,
       "costInRange": 255,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-03-29",
@@ -1497,7 +1533,7 @@
           "kind": "holiday",
           "label": "Easter Holiday",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, no club this day"
         }
       ],
       "needsReview": false
@@ -1508,13 +1544,14 @@
       "cost": 255,
       "costInRange": 255,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-04-05",
           "kind": "holiday",
           "label": "Easter Holiday",
-          "charge": 85,
-          "basis": "kids club"
+          "charge": 0,
+          "basis": "holiday, no club this day"
         },
         {
           "date": "2027-04-06",
@@ -1534,15 +1571,15 @@
           "date": "2027-04-08",
           "kind": "holiday",
           "label": "Easter Holiday",
-          "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "charge": 85,
+          "basis": "kids club"
         },
         {
           "date": "2027-04-09",
           "kind": "holiday",
           "label": "Easter Holiday",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, no club this day"
         }
       ],
       "needsReview": false
@@ -1553,6 +1590,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-04-12",
@@ -1598,6 +1636,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-04-19",
@@ -1643,6 +1682,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-04-26",
@@ -1688,6 +1728,7 @@
       "cost": 63,
       "costInRange": 63,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-05-03",
@@ -1733,6 +1774,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-05-10",
@@ -1778,6 +1820,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-05-17",
@@ -1823,6 +1866,7 @@
       "cost": 84,
       "costInRange": 84,
       "daysInRange": 5,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-05-24",
@@ -1868,6 +1912,7 @@
       "cost": 255,
       "costInRange": 0,
       "daysInRange": 1,
+      "clubShut": false,
       "days": [
         {
           "date": "2027-05-31",
@@ -1902,7 +1947,7 @@
           "kind": "holiday",
           "label": "Half Term Break",
           "charge": 0,
-          "basis": "holiday, beyond the 3 club days"
+          "basis": "holiday, no club this day"
         }
       ],
       "needsReview": false

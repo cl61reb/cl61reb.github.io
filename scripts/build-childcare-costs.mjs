@@ -5,8 +5,9 @@
 //
 // CHARGING RULES — costed per DAY, not per week:
 //
-//   School holiday   kids club, KIDS_CLUB_DAY a day, for
-//                    HOLIDAY_CLUB_DAYS_PER_WEEK days of that week
+//   School holiday, Tue/Wed/Thu  kids club, KIDS_CLUB_DAY a day
+//   School holiday, Mon or Fri    nothing — the club only runs Tue-Thu
+//   Christmas and New Year weeks  nothing — the club is shut
 //   Normal school day, Mon-Thu   after school club, AFTER_SCHOOL_DAY a day
 //   Normal school day, Friday    nothing — no Friday club
 //   Bank holiday                 nothing — the children are at home
@@ -18,10 +19,9 @@
 // holiday on a Mon-Thu saves AFTER_SCHOOL_DAY, and one on a Friday costs
 // nothing either way since Friday was never chargeable.
 //
-// WHICH THREE HOLIDAY DAYS: in a week with more than three holiday weekdays
-// the charge lands on the FIRST three. That only matters for a holiday week
-// split across two months, where it decides which month is billed. Stated
-// here because it is a convention, not something the calendar tells us.
+// The three club days are Tue, Wed and Thu, so a full holiday week is three
+// charges without needing a weekly cap. A bank holiday landing on one of those
+// days simply means the children are at home and that day is not charged.
 //
 // Because every charge belongs to one dated day, months add up exactly — no
 // week is pro-rated across a month boundary.
@@ -35,8 +35,14 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const KIDS_CLUB_DAY = 85;          // holiday kids club, per day
 const AFTER_SCHOOL_DAY = 21;       // after school club, per day, Mon-Thu
-const HOLIDAY_CLUB_DAYS_PER_WEEK = 3;
+// Holiday kids club runs Tue/Wed/Thu only, so a full holiday week is three
+// club days without needing a weekly cap - the days themselves decide it.
+const KIDS_CLUB_OFFSETS = [1, 2, 3]; // Mon=0 … Fri=4
 const AFTER_SCHOOL_WEEKDAYS = 4;   // Mon-Thu; no Friday club
+// The club shuts over Christmas and New Year. Those are the week containing
+// 25 December and the week containing 1 January - always two distinct,
+// adjacent weeks, since the dates are exactly seven days apart.
+const CLUB_CLOSED_DATES = ["12-25", "01-01"];
 const HOLIDAY_WEEK_THRESHOLD = 3;  // holiday weekdays at which a week reads as a holiday week
 const LONG_TERM_WEEKS = 9; // a run of school weeks this long suggests a missing half term
 
@@ -115,19 +121,27 @@ function round2(n) {
   return Math.round(n * 100) / 100;
 }
 
-// Charge for one weekday. `holidayBudget` is how many kids-club days are left
-// in this week; it is decremented as holiday days consume it.
-function chargeFor(kind, dayOffset, holidayBudget) {
-  if (kind === "holiday") {
-    return holidayBudget > 0
-      ? { charge: KIDS_CLUB_DAY, basis: "kids club", usesBudget: true }
-      : { charge: 0, basis: "holiday, beyond the " + HOLIDAY_CLUB_DAYS_PER_WEEK + " club days", usesBudget: false };
+// True for the Christmas and New Year weeks, when the holiday club shuts.
+function clubClosedWeek(weekStart) {
+  for (let i = 0; i < 7; i++) {
+    if (CLUB_CLOSED_DATES.includes(addDays(weekStart, i).slice(5))) return true;
   }
-  if (kind === "inset") return { charge: 0, basis: "inset day, at home", usesBudget: false };
-  if (kind === "bankHoliday") return { charge: 0, basis: "bank holiday, at home", usesBudget: false };
+  return false;
+}
+
+// Charge for one weekday.
+function chargeFor(kind, dayOffset, clubShut) {
+  if (kind === "holiday") {
+    if (clubShut) return { charge: 0, basis: "holiday, kids club shut this week" };
+    return KIDS_CLUB_OFFSETS.includes(dayOffset)
+      ? { charge: KIDS_CLUB_DAY, basis: "kids club" }
+      : { charge: 0, basis: "holiday, no club this day" };
+  }
+  if (kind === "inset") return { charge: 0, basis: "inset day, at home" };
+  if (kind === "bankHoliday") return { charge: 0, basis: "bank holiday, at home" };
   if (dayOffset < AFTER_SCHOOL_WEEKDAYS)
-    return { charge: AFTER_SCHOOL_DAY, basis: "after school club", usesBudget: false };
-  return { charge: 0, basis: "school day, no Friday club", usesBudget: false };
+    return { charge: AFTER_SCHOOL_DAY, basis: "after school club" };
+  return { charge: 0, basis: "school day, no Friday club" };
 }
 
 function buildWeeks(dayIndex, rangeStart, rangeEnd) {
@@ -145,10 +159,9 @@ function buildWeeks(dayIndex, rangeStart, rangeEnd) {
     }
     const holidayCount = raw.filter((d) => d.kind === "holiday").length;
 
-    let budget = HOLIDAY_CLUB_DAYS_PER_WEEK;
+    const clubShut = clubClosedWeek(weekStart);
     const days = raw.map((d) => {
-      const { charge, basis, usesBudget } = chargeFor(d.kind, d.offset, budget);
-      if (usesBudget) budget--;
+      const { charge, basis } = chargeFor(d.kind, d.offset, clubShut);
       return {
         date: d.date,
         kind: d.kind,
@@ -169,6 +182,7 @@ function buildWeeks(dayIndex, rangeStart, rangeEnd) {
     weeks.push({
       weekStart,
       type,
+      clubShut,
       days,
       cost: round2(days.reduce((n, d) => n + d.charge, 0)),
       costInRange: round2(days.filter((d) => d.inRange).reduce((n, d) => n + d.charge, 0)),
@@ -208,9 +222,9 @@ function findReviewFlags(weeks, allWeeks, rangeStart, rangeEnd) {
       reviews.push({
         weekStart: week.weekStart,
         kind: "closure-in-school-week",
-        detail: `"${closedSaysShut.label}" on ${closedSaysShut.date} says the school is closed, but the rest of the week has no holiday entries, so the week is charged as school days (£${week.cost}). If it is really a holiday week it would be ${HOLIDAY_CLUB_DAYS_PER_WEEK} kids club days, £${HOLIDAY_CLUB_DAYS_PER_WEEK * KIDS_CLUB_DAY}.`,
+        detail: `"${closedSaysShut.label}" on ${closedSaysShut.date} says the school is closed, but the rest of the week has no holiday entries, so the week is charged as school days (£${week.cost}). If it is really a holiday week it would be ${KIDS_CLUB_OFFSETS.length} kids club days, £${KIDS_CLUB_OFFSETS.length * KIDS_CLUB_DAY}.`,
         costedAt: week.cost,
-        couldBe: HOLIDAY_CLUB_DAYS_PER_WEEK * KIDS_CLUB_DAY,
+        couldBe: KIDS_CLUB_OFFSETS.length * KIDS_CLUB_DAY,
       });
     }
   }
@@ -331,7 +345,8 @@ function main() {
     rates: {
       kidsClubDay: KIDS_CLUB_DAY,
       afterSchoolDay: AFTER_SCHOOL_DAY,
-      holidayClubDaysPerWeek: HOLIDAY_CLUB_DAYS_PER_WEEK,
+      holidayClubDaysPerWeek: KIDS_CLUB_OFFSETS.length,
+      kidsClubDayNames: KIDS_CLUB_OFFSETS.map((i) => ["Mon", "Tue", "Wed", "Thu", "Fri"][i]),
       afterSchoolWeekdays: AFTER_SCHOOL_WEEKDAYS,
     },
     source: { feedStart, feedEnd, events: events.length },
@@ -345,6 +360,7 @@ function main() {
         cost: w.cost,
         costInRange: w.costInRange,
         daysInRange: w.daysInRange,
+        clubShut: w.clubShut,
         days: w.days.map((d) => ({ date: d.date, kind: d.kind, label: d.label, charge: d.charge, basis: d.basis })),
         needsReview: reviewWeeks.has(w.weekStart),
       })),
