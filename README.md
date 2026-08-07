@@ -50,27 +50,56 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
-## The three pages
+## Pages
 
-All three are the *same report over different date ranges* — same scripts,
-same logic, same layout. They share `assets/report.css` and
-`assets/report.js`; each page just sets `window.REPORT` to point at its own
-data files, so adding a fourth range would only mean a new HTML shell and a
-new data set.
+`index.html` is a menu listing every report, with each card showing that
+report's headline split and gap count read live from its own data — so it
+doubles as a dashboard.
 
 | Page | Range | Data |
 |---|---|---|
-| `index.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
+| `index.html` | — | menu, reads all of the below |
+| `year-to-date.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
 | `month.html` | the **current** calendar month | `data/month-data.json`, `data/month-exceptions.json` |
 | `forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
 
-The three windows are contiguous and don't overlap: year-to-date stops where
+The report windows are contiguous and don't overlap: year-to-date stops where
 the current month begins, and the forecast starts where it ends.
 
 `month.html` and `forecast.html` cover plans as much as history, so their
 numbers can still change. `data/corrections.json` applies only to
-`index.html`: it is bounded to before 2026-08-01, which is at or before both
-other windows.
+`year-to-date.html`: it is bounded to before 2026-08-01, which is at or
+before both other windows.
+
+### How the pages fit together
+
+Every report is the *same report over a different date range* — same scripts,
+same logic, same layout — so they share one renderer:
+
+- **`assets/reports.js`** — the registry. The single place that knows what
+  reports exist. Both the menu and the nav bar on every page are generated
+  from it.
+- **`assets/report.js`** — renders any report. A page says only
+  `window.REPORT_ID = "month";` and this looks the rest up in the registry.
+- **`assets/menu.js`** — renders the menu cards on `index.html`.
+- **`assets/report.css`** — shared styles.
+
+### Adding a new report
+
+1. Add an entry to `assets/reports.js` (id, href, title, blurb, and the three
+   data URLs).
+2. Copy any report page to `<id>.html` and change its one config line to
+   `window.REPORT_ID = "<your id>";`.
+3. Generate its data with the same three scripts, pointed at the new date
+   range — see the comment at the top of `assets/reports.js` for the exact
+   commands.
+4. Add those three commands to `docs/weekly-refresh-routine.md` so the weekly
+   refresh keeps it current.
+
+Nothing else needs editing: the new report appears in the menu and in every
+existing page's nav automatically. This was verified by adding a throwaway
+fourth report and confirming it showed up everywhere without touching any
+other page.
 
 ## Corrections (`data/corrections.json`)
 

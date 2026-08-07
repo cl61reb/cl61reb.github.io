@@ -34,7 +34,6 @@
     font-size: 0.95rem;
   }
   header p + p { margin-top: 8px; }
-  .nav { display: flex; flex-wrap: wrap; gap: 2px; align-items: baseline; }
   a { color: var(--series-claire); }
   .card {
     background: var(--surface-1);
@@ -154,3 +153,70 @@
   .empty { color: var(--text-secondary); padding: 20px 0; }
   #gap-table td, #gap-table th { text-align: left; font-variant-numeric: tabular-nums; }
   h2.section-title { font-size: 1.1rem; margin: 40px 0 4px; }
+
+/* --- nav bar (generated from the report registry) --- */
+.nav { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.nav-sep { color: var(--text-muted); }
+
+/* --- report menu (index.html) --- */
+.menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.12s, transform 0.12s;
+}
+.menu-card:hover, .menu-card:focus-visible {
+  border-color: var(--series-claire);
+  transform: translateY(-2px);
+}
+.menu-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.menu-card h2 { font-size: 1.1rem; margin: 0; }
+.menu-arrow { color: var(--series-claire); font-size: 1rem; }
+.menu-blurb {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.menu-figures { margin-top: auto; padding-top: 16px; }
+.menu-loading { color: var(--text-muted); font-size: 0.85rem; }
+.menu-range {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.menu-split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.menu-stat { display: flex; align-items: center; gap: 6px; }
+.menu-stat b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.menu-nights { color: var(--text-muted); }
+.menu-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+  background: var(--gridline);
+}
+.menu-bar span { display: block; height: 100%; }
+.menu-bar span + span { margin-left: 2px; }
+.menu-flag { margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
+.menu-flag-warn { color: #b8860b; }
+#menu-footer { margin-top: 28px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; }

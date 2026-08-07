@@ -11,11 +11,7 @@
   <header>
     <h1>Custody Split Tracker</h1>
     <p id="subtitle">Loading…</p>
-    <p class="nav">
-      <a href="index.html">Year to date</a> &nbsp;·&nbsp;
-      <b>This month</b> &nbsp;·&nbsp;
-      <a href="forecast.html">Next 12 months</a>
-    </p>
+    <p class="nav"></p>
   </header>
 
   <div class="stat-row" id="stat-row"></div>
@@ -62,13 +58,8 @@
   <footer id="footer"></footer>
 </div>
 
-<script>
-window.REPORT = {
-  dataUrl: "data/month-data.json",
-  exceptionsUrl: "data/month-exceptions.json",
-  rangeNote: 'Computed from the "Both of us" Google Calendar, covering the current calendar month. The month is still in progress, so later dates are planned rather than settled.',
-};
-</script>
+<script src="assets/reports.js"></script>
+<script>window.REPORT_ID = "month";</script>
 <script src="assets/report.js"></script>
 </body>
 </html>

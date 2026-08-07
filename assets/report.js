@@ -1,16 +1,35 @@
 // Shared renderer for the custody reports.
 //
-// index.html and forecast.html are the same report over different date
-// ranges, so they share this file entirely. Each page sets window.REPORT
-// before loading it:
+// Every report page is the same report over a different date range, so they
+// all share this file. A page only has to say which report it is:
 //
-//   window.REPORT = {
-//     dataUrl:       "data/custody-data.json",
-//     exceptionsUrl: "data/exceptions.json",
-//     rangeNote:     "…sentence describing the window, shown in the footer",
-//   };
+//   window.REPORT_ID = "month";
+//
+// The matching entry in assets/reports.js supplies the data URLs and the
+// footer note, and the nav bar is generated from the full registry — so a
+// new report shows up in every page's nav automatically.
 
 const NS = "http://www.w3.org/2000/svg";
+
+const REPORT = (window.REPORTS || []).find((r) => r.id === window.REPORT_ID);
+if (!REPORT) {
+  throw new Error(
+    `Unknown REPORT_ID "${window.REPORT_ID}" - add it to assets/reports.js, and make sure that file loads before this one.`
+  );
+}
+
+// Nav is generated from the registry so adding a report updates every page.
+function renderNav() {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+  nav.innerHTML =
+    `<a href="index.html">All reports</a>` +
+    window.REPORTS.map(
+      (r) =>
+        `<span class="nav-sep">·</span>` +
+        (r.id === REPORT.id ? `<b>${r.title}</b>` : `<a href="${r.href}">${r.title}</a>`)
+    ).join("");
+}
 
 function el(name, attrs) {
   const e = document.createElementNS(NS, name);
@@ -43,13 +62,13 @@ function fetchJson(url) {
 }
 
 async function renderSplit() {
-  const data = await fetchJson(window.REPORT.dataUrl);
+  const data = await fetchJson(REPORT.dataUrl);
   const { months, totals, names, generatedAt, rangeStart, rangeEnd } = data;
 
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
-    `${window.REPORT.rangeNote} "Unassigned" = days with no matching calendar event. The exception report falls back to the usual 3-2-2 rotation where the calendar is silent.`;
+    `${REPORT.rangeNote} "Unassigned" = days with no matching calendar event. The exception report falls back to the usual 3-2-2 rotation where the calendar is silent.`;
 
   // Stat tiles
   const statRow = document.getElementById("stat-row");
@@ -155,7 +174,7 @@ async function renderSplit() {
 }
 
 async function renderExceptions() {
-  const data = await fetchJson(window.REPORT.exceptionsUrl);
+  const data = await fetchJson(REPORT.exceptionsUrl);
   const { summary, gaps } = data;
 
   const statRow = document.getElementById("exception-stat-row");
@@ -187,6 +206,8 @@ async function renderExceptions() {
   document.getElementById("gap-empty").hidden = gaps.length > 0;
   document.getElementById("gap-table").hidden = gaps.length === 0;
 }
+
+renderNav();
 
 renderSplit().catch((err) => {
   document.getElementById("subtitle").textContent = "Failed to load data: " + err.message;
