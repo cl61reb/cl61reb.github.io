@@ -152,6 +152,28 @@ The table is registry-driven: it appears only on reports whose entry in
 `assets/reports.js` sets `nightsUrl`, which is why the year-to-date and
 forecast pages do not grow one.
 
+## Forecast checks
+
+The bottom of `forecast.html` carries two checks over the next 12 months.
+
+**Deviations from the schedule** (`data/forecast-nights.json`) — the same
+night-by-night comparison the month report uses, but with `nightsMode:
+"deviations"` in the registry so only the nights that differ are listed; a
+year of matching nights would bury them. Unswapped extra nights are flagged
+red exactly as on the month page.
+
+**Ambiguous calendar entries** (`data/forecast-ambiguity.json`) — dates covered
+by a Claire entry *and* a Mat entry at once, produced by
+`scripts/build-ambiguity-report.mjs`. These are neither gaps nor swaps: the
+calendar contradicts itself. The split still resolves them (most recently
+edited entry wins, then the weekend-Sunday rule, then corrections), but the
+answer is inferred rather than stated, so each is listed with every competing
+entry, its last-edited date, and which one was counted. Consecutive days
+sharing the same clash are grouped into one run.
+
+Both are registry-driven (`nightsUrl` / `ambiguityUrl`), so they appear only
+where configured — the year-to-date page has neither.
+
 ### Adding a new report
 
 1. Add an entry to `assets/reports.js` (id, href, title, blurb, and the three

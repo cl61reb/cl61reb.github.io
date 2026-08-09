@@ -206,9 +206,17 @@ async function renderNights() {
   const badge = (o) =>
     `<span class="badge"><span class="dot" style="background:${colour(o)}"></span>${label(o)}</span>`;
 
+  const deviationsOnly = REPORT.nightsMode === "deviations";
+  const shown = deviationsOnly ? nights.filter((n) => n.status !== "match") : nights;
+
   const u = summary.unswapped;
-  document.getElementById("nights-note").innerHTML =
-    `Every night of the month, against who the <b>usual 3-2-2 rotation</b> would give it to. ` +
+  document.getElementById("nights-note").innerHTML = deviationsOnly
+    ? `Only the nights that <b>differ</b> from the usual 3-2-2 rotation are listed — the other ` +
+      `${summary.matching} of ${summary.nights} follow it. Departures normally come in pairs, one ` +
+      `parent taking a night and giving one back, so they cancel. A departure with no matching one ` +
+      `the other way is flagged as an <b>unswapped extra night</b>. These are plans, so they can ` +
+      `still change.`
+    : `Every night of the month, against who the <b>usual 3-2-2 rotation</b> would give it to. ` +
     `Departures from the rotation normally come in pairs — one parent takes a night and gives one back — ` +
     `so they cancel out. A departure with no matching one the other way is a night gained and not returned, ` +
     `flagged below as an <b>unswapped extra night</b>.`;
@@ -229,7 +237,13 @@ async function renderNights() {
         : `<p class="nights-ok">The month balances — every departure from the rotation has a matching one the other way.</p>`
     }`;
 
-  document.querySelector("#nights-table tbody").innerHTML = nights
+  const emptyEl = document.getElementById("nights-empty");
+  if (emptyEl) {
+    emptyEl.hidden = shown.length > 0;
+    document.getElementById("nights-table").hidden = shown.length === 0;
+  }
+
+  document.querySelector("#nights-table tbody").innerHTML = shown
     .map((n) => {
       const d = new Date(`${n.date}T00:00:00Z`);
       const when = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
@@ -252,6 +266,54 @@ async function renderNights() {
     .join("");
 }
 
+// Days the calendar answers twice, for reports that configure one.
+async function renderAmbiguity() {
+  if (!REPORT.ambiguityUrl) return;
+  const data = await fetchJson(REPORT.ambiguityUrl);
+  const { conflicts, summary, names } = data;
+  const colour = (o) => (o === "claire" ? "var(--series-claire)" : "var(--series-mat)");
+
+  document.getElementById("ambiguity-note").innerHTML =
+    `Dates covered by a <b>${names.claire}</b> entry and a <b>${names.parent2}</b> entry at the same ` +
+    `time — days the calendar contradicts itself. The split still picks a winner (most recently ` +
+    `edited entry wins), but that answer is inferred rather than stated, so these are worth a look. ` +
+    `Consecutive days with the same clashing entries are grouped as one.`;
+
+  document.getElementById("ambiguity-summary").innerHTML = summary.conflictDays
+    ? `<p class="nights-alert"><b>${summary.conflictDays} ambiguous ${summary.conflictDays === 1 ? "day" : "days"}</b>
+         out of ${summary.daysChecked} checked, in ${summary.conflictRuns}
+         ${summary.conflictRuns === 1 ? "run" : "runs"}. Deleting or shortening whichever entry is wrong
+         would settle ${summary.conflictDays === 1 ? "it" : "them"}.</p>`
+    : `<p class="nights-ok">${summary.daysChecked} days checked, none with a clash.</p>`;
+
+  document.querySelector("#ambiguity-table tbody").innerHTML = conflicts
+    .map((c) => {
+      const last = new Date(`${c.endDateExclusive}T00:00:00Z`);
+      last.setUTCDate(last.getUTCDate() - 1);
+      const range = c.days > 1
+        ? `${fmtDate(c.startDate)} – ${fmtDate(last.toISOString().slice(0, 10))}`
+        : fmtDate(c.startDate);
+      const entries = c.competing
+        .map((e) => {
+          const won = e.owner === c.resolvedTo && e.summary === c.resolvedBy;
+          return `<div class="amb-entry${won ? " amb-won" : ""}">
+                    <span class="badge"><span class="dot" style="background:${colour(e.owner)}"></span>${e.ownerName}</span>
+                    <span class="amb-summary">${e.summary}</span>
+                    <span class="comment">edited ${e.updated.slice(0, 10)}${won ? " · counted" : ""}</span>
+                  </div>`;
+        })
+        .join("");
+      return `<tr>
+        <td class="date">${range}${c.days > 1 ? `<div class="comment">${c.days} days</div>` : ""}</td>
+        <td><span class="badge"><span class="dot" style="background:${colour(c.resolvedTo)}"></span>${c.resolvedToName}</span></td>
+        <td>${entries}</td>
+      </tr>`;
+    })
+    .join("");
+  document.getElementById("ambiguity-empty").hidden = conflicts.length > 0;
+  document.getElementById("ambiguity-table").hidden = conflicts.length === 0;
+}
+
 window.renderReportNav(REPORT.id);
 
 renderSplit().catch((err) => {
@@ -260,6 +322,11 @@ renderSplit().catch((err) => {
 renderNights().catch((err) => {
   const el = document.getElementById("nights-summary");
   if (el) el.textContent = "Failed to load night-by-night data: " + err.message;
+});
+
+renderAmbiguity().catch((err) => {
+  const el = document.getElementById("ambiguity-summary");
+  if (el) el.textContent = "Failed to load ambiguity data: " + err.message;
 });
 
 renderExceptions().catch((err) => {

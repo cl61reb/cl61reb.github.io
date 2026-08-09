@@ -55,6 +55,36 @@
     <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
   </div>
 
+  <h2 class="section-title" id="nights">Deviations from the schedule</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;" id="nights-note"></p>
+    <div id="nights-summary"></div>
+  </div>
+  <div class="card">
+    <table id="nights-table">
+      <thead>
+        <tr><th>Night</th><th>Who has them</th><th>Usual 3-2-2</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="nights-empty" hidden>No deviations — every night in the next 12 months follows the rotation 🎉</p>
+  </div>
+
+  <h2 class="section-title" id="ambiguity">Ambiguous calendar entries</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;" id="ambiguity-note"></p>
+    <div id="ambiguity-summary"></div>
+  </div>
+  <div class="card">
+    <table id="ambiguity-table">
+      <thead>
+        <tr><th>Dates</th><th>Counted as</th><th>Competing entries</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="ambiguity-empty" hidden>No ambiguous days — no date has both a Claire and a Mat entry 🎉</p>
+  </div>
+
   <footer id="footer"></footer>
 </div>
 

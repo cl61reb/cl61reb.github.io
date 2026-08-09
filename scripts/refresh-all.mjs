@@ -133,20 +133,22 @@ if (shortfall.length) {
 // --- custody reports --------------------------------------------------------
 
 const custody = [
-  // label, range key, rotation file, split file, exceptions file, nightly file (optional)
-  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null],
-  ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json", "month-nights.json"],
-  ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json", null],
+  // label, range key, rotation, split, exceptions, nightly (optional), ambiguity (optional)
+  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null, null],
+  ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json", "month-nights.json", null],
+  ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json", "forecast-nights.json", "forecast-ambiguity.json"],
 ];
 
 let ok = true;
-for (const [label, key, usualFile, dataFile, excFile, nightsFile] of custody) {
+for (const [label, key, usualFile, dataFile, excFile, nightsFile, ambFile] of custody) {
   const { start, end } = ranges[key];
   ok = run(`${label} · rotation`, usualFile, "generate-usual-schedule.mjs", [start, end]) && ok;
   ok = run(`${label} · split`, dataFile, "compute-custody-split.mjs", [eventsPath, start, end]) && ok;
   ok = run(`${label} · exceptions`, excFile, "build-exception-report.mjs", [eventsPath, join(DATA, usualFile), start, end]) && ok;
   if (nightsFile)
     ok = run(`${label} · nights`, nightsFile, "build-nightly-detail.mjs", [eventsPath, join(DATA, usualFile), start, end]) && ok;
+  if (ambFile)
+    ok = run(`${label} · ambiguity`, ambFile, "build-ambiguity-report.mjs", [eventsPath, start, end]) && ok;
 }
 
 // --- childcare costs --------------------------------------------------------
@@ -225,6 +227,13 @@ if (!dryRun) {
     } else {
       console.log(`  ${"Unswapped".padEnd(16)} none — this month balances against the rotation`);
     }
+  } catch { /* reported above */ }
+  try {
+    const f = JSON.parse(readFileSync(join(DATA, "forecast-nights.json"), "utf8")).summary;
+    const a = JSON.parse(readFileSync(join(DATA, "forecast-ambiguity.json"), "utf8")).summary;
+    console.log(`  ${"Forecast checks".padEnd(16)} ${f.swapped + f.unswapped.count} deviation(s) from the rotation` +
+                (f.unswapped.count ? ` (${f.unswapped.count} unswapped)` : "") +
+                `, ${a.conflictDays} ambiguous day(s)`);
   } catch { /* reported above */ }
   try {
     const c = JSON.parse(readFileSync(join(DATA, "childcare-data.json"), "utf8"));

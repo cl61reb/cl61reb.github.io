@@ -53,6 +53,12 @@ window.REPORTS = [
     dataUrl: "data/forecast-data.json",
     exceptionsUrl: "data/forecast-exceptions.json",
     usualScheduleUrl: "data/forecast-usual-schedule.json",
+    // A year of nights is too many to list, so this one shows only the
+    // departures from the rotation rather than every night.
+    nightsUrl: "data/forecast-nights.json",
+    nightsMode: "deviations",
+    // Days the calendar answers twice - a Claire entry and a Mat entry at once.
+    ambiguityUrl: "data/forecast-ambiguity.json",
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering a rolling 12 months starting from the first day of next month. These are plans, not history - they can still change.',
   },

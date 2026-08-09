@@ -270,3 +270,14 @@
   color: #a32020; font-size: 0.88rem; line-height: 1.55;
 }
 .nights-ok { margin: 10px 0 0; color: var(--text-secondary); font-size: 0.88rem; }
+
+/* ambiguous calendar entries */
+#ambiguity-table td, #ambiguity-table th { text-align: left; vertical-align: top; }
+#ambiguity-table td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.amb-entry {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  padding: 4px 0; font-size: 0.85rem;
+}
+.amb-entry + .amb-entry { border-top: 1px dashed var(--gridline); }
+.amb-summary { flex: 1 1 260px; }
+.amb-won .amb-summary { font-weight: 600; }
