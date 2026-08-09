@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T15:40:01.101Z",
+  "generatedAt": "2026-08-09T09:05:14.299Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-09-01",
   "names": {
@@ -27,21 +27,21 @@
     },
     {
       "month": "2026-11",
-      "claire": 13,
-      "parent2": 17,
+      "claire": 14,
+      "parent2": 16,
       "unassigned": 0,
       "totalDays": 30,
-      "clairePct": 43.3,
-      "parent2Pct": 56.7
+      "clairePct": 46.7,
+      "parent2Pct": 53.3
     },
     {
       "month": "2026-12",
-      "claire": 14,
-      "parent2": 17,
+      "claire": 15,
+      "parent2": 16,
       "unassigned": 0,
       "totalDays": 31,
-      "clairePct": 45.2,
-      "parent2Pct": 54.8
+      "clairePct": 48.4,
+      "parent2Pct": 51.6
     },
     {
       "month": "2027-01",
@@ -117,10 +117,10 @@
     }
   ],
   "totals": {
-    "claire": 181,
-    "parent2": 184,
+    "claire": 183,
+    "parent2": 182,
     "unassigned": 0,
-    "clairePct": 49.6,
-    "parent2Pct": 50.4
+    "clairePct": 50.1,
+    "parent2Pct": 49.9
   }
 }
