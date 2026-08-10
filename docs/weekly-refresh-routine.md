@@ -21,7 +21,7 @@ Refresh the custody split tracker at cl61reb.github.io with the latest calendar 
 
 REPO: cl61reb/cl61reb.github.io (branch: main). GitHub Pages publishes straight from main — no PR needed.
 
-BACKGROUND: index.html reads data/custody-data.json (the month-by-month custody split between Claire and Mat) and data/exceptions.json (nights with no calendar entry). Both are generated from the "Both of us" joint Google Calendar. Read README.md and the header comments in scripts/compute-custody-split.mjs first — they document the classification rules, the weekend-Sunday correction, and the corrections layer.
+BACKGROUND: index.html reads data/custody-data.json (the month-by-month custody split between Claire and Mat) and data/exceptions.json (nights with no calendar entry). Both are generated from the "Both of us" joint Google Calendar. Read docs/reports.md and the header comments in scripts/compute-custody-split.mjs first — they document the classification rules, the weekend-Sunday correction, and the corrections layer.
 
 STEPS:
 1. Clone/pull latest main.
