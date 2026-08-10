@@ -27,12 +27,23 @@
   </div>
 
   <div class="card">
-    <table id="data-table">
-      <thead>
-        <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="data-table">
+        <thead>
+          <tr class="group-row">
+            <th></th>
+            <th colspan="5">That month</th>
+            <th colspan="4" class="group-start">Cumulative since 1 Jan 2026</th>
+          </tr>
+          <tr>
+            <th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th>
+            <th class="group-start">Claire</th><th>Mat</th><th>Claire %</th><th>Mat %</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note" id="cumulative-note" hidden></p>
   </div>
 
   <h2 class="section-title" id="exceptions">Exception report</h2>

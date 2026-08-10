@@ -62,6 +62,16 @@ window.REPORTS = [
     nightsMode: "deviations",
     // Days the calendar answers twice - a Claire entry and a Mat entry at once.
     ambiguityUrl: "../data/forecast-ambiguity.json",
+    // Optional: extra table columns carrying a running total from a fixed
+    // month, spanning earlier reports as well as this one. The forecast starts
+    // in September, so the year so far has to come from the other two reports;
+    // their ranges are contiguous with this one, which is what makes the sum
+    // valid. Months are merged by key, so an overlap would not double count.
+    cumulative: {
+      since: "2026-01",
+      label: "Cumulative since 1 Jan 2026",
+      priorUrls: ["../data/custody-data.json", "../data/month-data.json"],
+    },
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering a rolling 12 months starting from the first day of next month. These are plans, not history - they can still change.',
   },

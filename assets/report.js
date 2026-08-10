@@ -49,9 +49,58 @@ function fetchJson(url) {
   return fetch(`${url}?v=${Date.now()}`, { cache: "no-store" }).then((r) => r.json());
 }
 
+// Running totals from a fixed month, carried across the earlier reports.
+//
+// The forecast begins in September, so "since 1 Jan" has to pick up the year
+// to date and the current month too. Months are merged by key rather than
+// added blindly, so overlapping ranges cannot double count, and any month
+// missing between the start and the end of this report is reported rather
+// than quietly treated as zero.
+function buildCumulative(config, data) {
+  const byMonth = new Map();
+  for (const src of [...config.sources, data]) {
+    if (!src || !Array.isArray(src.months)) continue;
+    for (const m of src.months) byMonth.set(m.month, { claire: m.claire, parent2: m.parent2 });
+  }
+
+  const lastMonth = data.months.length ? data.months[data.months.length - 1].month : config.since;
+  const wanted = [];
+  for (let k = config.since; k <= lastMonth; ) {
+    wanted.push(k);
+    const [y, m] = k.split("-").map(Number);
+    k = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+  }
+
+  const missing = wanted.filter((k) => !byMonth.has(k));
+  const rows = new Map();
+  let claire = 0, parent2 = 0;
+  for (const k of wanted) {
+    const v = byMonth.get(k);
+    if (!v) continue;
+    claire += v.claire;
+    parent2 += v.parent2;
+    const total = claire + parent2;
+    rows.set(k, {
+      claire,
+      parent2,
+      clairePct: total ? Math.round((claire * 1000) / total) / 10 : null,
+      parent2Pct: total ? Math.round((parent2 * 1000) / total) / 10 : null,
+    });
+  }
+  return { rows, missing, final: rows.get(wanted[wanted.length - 1]) || null };
+}
+
 async function renderSplit() {
   const data = await fetchJson(REPORT.dataUrl);
   const { months, totals, names, generatedAt, rangeStart, rangeEnd } = data;
+
+  const cumConfig = REPORT.cumulative;
+  const cum = cumConfig
+    ? buildCumulative(
+        { ...cumConfig, sources: await Promise.all(cumConfig.priorUrls.map(fetchJson)) },
+        data
+      )
+    : null;
 
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
@@ -142,6 +191,14 @@ async function renderSplit() {
   });
 
   // Table
+  const cumCells = (row) =>
+    cum
+      ? `<td class="group-start">${row ? row.claire : "–"}</td>
+         <td>${row ? row.parent2 : "–"}</td>
+         <td>${row && row.clairePct !== null ? row.clairePct : "–"}</td>
+         <td>${row && row.parent2Pct !== null ? row.parent2Pct : "–"}</td>`
+      : "";
+
   document.querySelector("#data-table tbody").innerHTML =
     months
       .map(
@@ -152,13 +209,28 @@ async function renderSplit() {
           <td>${m.unassigned}</td>
           <td>${m.clairePct ?? "–"}</td>
           <td>${m.parent2Pct ?? "–"}</td>
+          ${cumCells(cum ? cum.rows.get(m.month) : null)}
         </tr>`
       )
       .join("") +
     `<tr style="font-weight:600">
       <td>Total</td><td>${totals.claire}</td><td>${totals.parent2}</td>
       <td>${totals.unassigned}</td><td>${totals.clairePct}</td><td>${totals.parent2Pct}</td>
+      ${cumCells(cum ? cum.final : null)}
     </tr>`;
+
+  // The cumulative columns span three reports, so say plainly what they add up
+  // and flag it if a month between the start date and here is missing.
+  const cumNote = document.getElementById("cumulative-note");
+  if (cumNote && cum) {
+    cumNote.textContent = cum.missing.length
+      ? `The cumulative columns are INCOMPLETE: no data for ${cum.missing.join(", ")}. ` +
+        `Those months are missing from the running total, so the percentages understate the period.`
+      : `The cumulative columns are a running total of every night from 1 January 2026 to the end of that row's month, ` +
+        `combining the year to date and current month reports with this one. The "Total" row is the whole period. ` +
+        `Unassigned nights are excluded from the percentages.`;
+    cumNote.hidden = false;
+  }
 }
 
 async function renderExceptions() {

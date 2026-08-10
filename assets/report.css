@@ -121,6 +121,19 @@
     color: var(--text-secondary);
     font-weight: 500;
   }
+  /* Grouped column headings, e.g. the cumulative block on the forecast. */
+  .group-row th {
+    text-align: center;
+    border-bottom: none;
+    padding-bottom: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .group-start { border-left: 1px solid var(--border); }
+  /* Wide tables scroll inside the card rather than stretching the page. */
+  .table-scroll { overflow-x: auto; }
   footer {
     margin-top: 32px;
     color: var(--text-muted);
