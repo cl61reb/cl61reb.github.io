@@ -41,6 +41,16 @@ const CUSTODY_KEYWORD = /night|weekend|ha(?:s|ve) kids|kids away|away with (?:ki
 const AWAY_ONLY = /\baway\b/i;
 const WITH_CHILDREN = /kids|children/i;
 
+// The standing weekend entries in the rota — "Claire weekends", "Mats
+// Weekends", "Claire weekends until 6pm Saturday". These are the only events
+// the weekend-Sunday correction below may touch.
+//
+// It must NOT match a one-off block that happens to contain the word weekend,
+// such as "Mat have the kids for along weekend": there the Sunday is the
+// entire point of the entry, so flipping it away inverts what was agreed.
+// Matching on "weekend" alone did exactly that to 8 Nov 2026.
+const ROTA_WEEKEND_EVENT = /^\s*(?:claire|mat)['’]?s?\s+weekends?\b/i;
+
 function toDateOnly(value) {
   // "2026-07-01" or "2026-07-26T00:00:00+01:00" -> "2026-07-01"
   return value.slice(0, 10);
@@ -92,7 +102,7 @@ export function loadEvents(path) {
         start,
         end,
         nights,
-        isWeekendEvent: /weekend/i.test(summary),
+        isWeekendEvent: ROTA_WEEKEND_EVENT.test(summary),
         updated: e.updated || "1970-01-01T00:00:00Z",
         summary,
       };
@@ -136,6 +146,9 @@ export function buildDateOwnerMap(events, rangeStart, rangeEnd, corrections = []
   }
 
   // Weekend Sunday correction.
+  //
+  // Applies only to the standing rota entries (see ROTA_WEEKEND_EVENT), never
+  // to a one-off block that merely mentions a weekend.
   //
   // "Mats Weekends" / "Claire weekends" entries are written Fri-Sun, but the
   // actual rotation gives the weekend parent only Fri+Sat - the kids change

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T00:20:55.152Z",
+  "generatedAt": "2026-08-10T01:23:11.522Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-09-01",
   "names": {
@@ -9,20 +9,22 @@
   "summary": {
     "nights": 365,
     "actual": {
-      "claire": 183,
-      "parent2": 182
+      "claire": 182,
+      "parent2": 183
     },
     "usual": {
       "claire": 183,
       "parent2": 182
     },
-    "matching": 337,
+    "matching": 336,
     "swapped": 28,
     "unassigned": 0,
     "unswapped": {
-      "count": 0,
-      "owner": null,
-      "dates": []
+      "count": 1,
+      "owner": "parent2",
+      "dates": [
+        "2027-01-04"
+      ]
     }
   },
   "nights": [
@@ -443,9 +445,10 @@
     },
     {
       "date": "2026-11-08",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat have the kids for along weekend"
     },
     {
       "date": "2026-11-09",
@@ -804,7 +807,7 @@
       "date": "2027-01-04",
       "actual": "parent2",
       "usual": "claire",
-      "status": "swapped",
+      "status": "unswapped",
       "note": "Mats Nights -Claire away"
     },
     {
