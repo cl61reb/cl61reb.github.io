@@ -64,6 +64,24 @@ Nothing is indexable: every page carries
 `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">` and
 `robots.txt` disallows everything.
 
+### Access gate on /family/
+
+Family pages load `assets/gate.js` first. It looks for `?k=<token>` in the URL,
+remembers it in `sessionStorage` for the rest of the browser session so the
+links between reports keep working, and otherwise sends the visitor to the blog
+home.
+
+The working link is **`/family/?k=xM5sUFAbWY0m`**.
+
+Tested: a bare URL and a wrong token both redirect; the right token loads and
+click-through then works without repeating it; a fresh session redirects again.
+
+**It is a speed bump, not a lock**, and the same test run shows why — with
+JavaScript disabled the page loads normally, `curl` returns it in full, and
+`/data/*.json` is served ungated regardless. The token is also committed to a
+public repo, so it is readable by anyone who opens `assets/gate.js` on GitHub.
+It stops someone casually forwarded a bare link. That is all it does.
+
 > **Unlinked is not private.** The repo is public, so anyone browsing
 > github.com/cl61reb/cl61reb.github.io can see `family/` and every data file in
 > it, and `robots.txt` is a request that well-behaved crawlers honour rather
