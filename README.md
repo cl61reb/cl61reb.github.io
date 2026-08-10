@@ -50,19 +50,43 @@ missing entries are, since those are the ones worth fixing.
   spreadsheet's "Data" tab) and its earlier output `data/schedule-ground-truth.json`
   are kept for reference but are no longer used.
 
-## Pages
+## Site layout
 
-`index.html` is a menu listing every report, with each card showing that
-report's headline split and gap count read live from its own data — so it
-doubles as a dashboard.
+The site is two separate things sharing one repo:
+
+- **`/`** — a blog. `index.html` renders its post list from `assets/posts.js`;
+  posts live in `posts/`, and `posts/_template.html` is the starting shape.
+  Add a post by writing the HTML and adding one entry to the registry.
+- **`/family/`** — the custody and childcare reports. **Deliberately not linked
+  from the blog**, reachable only by knowing the URL.
+
+Nothing is indexable: every page carries
+`<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">` and
+`robots.txt` disallows everything.
+
+> **Unlinked is not private.** The repo is public, so anyone browsing
+> github.com/cl61reb/cl61reb.github.io can see `family/` and every data file in
+> it, and `robots.txt` is a request that well-behaved crawlers honour rather
+> than an access control. Anyone with the URL can read the reports. Real
+> privacy needs either a private repo (GitHub Pages needs a paid plan to
+> publish from one) or a host with password protection, such as Cloudflare
+> Pages or Netlify.
+
+`family/index.html` is a menu of the reports, each card showing that report's
+headline figures read live from its own data — so it doubles as a dashboard.
 
 | Page | Range | Data |
 |---|---|---|
-| `index.html` | — | menu, reads all of the below |
-| `year-to-date.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
-| `month.html` | the **current** calendar month | `data/month-data.json`, `data/month-exceptions.json` |
-| `forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
-| `childcare.html` | Sept 2026 → end of the month **9 months out** | `data/childcare-data.json` |
+| `index.html` | — | blog home, reads `assets/posts.js` |
+| `family/index.html` | — | report menu, reads all of the below |
+| `family/year-to-date.html` | Jan 1 → end of the **previous** month | `data/custody-data.json`, `data/exceptions.json` |
+| `family/month.html` | the **current** calendar month | `data/month-data.json`, `data/month-exceptions.json` |
+| `family/forecast.html` | rolling 12 months from the **first day of next month** | `data/forecast-data.json`, `data/forecast-exceptions.json` |
+| `family/childcare.html` | Sept 2026 → end of the month **9 months out** | `data/childcare-data.json` |
+
+Generated data stays at the repo root in `data/`, next to `scripts/`, so the
+report pages reference it as `../data/…`. The refresh pipeline is unaffected by
+the page move.
 
 The report windows are contiguous and don't overlap: year-to-date stops where
 the current month begins, and the forecast starts where it ends.

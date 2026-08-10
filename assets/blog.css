@@ -1,0 +1,20 @@
+/* Blog home. Leans on report.css for the colour tokens and base type. */
+.wrap-blog { max-width: 680px; }
+.blog-header { padding-bottom: 8px; border-bottom: 1px solid var(--gridline); }
+.blog-header h1 { font-size: 1.75rem; margin: 0 0 4px; }
+.blog-tagline { margin: 0; color: var(--text-secondary); font-size: 0.95rem; }
+
+.post-item { padding: 26px 0; border-bottom: 1px solid var(--gridline); }
+.post-item:last-child { border-bottom: none; }
+.post-item h2 { font-size: 1.2rem; margin: 0 0 4px; }
+.post-item h2 a { color: var(--text-primary); text-decoration: none; }
+.post-item h2 a:hover { color: var(--series-claire); }
+.post-date { margin: 0; color: var(--text-muted); font-size: 0.82rem; }
+.post-summary { margin: 8px 0 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; }
+
+/* A post page */
+.post-body { font-size: 1rem; line-height: 1.7; color: var(--text-primary); }
+.post-body h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+.post-body p { margin: 0 0 16px; }
+.post-body img { max-width: 100%; height: auto; border-radius: 8px; }
+.post-back { display: inline-block; margin-bottom: 24px; font-size: 0.88rem; }
