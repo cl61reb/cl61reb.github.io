@@ -108,15 +108,29 @@ async function renderSplit() {
     `${REPORT.rangeNote} "Unassigned" = days with no matching calendar event. The exception report falls back to the usual 3-2-2 rotation where the calendar is silent.`;
 
   // Stat tiles
+  //
+  // With a cumulative period on the page there are two total rates, so both
+  // sets of tiles name their period. Without one, the labels stay bare - the
+  // other reports only ever show a single period.
+  const period = cum ? ` · ${REPORT.cumulative.periodLabel}` : "";
   const statRow = document.getElementById("stat-row");
   const tiles = [
-    { label: names.claire, value: `${totals.clairePct}%`, color: "var(--series-claire)" },
-    { label: names.parent2, value: `${totals.parent2Pct}%`, color: "var(--series-mat)" },
+    { label: `${names.claire}${period}`, value: `${totals.clairePct}%`, color: "var(--series-claire)" },
+    { label: `${names.parent2}${period}`, value: `${totals.parent2Pct}%`, color: "var(--series-mat)" },
     { label: `${names.claire} nights`, value: totals.claire, color: "var(--series-claire)" },
     { label: `${names.parent2} nights`, value: totals.parent2, color: "var(--series-mat)" },
   ];
   if (totals.unassigned > 0) {
     tiles.push({ label: "Unassigned days", value: totals.unassigned, color: "var(--series-unassigned)" });
+  }
+  // The cumulative total rate. It is in the table too, but at the far right of
+  // a table that scrolls sideways on a phone, so it needs to be up here.
+  if (cum && cum.final && cum.final.clairePct !== null) {
+    const since = REPORT.cumulative.shortLabel;
+    tiles.push(
+      { label: `${names.claire} · ${since}`, value: `${cum.final.clairePct}%`, color: "var(--series-claire)" },
+      { label: `${names.parent2} · ${since}`, value: `${cum.final.parent2Pct}%`, color: "var(--series-mat)" }
+    );
   }
   for (const t of tiles) {
     const tile = document.createElement("div");

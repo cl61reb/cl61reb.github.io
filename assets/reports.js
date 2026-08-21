@@ -70,6 +70,10 @@ window.REPORTS = [
     cumulative: {
       since: "2026-01",
       label: "Cumulative since 1 Jan 2026",
+      // Tile labels: periodLabel names this report's own range, shortLabel the
+      // cumulative one, so the two total rates can't be mistaken for each other.
+      periodLabel: "next 12 months",
+      shortLabel: "since 1 Jan",
       priorUrls: ["../data/custody-data.json", "../data/month-data.json"],
     },
     rangeNote:
