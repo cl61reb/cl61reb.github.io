@@ -134,6 +134,18 @@
   .group-start { border-left: 1px solid var(--border); }
   /* Wide tables scroll inside the card rather than stretching the page. */
   .table-scroll { overflow-x: auto; }
+  /* Carry-over rows: set apart from the report's own total above them. */
+  .carry-row td { color: var(--text-secondary); }
+  .carry-row td:first-child { font-style: italic; }
+  .carry-total td {
+    font-weight: 700;
+    border-top: 2px solid var(--border);
+    border-bottom: none;
+  }
+  .carry-over-note {
+    margin: 14px 0 0;
+    font-size: 0.95rem;
+  }
   footer {
     margin-top: 32px;
     color: var(--text-muted);

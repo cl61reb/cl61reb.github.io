@@ -1,0 +1,99 @@
+{
+  "static": true,
+  "source": "schedule.01062026.xlsx, 'Data' tab - the agreed schedule spreadsheet",
+  "note": "Fixed history. Not produced by scripts/refresh-all.mjs and not derived from the joint Google Calendar - re-run scripts/extract-2025-from-spreadsheet.py only if the spreadsheet itself is corrected.",
+  "rangeStart": "2025-05-01",
+  "rangeEnd": "2026-01-01",
+  "names": {
+    "claire": "Claire",
+    "parent2": "Mat"
+  },
+  "months": [
+    {
+      "month": "2025-05",
+      "claire": 16,
+      "parent2": 15,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 51.6,
+      "parent2Pct": 48.4
+    },
+    {
+      "month": "2025-06",
+      "claire": 14,
+      "parent2": 16,
+      "unassigned": 0,
+      "totalDays": 30,
+      "clairePct": 46.7,
+      "parent2Pct": 53.3
+    },
+    {
+      "month": "2025-07",
+      "claire": 18,
+      "parent2": 13,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 58.1,
+      "parent2Pct": 41.9
+    },
+    {
+      "month": "2025-08",
+      "claire": 15,
+      "parent2": 16,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 48.4,
+      "parent2Pct": 51.6
+    },
+    {
+      "month": "2025-09",
+      "claire": 17,
+      "parent2": 13,
+      "unassigned": 0,
+      "totalDays": 30,
+      "clairePct": 56.7,
+      "parent2Pct": 43.3
+    },
+    {
+      "month": "2025-10",
+      "claire": 15,
+      "parent2": 16,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 48.4,
+      "parent2Pct": 51.6
+    },
+    {
+      "month": "2025-11",
+      "claire": 16,
+      "parent2": 14,
+      "unassigned": 0,
+      "totalDays": 30,
+      "clairePct": 53.3,
+      "parent2Pct": 46.7
+    },
+    {
+      "month": "2025-12",
+      "claire": 17,
+      "parent2": 14,
+      "unassigned": 0,
+      "totalDays": 31,
+      "clairePct": 54.8,
+      "parent2Pct": 45.2
+    }
+  ],
+  "totals": {
+    "claire": 128,
+    "parent2": 117,
+    "unassigned": 0,
+    "clairePct": 52.2,
+    "parent2Pct": 47.8
+  },
+  "carryOver": {
+    "owner": "claire",
+    "ownerName": "Claire",
+    "nights": 11,
+    "claire": 128,
+    "parent2": 117
+  }
+}

@@ -64,7 +64,8 @@ async function renderCard(report) {
     if (report.kind === "cost") return await renderCostFigures(report, figures);
     const [data, exceptions] = await Promise.all([
       fetchJson(report.dataUrl),
-      fetchJson(report.exceptionsUrl).catch(() => null),
+      // A report with no calendar behind it has no exception file to fetch.
+      report.exceptionsUrl ? fetchJson(report.exceptionsUrl).catch(() => null) : null,
     ]);
     const t = data.totals;
     const gapDays = exceptions && exceptions.summary ? exceptions.summary.gapDays : 0;
@@ -80,7 +81,9 @@ async function renderCard(report) {
         <span style="width:${t.parent2Pct}%;background:var(--series-mat)"></span>
       </div>
       ${
-        gapDays > 0
+        report.menuFlag
+          ? `<div class="menu-flag">${report.menuFlag}</div>`
+          : gapDays > 0
           ? `<div class="menu-flag menu-flag-warn">${gapDays} night${gapDays === 1 ? "" : "s"} with no calendar entry</div>`
           : `<div class="menu-flag">Every day has a calendar entry</div>`
       }`;

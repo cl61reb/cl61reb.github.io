@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>Custody Split Tracker — 2025</title>
+<script src="../assets/gate.js"></script>
+<link rel="stylesheet" href="../assets/report.css" />
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Custody Split Tracker</h1>
+    <p id="subtitle">Loading…</p>
+    <p class="nav"></p>
+  </header>
+
+  <div class="stat-row" id="stat-row"></div>
+
+  <div class="card">
+    <div class="legend" id="legend"></div>
+    <div id="chart-container">
+      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Monthly custody split, May to December 2025"></svg>
+      <div id="tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="data-table">
+      <thead>
+        <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p class="carry-over-note" id="carry-over-note" hidden></p>
+  </div>
+
+  <!--
+    No exception report and no night-by-night table: this period predates the
+    joint calendar's custody entries, so there is nothing to find gaps in and
+    no rotation baseline to compare against. The renderer skips both sections
+    because the registry entry sets no exceptionsUrl or nightsUrl.
+  -->
+
+  <footer id="footer"></footer>
+</div>
+
+<script src="../assets/reports.js"></script>
+<script>window.REPORT_ID = "2025";</script>
+<script src="../assets/report.js"></script>
+</body>
+</html>

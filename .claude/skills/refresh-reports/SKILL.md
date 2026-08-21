@@ -95,4 +95,11 @@ failed, say so plainly rather than glossing over it.
 - Add entries to `data/corrections.json`. It is bounded by
   `validBefore: 2026-08-01`; the spreadsheet behind it is not valid on or
   after that date, and the loader drops anything that is.
+- Touch `data/2025-data.json`. The 2025 report is fixed history taken from
+  the schedule spreadsheet, not the calendar, so nothing in a refresh can
+  regenerate it — `refresh-all.mjs` prints it as `static` and leaves it
+  alone. It changes only by re-running
+  `scripts/extract-2025-from-spreadsheet.py` against a corrected
+  spreadsheet. The year-to-date report reads its carry-over figure, so
+  altering it silently moves the numbers on another page.
 - Write to the user's Google Calendar. Read only.

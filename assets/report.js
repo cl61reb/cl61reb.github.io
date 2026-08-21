@@ -102,6 +102,9 @@ async function renderSplit() {
       )
     : null;
 
+  // An earlier period's closing imbalance, carried into this report.
+  const carry = REPORT.carryOver ? (await fetchJson(REPORT.carryOver.url)).carryOver : null;
+
   document.getElementById("subtitle").textContent =
     `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("footer").textContent =
@@ -114,12 +117,22 @@ async function renderSplit() {
   // other reports only ever show a single period.
   const period = cum ? ` · ${REPORT.cumulative.periodLabel}` : "";
   const statRow = document.getElementById("stat-row");
-  const tiles = [
+  const tiles = [];
+  // The carry over leads, because it is the number the rest of the page has to
+  // be read against - 50/50 for the year still leaves someone ahead overall.
+  if (carry) {
+    tiles.push({
+      label: REPORT.carryOver.label,
+      value: `${carry.ownerName} +${carry.nights}`,
+      color: ownerColor(carry.owner),
+    });
+  }
+  tiles.push(
     { label: `${names.claire}${period}`, value: `${totals.clairePct}%`, color: "var(--series-claire)" },
     { label: `${names.parent2}${period}`, value: `${totals.parent2Pct}%`, color: "var(--series-mat)" },
     { label: `${names.claire} nights`, value: totals.claire, color: "var(--series-claire)" },
-    { label: `${names.parent2} nights`, value: totals.parent2, color: "var(--series-mat)" },
-  ];
+    { label: `${names.parent2} nights`, value: totals.parent2, color: "var(--series-mat)" }
+  );
   if (totals.unassigned > 0) {
     tiles.push({ label: "Unassigned days", value: totals.unassigned, color: "var(--series-unassigned)" });
   }
@@ -231,7 +244,39 @@ async function renderSplit() {
       <td>Total</td><td>${totals.claire}</td><td>${totals.parent2}</td>
       <td>${totals.unassigned}</td><td>${totals.clairePct}</td><td>${totals.parent2Pct}</td>
       ${cumCells(cum ? cum.final : null)}
-    </tr>`;
+    </tr>` +
+    // Carry over sits below this report's own total, then a combined total, so
+    // the report's figures stay readable on their own terms and the carried
+    // position is clearly a separate line rather than folded into them.
+    (carry
+      ? (() => {
+          const c = totals.claire + carry.claire;
+          const p = totals.parent2 + carry.parent2;
+          const t = c + p;
+          const pct = (n) => Math.round((n * 1000) / t) / 10;
+          return `<tr class="carry-row">
+              <td>${REPORT.carryOver.rowLabel}</td>
+              <td>${carry.claire}</td><td>${carry.parent2}</td>
+              <td>–</td><td>–</td><td>–</td>${cumCells(null)}
+            </tr>
+            <tr class="carry-total">
+              <td>${REPORT.carryOver.totalLabel}</td>
+              <td>${c}</td><td>${p}</td>
+              <td>${totals.unassigned}</td><td>${pct(c)}</td><td>${pct(p)}</td>${cumCells(null)}
+            </tr>`;
+        })()
+      : "");
+
+  // A report that IS the carry over (rather than one receiving it) states the
+  // closing position in bold at the foot of the page.
+  const coNote = document.getElementById("carry-over-note");
+  if (coNote && data.carryOver) {
+    const co = data.carryOver;
+    coNote.innerHTML =
+      `<b>Carry over into 2026: ${co.ownerName} is ${co.nights} night${co.nights === 1 ? "" : "s"} ahead` +
+      ` (${names.claire} ${co.claire}, ${names.parent2} ${co.parent2}).</b>`;
+    coNote.hidden = false;
+  }
 
   // The cumulative columns span three reports, so say plainly what they add up
   // and flag it if a month between the start date and here is missing.
@@ -248,6 +293,8 @@ async function renderSplit() {
 }
 
 async function renderExceptions() {
+  // The 2025 report has no calendar behind it, so no gaps to find.
+  if (!REPORT.exceptionsUrl) return;
   const data = await fetchJson(REPORT.exceptionsUrl);
   const { summary, gaps } = data;
 

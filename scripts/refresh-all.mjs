@@ -132,6 +132,12 @@ if (shortfall.length) {
 
 // --- custody reports --------------------------------------------------------
 
+// data/2025-data.json is deliberately absent from this list. It is fixed
+// history taken from the schedule spreadsheet, not from the joint calendar,
+// so there is nothing here that could regenerate it — see
+// scripts/extract-2025-from-spreadsheet.py. Do not add it.
+const STATIC_REPORTS = ["2025-data.json"];
+
 const custody = [
   // label, range key, rotation, split, exceptions, nightly (optional), ambiguity (optional)
   ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null, null],
@@ -199,9 +205,16 @@ for (const [k, v] of Object.entries(ranges)) {
 }
 if (schoolNote) console.log(`\nschool calendar: ${schoolNote}`);
 
+for (const f of STATIC_REPORTS) {
+  results.push({ label: "2025 (fixed history)", outFile: f, status: "static — left untouched" });
+}
+
 console.log("\nreports");
 for (const r of results) {
-  const mark = r.status === "ok" ? "  ok  " : r.status.startsWith("skipped") ? "  --  " : "  !!  ";
+  const mark =
+    r.status === "ok" ? "  ok  "
+    : r.status.startsWith("skipped") || r.status.startsWith("static") ? "  --  "
+    : "  !!  ";
   console.log(`${mark}${r.label.padEnd(28)} ${r.outFile}${r.detail ? `  (${r.detail})` : ""}`);
 }
 
