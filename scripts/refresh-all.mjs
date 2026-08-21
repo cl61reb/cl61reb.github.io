@@ -36,6 +36,7 @@ const DATA = join(REPO, "data");
 const SCHOOL_ICS_URL = "https://allsaintsttl.greenhousecms.co.uk/ical.ics";
 const CHILDCARE_START = "2026-09-01"; // start of the school year this report covers
 const CHILDCARE_MONTHS_AHEAD = 9;
+const YEAR_REPORT = 2026; // the named calendar-year report (see ranges.year)
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
@@ -69,6 +70,17 @@ const ranges = {
   month: { start: thisMonth, end: shiftMonths(thisMonth, 1) },
   forecast: { start: shiftMonths(thisMonth, 1), end: shiftMonths(thisMonth, 13) },
   childcare: { start: CHILDCARE_START, end: shiftMonths(thisMonth, CHILDCARE_MONTHS_AHEAD + 1) },
+  // A whole named calendar year, pinned rather than derived from today. It
+  // overlaps the three windows above by design: it is a different view of the
+  // same nights (settled ones plus the rest of the year as planned), not part
+  // of the tiling they do.
+  //
+  // Pinned, so this report can never be silently relabelled: in January the
+  // events pull starts at the new year and would no longer cover 2026, and
+  // rather than write a year of "unassigned" the runner skips it (see
+  // yearCovered below) and leaves the last good data in place. To add 2027,
+  // add its year here and a registry entry - do not repoint this one.
+  year: { start: `${YEAR_REPORT}-01-01`, end: `${YEAR_REPORT + 1}-01-01` },
 };
 
 // The custody windows tile: no gaps, no double counting.
@@ -98,6 +110,11 @@ const needed = { from: ranges.ytd.start, to: ranges.forecast.end };
 const shortfall = [];
 if (covered.from > needed.from) shortfall.push(`starts ${covered.from}, need ${needed.from}`);
 if (covered.to < needed.to) shortfall.push(`ends ${covered.to}, need ${needed.to}`);
+
+// The pinned year is checked separately: it is not part of the tiling, so a
+// pull that no longer reaches back to it should skip that one report rather
+// than fail the whole refresh.
+const yearCovered = covered.from <= ranges.year.start && covered.to >= ranges.year.end;
 
 // --- runner -----------------------------------------------------------------
 
@@ -140,6 +157,7 @@ const STATIC_REPORTS = ["2025-data.json"];
 
 const custody = [
   // label, range key, rotation, split, exceptions, nightly (optional), ambiguity (optional)
+  [`${YEAR_REPORT}`, "year", `${YEAR_REPORT}-usual-schedule.json`, `${YEAR_REPORT}-data.json`, `${YEAR_REPORT}-exceptions.json`, null, null],
   ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null, null],
   ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json", "month-nights.json", null],
   ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json", "forecast-nights.json", "forecast-ambiguity.json"],
@@ -147,6 +165,15 @@ const custody = [
 
 let ok = true;
 for (const [label, key, usualFile, dataFile, excFile, nightsFile, ambFile] of custody) {
+  if (key === "year" && !yearCovered) {
+    results.push({
+      label: `${label} · skipped`,
+      outFile: dataFile,
+      status: "SKIPPED",
+      detail: `events cover ${covered.from}..${covered.to}, not all of ${ranges.year.start}..${ranges.year.end} — existing data left untouched`,
+    });
+    continue;
+  }
   const { start, end } = ranges[key];
   ok = run(`${label} · rotation`, usualFile, "generate-usual-schedule.mjs", [start, end]) && ok;
   ok = run(`${label} · split`, dataFile, "compute-custody-split.mjs", [eventsPath, start, end]) && ok;
@@ -221,6 +248,7 @@ for (const r of results) {
 if (!dryRun) {
   console.log("\nheadlines");
   for (const [label, file] of [
+    [`${YEAR_REPORT} (full year)`, `${YEAR_REPORT}-data.json`],
     ["Year to date", "custody-data.json"],
     ["This month", "month-data.json"],
     ["Next 12 months", "forecast-data.json"],

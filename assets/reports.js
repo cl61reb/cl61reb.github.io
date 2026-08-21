@@ -40,6 +40,24 @@ window.REPORTS = [
   },
   {
     kind: "custody",
+    id: "2026",
+    href: "2026.html",
+    title: "2026",
+    blurb: "The whole of 2026 from the joint calendar — settled months plus the rest of the year as it currently stands. Refreshed with everything else.",
+    dataUrl: "../data/2026-data.json",
+    exceptionsUrl: "../data/2026-exceptions.json",
+    usualScheduleUrl: "../data/2026-usual-schedule.json",
+    carryOver: {
+      url: "../data/2025-data.json",
+      label: "2025 carry over",
+      rowLabel: "+ 2025 carry over",
+      totalLabel: "Total incl. 2025 carry over",
+    },
+    rangeNote:
+      'Computed from the "Both of us" Google Calendar, covering all of 2026. Months that have already happened are settled; the rest of the year is what the calendar currently plans, so it moves as entries change.',
+  },
+  {
+    kind: "custody",
     id: "ytd",
     href: "year-to-date.html",
     title: "Year to date",

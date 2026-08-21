@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>Custody Split Tracker — 2026</title>
+<script src="../assets/gate.js"></script>
+<link rel="stylesheet" href="../assets/report.css" />
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Custody Split Tracker</h1>
+    <p id="subtitle">Loading…</p>
+    <p class="nav"></p>
+  </header>
+
+  <div class="stat-row" id="stat-row"></div>
+
+  <div class="card">
+    <div class="legend" id="legend"></div>
+    <div id="chart-container">
+      <svg id="chart" viewBox="0 0 860 320" role="img" aria-label="Monthly custody split, 2026"></svg>
+      <div id="tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="data-table">
+      <thead>
+        <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title" id="exceptions">Exception report</h2>
+  <div class="card">
+    <p class="legend-note" style="margin-top:0;">
+      Dates with no matching calendar event, with who would normally have the
+      kids based on the <b>usual 3-2-2 rotation</b> — Fri+Sat with one parent,
+      Sun+Mon+Tue with the other, Wed+Thu back with the first, swapping each
+      week (see <code>scripts/usual-schedule.mjs</code>).
+      Click "Add to calendar" to open a prefilled Google Calendar event -
+      double-check the calendar picker is set to "Both of us" before saving.
+    </p>
+  </div>
+
+  <div class="stat-row" id="exception-stat-row"></div>
+
+  <div class="card">
+    <table id="gap-table">
+      <thead><tr><th style="text-align:left">Dates</th><th style="text-align:left">Nights</th><th style="text-align:left">Usually</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script src="../assets/reports.js"></script>
+<script>window.REPORT_ID = "2026";</script>
+<script src="../assets/report.js"></script>
+</body>
+</html>
