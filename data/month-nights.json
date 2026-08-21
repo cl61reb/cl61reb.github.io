@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T01:23:11.222Z",
+  "generatedAt": "2026-08-21T20:23:35.878Z",
   "rangeStart": "2026-08-01",
   "rangeEnd": "2026-09-01",
   "names": {
@@ -9,21 +9,22 @@
   "summary": {
     "nights": 31,
     "actual": {
-      "claire": 18,
-      "parent2": 13
+      "claire": 19,
+      "parent2": 12
     },
     "usual": {
       "claire": 16,
       "parent2": 15
     },
-    "matching": 29,
+    "matching": 28,
     "swapped": 0,
     "unassigned": 0,
     "unswapped": {
-      "count": 2,
+      "count": 3,
       "owner": "claire",
       "dates": [
         "2026-08-09",
+        "2026-08-10",
         "2026-08-23"
       ]
     }
@@ -82,13 +83,14 @@
       "actual": "claire",
       "usual": "parent2",
       "status": "unswapped",
-      "note": "Claire away with children -Mat drop off for 9am Friday, Claire drop off approx 4pm on Monday "
+      "note": "Claire away with children -Mat drop off for 9am Friday, Claire drop off approx 4pm on Monday - no planned swap"
     },
     {
       "date": "2026-08-10",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "unswapped",
+      "note": "Claire away with children -Mat drop off for 9am Friday, Claire drop off approx 4pm on Monday - no planned swap"
     },
     {
       "date": "2026-08-11",
@@ -167,7 +169,7 @@
       "actual": "claire",
       "usual": "parent2",
       "status": "unswapped",
-      "note": "Claire’s nights"
+      "note": "Claire’s nights - no planned swap"
     },
     {
       "date": "2026-08-24",

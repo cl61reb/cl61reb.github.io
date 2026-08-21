@@ -1,13 +1,22 @@
 {
-  "generatedAt": "2026-08-10T01:23:11.442Z",
+  "generatedAt": "2026-08-21T20:23:36.084Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-09-01",
   "summary": {
     "rangeStart": "2026-09-01",
     "rangeEnd": "2027-09-01",
     "totalDays": 365,
-    "gapDays": 0,
-    "gapRuns": 0
+    "gapDays": 1,
+    "gapRuns": 1
   },
-  "gaps": []
+  "gaps": [
+    {
+      "startDate": "2026-11-22",
+      "endDateExclusive": "2026-11-23",
+      "owner": "claire",
+      "nights": 1,
+      "ownerLabel": "Claire",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Claire%E2%80%99s+nights&dates=20261122%2F20261123&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T01:23:11.597Z",
+  "generatedAt": "2026-08-21T20:23:36.213Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-09-01",
   "names": {
@@ -8,8 +8,87 @@
   },
   "summary": {
     "daysChecked": 365,
-    "conflictDays": 0,
-    "conflictRuns": 0
+    "conflictDays": 3,
+    "conflictRuns": 3
   },
-  "conflicts": []
+  "conflicts": [
+    {
+      "startDate": "2026-11-20",
+      "endDateExclusive": "2026-11-21",
+      "days": 1,
+      "resolvedTo": "parent2",
+      "resolvedToName": "Mat",
+      "resolvedBy": "Mats Nights",
+      "competing": [
+        {
+          "owner": "claire",
+          "summary": "Claire’s nights with the kids",
+          "updated": "2026-08-09T08:59:53Z",
+          "start": "2026-11-18",
+          "end": "2026-11-21",
+          "ownerName": "Claire"
+        },
+        {
+          "owner": "parent2",
+          "summary": "Mats Nights",
+          "updated": "2026-08-21T20:12:52Z",
+          "start": "2026-11-20",
+          "end": "2026-11-22",
+          "ownerName": "Mat"
+        }
+      ]
+    },
+    {
+      "startDate": "2026-12-02",
+      "endDateExclusive": "2026-12-03",
+      "days": 1,
+      "resolvedTo": "parent2",
+      "resolvedToName": "Mat",
+      "resolvedBy": "Mats nights",
+      "competing": [
+        {
+          "owner": "claire",
+          "summary": "Claire’s nights with the kids",
+          "updated": "2026-08-09T08:59:53Z",
+          "start": "2026-12-02",
+          "end": "2026-12-04",
+          "ownerName": "Claire"
+        },
+        {
+          "owner": "parent2",
+          "summary": "Mats nights",
+          "updated": "2026-08-21T20:14:43Z",
+          "start": "2026-11-29",
+          "end": "2026-12-03",
+          "ownerName": "Mat"
+        }
+      ]
+    },
+    {
+      "startDate": "2026-12-05",
+      "endDateExclusive": "2026-12-06",
+      "days": 1,
+      "resolvedTo": "parent2",
+      "resolvedToName": "Mat",
+      "resolvedBy": "Mats night Friday drop off at 4pm Saturday",
+      "competing": [
+        {
+          "owner": "claire",
+          "summary": "Claires nights with the kids",
+          "updated": "2026-08-09T09:02:57Z",
+          "start": "2026-12-05",
+          "end": "2026-12-09",
+          "ownerName": "Claire"
+        },
+        {
+          "owner": "parent2",
+          "summary": "Mats night Friday drop off at 4pm Saturday",
+          "updated": "2026-08-21T20:12:52Z",
+          "start": "2026-12-04",
+          "end": "2026-12-06",
+          "ownerName": "Mat"
+        }
+      ]
+    }
+  ]
 }
