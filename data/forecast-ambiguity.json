@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T21:30:13.101Z",
+  "generatedAt": "2026-08-21T21:52:51.061Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-09-01",
   "names": {
@@ -8,35 +8,8 @@
   },
   "summary": {
     "daysChecked": 365,
-    "conflictDays": 1,
-    "conflictRuns": 1
+    "conflictDays": 0,
+    "conflictRuns": 0
   },
-  "conflicts": [
-    {
-      "startDate": "2026-12-02",
-      "endDateExclusive": "2026-12-03",
-      "days": 1,
-      "resolvedTo": "parent2",
-      "resolvedToName": "Mat",
-      "resolvedBy": "Mats nights",
-      "competing": [
-        {
-          "owner": "claire",
-          "summary": "Claire’s nights with the kids",
-          "updated": "2026-08-09T08:59:53Z",
-          "start": "2026-12-02",
-          "end": "2026-12-04",
-          "ownerName": "Claire"
-        },
-        {
-          "owner": "parent2",
-          "summary": "Mats nights",
-          "updated": "2026-08-21T20:14:43Z",
-          "start": "2026-11-29",
-          "end": "2026-12-03",
-          "ownerName": "Mat"
-        }
-      ]
-    }
-  ]
+  "conflicts": []
 }
