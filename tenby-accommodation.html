@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>Tenby Accommodation Finder — Ironman Wales</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --border: rgba(11,11,11,0.10);
+    --accent: #2a78d6;
+    --ok: #1f8a4c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 28px 18px 64px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .tagline { margin: 0 0 20px; color: var(--text-secondary); font-size: 0.95rem; }
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .card h2 { font-size: 1rem; margin: 0 0 12px; }
+  label { display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 3px; }
+  .field { min-width: 130px; flex: 1; }
+  .fields { display: flex; flex-wrap: wrap; gap: 12px; }
+  input, select {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    background: #fff;
+  }
+  .note { font-size: 0.82rem; color: var(--text-muted); margin-top: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; }
+  td.type { color: var(--text-muted); font-size: 0.82rem; white-space: nowrap; }
+  a.go {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-right: 6px;
+  }
+  a.go.secondary { background: #e7e6e0; color: var(--text-primary); }
+  a.plain { color: var(--accent); }
+  .checked-row { opacity: 0.55; }
+  .checked-row td.name::after { content: " ✓"; color: var(--ok); }
+  .chk { transform: scale(1.1); cursor: pointer; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill {
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  footer { color: var(--text-muted); font-size: 0.8rem; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tenby Accommodation Finder</h1>
+  <p class="tagline">Ironman Wales weekend — 12–13 Sept, within ~4 miles of Tenby town centre. Availability is going fast, so this just opens live, pre-filled searches on every relevant site rather than trying to scrape them (most block that, and results would be stale the moment you loaded the page anyway).</p>
+
+  <div class="card">
+    <h2>Search parameters</h2>
+    <div class="fields">
+      <div class="field">
+        <label for="loc">Location</label>
+        <input id="loc" value="Tenby, Wales, United Kingdom" />
+      </div>
+      <div class="field">
+        <label for="checkin">Check-in</label>
+        <input id="checkin" type="date" value="2026-09-12" />
+      </div>
+      <div class="field">
+        <label for="checkout">Check-out</label>
+        <input id="checkout" type="date" value="2026-09-13" />
+      </div>
+      <div class="field">
+        <label for="adults">Adults</label>
+        <input id="adults" type="number" min="1" value="2" />
+      </div>
+    </div>
+    <div class="pill-row" id="nearby"></div>
+    <p class="note">Tenby itself will be the first to sell out — everyone doing the race thinks of it first. If nothing's left, the pills above swap the location to villages that are still inside or just outside a 4-mile radius: Penally (~1.5mi), Saundersfoot (~3mi), St Florence / Gumfreston / New Hedges (~2–4mi), Kilgetty / Narberth / Manorbier / Pembroke (~5–8mi, worth it if you have a car).</p>
+  </div>
+
+  <div class="card">
+    <h2>Live search — updates as you change the fields above</h2>
+    <table>
+      <thead><tr><th></th><th>Site</th><th class="type">Type</th><th></th></tr></thead>
+      <tbody id="live-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Welsh cottage &amp; caravan agencies (Pembrokeshire specialists)</h2>
+    <p class="note">These list a large share of the private cottages/caravans around Tenby that never appear on Booking.com or Airbnb. They don't have reliable URL-based date search, so each row opens the site's Tenby page (or a Google site-search as a fallback) — search "Tenby" and your dates once you're in.</p>
+    <table>
+      <thead><tr><th></th><th>Site</th><th class="type">Type</th><th></th></tr></thead>
+      <tbody id="static-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Also worth a direct check</h2>
+    <table>
+      <thead><tr><th></th><th>Site</th><th class="type">Type</th><th></th></tr></thead>
+      <tbody id="extra-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Tips for a scarce weekend</h2>
+    <ul class="note" style="padding-left: 18px;">
+      <li>On Booking.com, tick "I'm flexible" / search ±1 day — some hosts blocked the 12th–13th but left the 11th or 14th open, and a 3-night minimum stay covering the race weekend is common.</li>
+      <li>Cancellations spike in the final 2–3 weeks before a sold-out event — worth rechecking daily, ideally first thing in the morning.</li>
+      <li>The <a class="plain" href="https://www.ironman.com/im-wales-travel" target="_blank" rel="noopener">official Ironman Wales travel page</a> lists partner hotels who hold race-weekend blocks separately from public inventory.</li>
+      <li>Camping/caravan sites (Kiln Park, Trevayne Farm, Wood Park) tend to have more late availability than cottages — good fallback if you don't mind roughing it.</li>
+    </ul>
+  </div>
+
+  <footer>Checkboxes save locally in this browser only (nothing is sent anywhere) so you can track what you've already looked at.</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const STORAGE_KEY = 'tenby-accom-checked';
+
+function getChecked() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function setChecked(key, val) {
+  const c = getChecked();
+  if (val) c[key] = Date.now(); else delete c[key];
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+
+const NEARBY = [
+  'Tenby, Wales, United Kingdom',
+  'Penally, Wales, United Kingdom',
+  'Saundersfoot, Wales, United Kingdom',
+  'St Florence, Wales, United Kingdom',
+  'Kilgetty, Wales, United Kingdom',
+  'Narberth, Wales, United Kingdom',
+  'Manorbier, Wales, United Kingdom',
+  'Pembroke, Wales, United Kingdom'
+];
+
+function renderPills() {
+  const wrap = $('nearby');
+  wrap.innerHTML = '';
+  NEARBY.forEach(place => {
+    const p = document.createElement('span');
+    p.className = 'pill' + (place === $('loc').value ? ' active' : '');
+    p.textContent = place.split(',')[0];
+    p.onclick = () => { $('loc').value = place; render(); };
+    wrap.appendChild(p);
+  });
+}
+
+function liveLinks(loc, checkin, checkout, adults) {
+  const encLoc = encodeURIComponent(loc);
+  return [
+    {
+      key: 'booking',
+      name: 'Booking.com',
+      type: 'Hotels, B&Bs, apartments',
+      url: `https://www.booking.com/searchresults.en-gb.html?ss=${encLoc}&checkin=${checkin}&checkout=${checkout}&group_adults=${adults}&no_rooms=1&group_children=0`
+    },
+    {
+      key: 'airbnb',
+      name: 'Airbnb',
+      type: 'Whole homes, rooms',
+      url: `https://www.airbnb.co.uk/s/${encodeURIComponent(loc.split(',')[0])}--Wales--United-Kingdom/homes?checkin=${checkin}&checkout=${checkout}&adults=${adults}`
+    },
+    {
+      key: 'vrbo',
+      name: 'Vrbo',
+      type: 'Whole homes',
+      url: `https://www.vrbo.com/search?destination=${encLoc}&startDate=${checkin}&endDate=${checkout}&adults=${adults}`
+    },
+    {
+      key: 'expedia',
+      name: 'Expedia',
+      type: 'Hotels',
+      url: `https://www.expedia.co.uk/Hotel-Search?destination=${encLoc}&startDate=${checkin}&endDate=${checkout}&adults=${adults}`
+    },
+    {
+      key: 'tripadvisor',
+      name: 'Tripadvisor',
+      type: 'Hotels (reviews + availability)',
+      url: `https://www.tripadvisor.co.uk/Hotels-g186470-Tenby_Pembrokeshire_Wales-Hotels.html`
+    }
+  ];
+}
+
+const STATIC_SITES = [
+  { key: 'sykes', name: 'Sykes Cottages', type: 'Cottage agency', url: 'https://www.sykescottages.co.uk/cottages/wales/tenby/', fallback: 'sykescottages.co.uk tenby' },
+  { key: 'coastal', name: 'Coastal Cottages of Wales', type: 'Cottage agency (local, Pembrokeshire-based)', url: 'https://www.coastalcottages.co.uk/', fallback: 'coastalcottages.co.uk tenby' },
+  { key: 'hoseasons', name: 'Hoseasons', type: 'Cottages, lodges, caravans', url: 'https://www.hoseasons.co.uk/', fallback: 'hoseasons.co.uk tenby' },
+  { key: 'holidaycottages', name: 'holidaycottages.co.uk', type: 'Cottage agency', url: 'https://www.holidaycottages.co.uk/', fallback: 'holidaycottages.co.uk tenby pembrokeshire' },
+  { key: 'underthethatch', name: 'Under the Thatch', type: 'Independent Welsh cottages', url: 'https://www.underthethatch.co.uk/', fallback: 'underthethatch.co.uk tenby pembrokeshire' },
+  { key: 'walescottages', name: 'Wales Cottage Holidays', type: 'Cottage agency', url: 'https://www.walescottageholidays.co.uk/', fallback: 'walescottageholidays.co.uk tenby' }
+];
+
+const EXTRA_SITES = [
+  { key: 'ironmantravel', name: 'Ironman Wales — official travel page', type: 'Partner hotel blocks', url: 'https://www.ironman.com/im-wales-travel' },
+  { key: 'kilnpark', name: 'Kiln Park Holiday Centre (Haven)', type: 'Caravan / camping', url: 'https://www.haven.com/parks/wales/kiln-park' },
+  { key: 'trevayne', name: 'Trevayne Farm Caravan & Camping', type: 'Camping (Saundersfoot, ~3mi)', url: 'https://www.trevaynefarm.co.uk/' },
+  { key: 'woodpark', name: 'Wood Park Caravans', type: 'Caravan / camping', url: 'https://www.woodpark.co.uk/' },
+  { key: 'laterooms', name: 'LateRooms / Google Hotels', type: 'Last-minute hotel aggregator', url: 'https://www.google.com/travel/hotels/tenby' }
+];
+
+function googleFallback(q) {
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+}
+
+function rowHtml(site, primaryLabel, secondaryUrl, secondaryLabel) {
+  const checked = getChecked();
+  const isChecked = !!checked[site.key];
+  return `
+    <tr class="${isChecked ? 'checked-row' : ''}" data-key="${site.key}">
+      <td><input type="checkbox" class="chk" ${isChecked ? 'checked' : ''} data-key="${site.key}" /></td>
+      <td class="name">${site.name}</td>
+      <td class="type">${site.type}</td>
+      <td>
+        <a class="go" href="${site.url}" target="_blank" rel="noopener">${primaryLabel}</a>
+        ${secondaryUrl ? `<a class="go secondary" href="${secondaryUrl}" target="_blank" rel="noopener">${secondaryLabel}</a>` : ''}
+      </td>
+    </tr>`;
+}
+
+function render() {
+  renderPills();
+  const loc = $('loc').value.trim() || 'Tenby, Wales, United Kingdom';
+  const checkin = $('checkin').value;
+  const checkout = $('checkout').value;
+  const adults = $('adults').value || 2;
+
+  $('live-rows').innerHTML = liveLinks(loc, checkin, checkout, adults)
+    .map(s => rowHtml(s, 'Search')).join('');
+
+  $('static-rows').innerHTML = STATIC_SITES
+    .map(s => rowHtml(s, 'Open site', googleFallback(s.fallback), 'Google it')).join('');
+
+  $('extra-rows').innerHTML = EXTRA_SITES
+    .map(s => rowHtml(s, 'Open')).join('');
+
+  document.querySelectorAll('.chk').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      setChecked(e.target.dataset.key, e.target.checked);
+      render();
+    });
+  });
+}
+
+['loc', 'checkin', 'checkout', 'adults'].forEach(id => {
+  $(id).addEventListener('input', render);
+});
+
+render();
+</script>
+</body>
+</html>
