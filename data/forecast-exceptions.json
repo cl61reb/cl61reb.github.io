@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-08-21T21:52:50.917Z",
-  "rangeStart": "2026-09-01",
-  "rangeEnd": "2027-09-01",
+  "generatedAt": "2026-09-01T08:11:18.576Z",
+  "rangeStart": "2026-10-01",
+  "rangeEnd": "2027-10-01",
   "summary": {
-    "rangeStart": "2026-09-01",
-    "rangeEnd": "2027-09-01",
+    "rangeStart": "2026-10-01",
+    "rangeEnd": "2027-10-01",
     "totalDays": 365,
     "gapDays": 0,
     "gapRuns": 0

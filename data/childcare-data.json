@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-21T21:52:52.231Z",
+  "generatedAt": "2026-09-01T08:11:19.960Z",
   "rangeStart": "2026-09-01",
-  "rangeEnd": "2027-06-01",
+  "rangeEnd": "2027-07-01",
   "rates": {
     "kidsClubDay": 85,
     "afterSchoolDay": 21,
@@ -99,17 +99,26 @@
       "afterSchoolDays": 15,
       "schoolShutDays": 2,
       "needsReview": false
+    },
+    {
+      "month": "2027-06",
+      "cost": 549,
+      "weekdays": 22,
+      "kidsClubDays": 3,
+      "afterSchoolDays": 14,
+      "schoolShutDays": 5,
+      "needsReview": false
     }
   ],
   "totals": {
-    "cost": 3687,
-    "weekdays": 195,
-    "kidsClubDays": 12,
-    "afterSchoolDays": 127,
-    "schoolShutDays": 36,
+    "cost": 4236,
+    "weekdays": 217,
+    "kidsClubDays": 15,
+    "afterSchoolDays": 141,
+    "schoolShutDays": 41,
     "holidayWeeks": 7,
-    "reducedWeeks": 5,
-    "schoolWeeks": 28
+    "reducedWeeks": 6,
+    "schoolWeeks": 31
   },
   "weeks": [
     {
@@ -1910,8 +1919,8 @@
       "weekStart": "2027-05-31",
       "type": "holiday",
       "cost": 255,
-      "costInRange": 0,
-      "daysInRange": 1,
+      "costInRange": 255,
+      "daysInRange": 5,
       "clubShut": false,
       "days": [
         {
@@ -1948,6 +1957,190 @@
           "label": "Half Term Break",
           "charge": 0,
           "basis": "holiday, no club this day"
+        }
+      ],
+      "needsReview": false
+    },
+    {
+      "weekStart": "2027-06-07",
+      "type": "school",
+      "cost": 84,
+      "costInRange": 84,
+      "daysInRange": 5,
+      "clubShut": false,
+      "days": [
+        {
+          "date": "2027-06-07",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-08",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-09",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-10",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-11",
+          "kind": "school",
+          "label": null,
+          "charge": 0,
+          "basis": "school day, no Friday club"
+        }
+      ],
+      "needsReview": false
+    },
+    {
+      "weekStart": "2027-06-14",
+      "type": "school",
+      "cost": 84,
+      "costInRange": 84,
+      "daysInRange": 5,
+      "clubShut": false,
+      "days": [
+        {
+          "date": "2027-06-14",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-15",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-16",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-17",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-18",
+          "kind": "school",
+          "label": null,
+          "charge": 0,
+          "basis": "school day, no Friday club"
+        }
+      ],
+      "needsReview": false
+    },
+    {
+      "weekStart": "2027-06-21",
+      "type": "school",
+      "cost": 84,
+      "costInRange": 84,
+      "daysInRange": 5,
+      "clubShut": false,
+      "days": [
+        {
+          "date": "2027-06-21",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-22",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-23",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-24",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-25",
+          "kind": "school",
+          "label": null,
+          "charge": 0,
+          "basis": "school day, no Friday club"
+        }
+      ],
+      "needsReview": false
+    },
+    {
+      "weekStart": "2027-06-28",
+      "type": "reduced",
+      "cost": 63,
+      "costInRange": 42,
+      "daysInRange": 3,
+      "clubShut": false,
+      "days": [
+        {
+          "date": "2027-06-28",
+          "kind": "inset",
+          "label": "Inset Day",
+          "charge": 0,
+          "basis": "inset day, at home"
+        },
+        {
+          "date": "2027-06-29",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-06-30",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-07-01",
+          "kind": "school",
+          "label": null,
+          "charge": 21,
+          "basis": "after school club"
+        },
+        {
+          "date": "2027-07-02",
+          "kind": "school",
+          "label": null,
+          "charge": 0,
+          "basis": "school day, no Friday club"
         }
       ],
       "needsReview": false

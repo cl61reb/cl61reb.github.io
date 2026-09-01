@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-21T21:52:50.455Z",
+  "generatedAt": "2026-09-01T08:11:17.947Z",
   "rangeStart": "2026-01-01",
-  "rangeEnd": "2026-08-01",
+  "rangeEnd": "2026-09-01",
   "summary": {
     "rangeStart": "2026-01-01",
-    "rangeEnd": "2026-08-01",
-    "totalDays": 212,
+    "rangeEnd": "2026-09-01",
+    "totalDays": 243,
     "gapDays": 0,
     "gapRuns": 0
   },
