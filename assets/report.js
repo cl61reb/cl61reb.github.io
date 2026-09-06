@@ -105,10 +105,17 @@ async function renderSplit() {
   // An earlier period's closing imbalance, carried into this report.
   const carry = REPORT.carryOver ? (await fetchJson(REPORT.carryOver.url)).carryOver : null;
 
+  // A static report has no generatedAt - it is not generated from anything
+  // that moves - so it says what it is rather than rendering an Invalid Date.
+  const provenance = data.static
+    ? "fixed history, from the schedule spreadsheet"
+    : `updated ${new Date(generatedAt).toLocaleString()}`;
   document.getElementById("subtitle").textContent =
-    `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — updated ${new Date(generatedAt).toLocaleString()}`;
+    `${names.claire} vs ${names.parent2} — ${rangeStart} to ${rangeEnd} — ${provenance}`;
   document.getElementById("footer").textContent =
-    `${REPORT.rangeNote} "Unassigned" = days with no matching calendar event. The exception report falls back to the usual 3-2-2 rotation where the calendar is silent.`;
+    data.static
+      ? REPORT.rangeNote
+      : `${REPORT.rangeNote} "Unassigned" = days with no matching calendar event. The exception report falls back to the usual 3-2-2 rotation where the calendar is silent.`;
 
   // Stat tiles
   //
