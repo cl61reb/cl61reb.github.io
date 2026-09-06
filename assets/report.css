@@ -134,6 +134,19 @@
   .group-start { border-left: 1px solid var(--border); }
   /* Wide tables scroll inside the card rather than stretching the page. */
   .table-scroll { overflow-x: auto; }
+  /* On a phone the default cell padding is enough on its own to push the last
+     column out of sight. Tightening it lets the month tables fit whole. */
+  @media (max-width: 480px) {
+    .card { padding: 14px; }
+    th, td { padding: 8px 4px; font-size: 0.85rem; }
+  }
+  /* Heading on a card that holds a second, related table. */
+  .table-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
   /* Carry-over rows: set apart from the report's own total above them. */
   .carry-row td { color: var(--text-secondary); }
   .carry-row td:first-child { font-style: italic; }

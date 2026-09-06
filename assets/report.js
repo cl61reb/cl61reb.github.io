@@ -228,14 +228,6 @@ async function renderSplit() {
   });
 
   // Table
-  const cumCells = (row) =>
-    cum
-      ? `<td class="group-start">${row ? row.claire : "–"}</td>
-         <td>${row ? row.parent2 : "–"}</td>
-         <td>${row && row.clairePct !== null ? row.clairePct : "–"}</td>
-         <td>${row && row.parent2Pct !== null ? row.parent2Pct : "–"}</td>`
-      : "";
-
   document.querySelector("#data-table tbody").innerHTML =
     months
       .map(
@@ -246,14 +238,12 @@ async function renderSplit() {
           <td>${m.unassigned}</td>
           <td>${m.clairePct ?? "–"}</td>
           <td>${m.parent2Pct ?? "–"}</td>
-          ${cumCells(cum ? cum.rows.get(m.month) : null)}
         </tr>`
       )
       .join("") +
     `<tr style="font-weight:600">
       <td>Total</td><td>${totals.claire}</td><td>${totals.parent2}</td>
       <td>${totals.unassigned}</td><td>${totals.clairePct}</td><td>${totals.parent2Pct}</td>
-      ${cumCells(cum ? cum.final : null)}
     </tr>` +
     // Carry over sits below this report's own total, then a combined total, so
     // the report's figures stay readable on their own terms and the carried
@@ -267,15 +257,61 @@ async function renderSplit() {
           return `<tr class="carry-row">
               <td>${REPORT.carryOver.rowLabel}</td>
               <td>${carry.claire}</td><td>${carry.parent2}</td>
-              <td>–</td><td>–</td><td>–</td>${cumCells(null)}
+              <td>–</td><td>–</td><td>–</td>
             </tr>
             <tr class="carry-total">
               <td>${REPORT.carryOver.totalLabel}</td>
               <td>${c}</td><td>${p}</td>
-              <td>${totals.unassigned}</td><td>${pct(c)}</td><td>${pct(p)}</td>${cumCells(null)}
+              <td>${totals.unassigned}</td><td>${pct(c)}</td><td>${pct(p)}</td>
             </tr>`;
         })()
       : "");
+
+  // The cumulative figures get their own table directly beneath, rather than
+  // extra columns on the one above. As columns they doubled the table's width
+  // and on a phone they sat off the right-hand edge behind a horizontal
+  // scroll - present, but not something you would ever find.
+  //
+  // Built here rather than in the page markup so a report opts in purely
+  // through its registry entry, the same way every other section works.
+  if (cum) {
+    const rows = months
+      .map((m) => {
+        const r = cum.rows.get(m.month);
+        return `<tr>
+          <td>${monthLabel(m.month)} ${m.month.slice(0, 4)}</td>
+          <td>${r ? r.claire : "–"}</td>
+          <td>${r ? r.parent2 : "–"}</td>
+          <td>${r && r.clairePct !== null ? r.clairePct : "–"}</td>
+          <td>${r && r.parent2Pct !== null ? r.parent2Pct : "–"}</td>
+        </tr>`;
+      })
+      .join("");
+    const f = cum.final;
+    const totalRow = `<tr style="font-weight:600">
+        <td>Total</td>
+        <td>${f ? f.claire : "–"}</td>
+        <td>${f ? f.parent2 : "–"}</td>
+        <td>${f && f.clairePct !== null ? f.clairePct : "–"}</td>
+        <td>${f && f.parent2Pct !== null ? f.parent2Pct : "–"}</td>
+      </tr>`;
+
+    const section = document.createElement("div");
+    section.className = "card";
+    section.innerHTML = `
+      <h3 class="table-title">${cumConfig.label}</h3>
+      <div class="table-scroll">
+        <table id="cumulative-table">
+          <thead>
+            <tr><th>Month</th><th>${names.claire}</th><th>${names.parent2}</th>
+                <th>${names.claire} %</th><th>${names.parent2} %</th></tr>
+          </thead>
+          <tbody>${rows}${totalRow}</tbody>
+        </table>
+      </div>
+      <p class="note" id="cumulative-note"></p>`;
+    document.getElementById("data-table").closest(".card").insertAdjacentElement("afterend", section);
+  }
 
   // A report that IS the carry over (rather than one receiving it) states the
   // closing position in bold at the foot of the page.

@@ -26,24 +26,19 @@
     </div>
   </div>
 
+  <!--
+    Cumulative figures are rendered as a separate table after this card rather
+    than as extra columns - see the note in family/year-to-date.html.
+  -->
   <div class="card">
     <div class="table-scroll">
       <table id="data-table">
         <thead>
-          <tr class="group-row">
-            <th></th>
-            <th colspan="5">That month</th>
-            <th colspan="4" class="group-start">Cumulative since 1 Jan 2026</th>
-          </tr>
-          <tr>
-            <th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th>
-            <th class="group-start">Claire</th><th>Mat</th><th>Claire %</th><th>Mat %</th>
-          </tr>
+          <tr><th>Month</th><th>Claire</th><th>Mat</th><th>Unassigned</th><th>Claire %</th><th>Mat %</th></tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
-    <p class="note" id="cumulative-note" hidden></p>
   </div>
 
   <h2 class="section-title" id="exceptions">Exception report</h2>
@@ -61,10 +56,12 @@
   <div class="stat-row" id="exception-stat-row"></div>
 
   <div class="card">
-    <table id="gap-table">
-      <thead><tr><th style="text-align:left">Dates</th><th style="text-align:left">Nights</th><th style="text-align:left">Usually</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="gap-table">
+        <thead><tr><th style="text-align:left">Dates</th><th style="text-align:left">Nights</th><th style="text-align:left">Usually</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <p class="empty" id="gap-empty" hidden>No calendar gaps 🎉</p>
   </div>
 
@@ -74,12 +71,14 @@
     <div id="nights-summary"></div>
   </div>
   <div class="card">
-    <table id="nights-table">
-      <thead>
-        <tr><th>Night</th><th>Who has them</th><th>Usual 3-2-2</th><th></th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="nights-table">
+        <thead>
+          <tr><th>Night</th><th>Who has them</th><th>Usual 3-2-2</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <p class="empty" id="nights-empty" hidden>No deviations — every night in the next 12 months follows the rotation 🎉</p>
   </div>
 
@@ -89,12 +88,14 @@
     <div id="ambiguity-summary"></div>
   </div>
   <div class="card">
-    <table id="ambiguity-table">
-      <thead>
-        <tr><th>Dates</th><th>Counted as</th><th>Competing entries</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="ambiguity-table">
+        <thead>
+          <tr><th>Dates</th><th>Counted as</th><th>Competing entries</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <p class="empty" id="ambiguity-empty" hidden>No ambiguous days — no date has both a Claire and a Mat entry 🎉</p>
   </div>
 
