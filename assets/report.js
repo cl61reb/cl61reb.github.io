@@ -122,7 +122,10 @@ async function renderSplit() {
   // With a cumulative period on the page there are two total rates, so both
   // sets of tiles name their period. Without one, the labels stay bare - the
   // other reports only ever show a single period.
-  const period = cum ? ` · ${REPORT.cumulative.periodLabel}` : "";
+  // Only worth naming the period when a second set of totals is on screen to
+  // be told apart from it.
+  const cumTiles = cum && cumConfig.showTiles !== false;
+  const period = cumTiles ? ` · ${cumConfig.periodLabel}` : "";
   const statRow = document.getElementById("stat-row");
   const tiles = [];
   // The carry over leads, because it is the number the rest of the page has to
@@ -145,8 +148,8 @@ async function renderSplit() {
   }
   // The cumulative total rate. It is in the table too, but at the far right of
   // a table that scrolls sideways on a phone, so it needs to be up here.
-  if (cum && cum.final && cum.final.clairePct !== null) {
-    const since = REPORT.cumulative.shortLabel;
+  if (cumTiles && cum.final && cum.final.clairePct !== null) {
+    const since = cumConfig.shortLabel;
     tiles.push(
       { label: `${names.claire} · ${since}`, value: `${cum.final.clairePct}%`, color: "var(--series-claire)" },
       { label: `${names.parent2} · ${since}`, value: `${cum.final.parent2Pct}%`, color: "var(--series-mat)" }
@@ -285,16 +288,18 @@ async function renderSplit() {
     coNote.hidden = false;
   }
 
-  // The cumulative columns span three reports, so say plainly what they add up
-  // and flag it if a month between the start date and here is missing.
+  // Say plainly what the cumulative columns add up - the wording differs by
+  // whether they reach into other reports - and flag it if a month between the
+  // start date and here is missing.
   const cumNote = document.getElementById("cumulative-note");
   if (cumNote && cum) {
+    const joins = cumConfig.priorUrls.length > 0;
     cumNote.textContent = cum.missing.length
       ? `The cumulative columns are INCOMPLETE: no data for ${cum.missing.join(", ")}. ` +
         `Those months are missing from the running total, so the percentages understate the period.`
-      : `The cumulative columns are a running total of every night from 1 January 2026 to the end of that row's month, ` +
-        `combining the year to date and current month reports with this one. The "Total" row is the whole period. ` +
-        `Unassigned nights are excluded from the percentages.`;
+      : `The cumulative columns are a running total of every night from 1 January 2026 to the end of that row's month` +
+        (joins ? `, combining the year to date and current month reports with this one` : "") +
+        `. The "Total" row is the whole period. Unassigned nights are excluded from the percentages.`;
     cumNote.hidden = false;
   }
 }

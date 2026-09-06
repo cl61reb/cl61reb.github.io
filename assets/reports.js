@@ -65,13 +65,15 @@ window.REPORTS = [
     dataUrl: "../data/custody-data.json",
     exceptionsUrl: "../data/exceptions.json",
     usualScheduleUrl: "../data/usual-schedule.json",
-    // Brings the closing imbalance from the 2025 report forward: a headline
-    // tile at the top, and two extra rows under the table's own total.
-    carryOver: {
-      url: "../data/2025-data.json",
-      label: "2025 carry over",
-      rowLabel: "+ 2025 carry over",
-      totalLabel: "Total incl. 2025 carry over",
+    // Running totals within this report's own months - no earlier period is
+    // read in, so no priorUrls and no carry over. showTiles is off because the
+    // cumulative total here IS the report total: a second pair of tiles saying
+    // the same number would only invite the reader to look for a difference.
+    cumulative: {
+      since: "2026-01",
+      label: "Cumulative in 2026",
+      showTiles: false,
+      priorUrls: [],
     },
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering Jan 1 through the end of the previous month (the current, incomplete month is excluded).',
