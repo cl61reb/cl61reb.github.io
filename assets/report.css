@@ -292,6 +292,30 @@
 /* night-by-night table (this month) */
 #nights-table td, #nights-table th { text-align: left; }
 #nights-table td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Heading row separating one month from the next in a multi-month night list. */
+.month-break th {
+  text-align: left;
+  background: var(--surface-2, #f0efec);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  position: sticky;
+  top: 0;
+}
+.month-break-tally {
+  float: right;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+/* The night list is wider than a phone screen, so the heading cell spans past
+   the right-hand edge and a floated tally goes with it. Stack it under the
+   month name instead. Must come after the rule above to win on order. */
+@media (max-width: 480px) {
+  .month-break-tally { float: none; display: block; margin-top: 3px; }
+}
 .row-unswapped { background: rgba(208,59,59,0.06); }
 .badge-unswapped {
   color: #a32020; border-color: rgba(208,59,59,0.45); background: rgba(208,59,59,0.10);

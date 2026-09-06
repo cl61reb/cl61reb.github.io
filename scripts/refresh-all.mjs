@@ -158,7 +158,7 @@ const STATIC_REPORTS = ["2025-data.json"];
 const custody = [
   // label, range key, rotation, split, exceptions, nightly (optional), ambiguity (optional)
   [`${YEAR_REPORT}`, "year", `${YEAR_REPORT}-usual-schedule.json`, `${YEAR_REPORT}-data.json`, `${YEAR_REPORT}-exceptions.json`, null, null],
-  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", null, null],
+  ["Year to date", "ytd", "usual-schedule.json", "custody-data.json", "exceptions.json", "ytd-nights.json", null],
   ["This month", "month", "month-usual-schedule.json", "month-data.json", "month-exceptions.json", "month-nights.json", null],
   ["Next 12 months", "forecast", "forecast-usual-schedule.json", "forecast-data.json", "forecast-exceptions.json", "forecast-nights.json", "forecast-ambiguity.json"],
 ];

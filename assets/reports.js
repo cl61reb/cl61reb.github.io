@@ -75,6 +75,9 @@ window.REPORTS = [
       showTiles: false,
       priorUrls: [],
     },
+    // Every night of the year so far, with a heading row between months.
+    nightsUrl: "../data/ytd-nights.json",
+    nightsMode: "grouped",
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering Jan 1 through the end of the previous month (the current, incomplete month is excluded).',
   },

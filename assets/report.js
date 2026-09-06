@@ -388,7 +388,10 @@ async function renderNights() {
     `<span class="badge"><span class="dot" style="background:${colour(o)}"></span>${label(o)}</span>`;
 
   const deviationsOnly = REPORT.nightsMode === "deviations";
-  const shown = deviationsOnly ? nights.filter((n) => n.status !== "match") : nights;
+  // "grouped" lists every night across a multi-month range, with a heading row
+  // between months carrying that month's own tally - so the day-by-day detail
+  // is all there, but you can still see where one month ends.
+  const grouped = REPORT.nightsMode === "grouped";
 
   const u = summary.unswapped;
   document.getElementById("nights-note").innerHTML = deviationsOnly
@@ -397,6 +400,12 @@ async function renderNights() {
       `parent taking a night and giving one back, so they cancel. A departure with no matching one ` +
       `the other way is flagged as an <b>unswapped extra night</b>. These are plans, so they can ` +
       `still change.`
+    : grouped
+    ? `Every night so far this year, month by month, against who the <b>usual 3-2-2 rotation</b> ` +
+      `would give it to. Departures normally come in pairs — one parent takes a night and gives one ` +
+      `back — so they cancel. A departure with no matching one the other way is an <b>unswapped extra ` +
+      `night</b>; those are paired across the whole period, not within a single month, so a flag can ` +
+      `land in one month for a night taken in another.`
     : `Every night of the month, against who the <b>usual 3-2-2 rotation</b> would give it to. ` +
     `Departures from the rotation normally come in pairs — one parent takes a night and gives one back — ` +
     `so they cancel out. A departure with no matching one the other way is a night gained and not returned, ` +
@@ -413,10 +422,12 @@ async function renderNights() {
         ? `<p class="nights-alert"><b>${u.count} unswapped extra ${u.count === 1 ? "night" : "nights"} for ${label(u.owner)}.</b>
              ${label(u.owner)} has taken ${u.count === 1 ? "a night" : `${u.count} nights`} that the rotation gives to
              ${label(u.owner === "claire" ? "parent2" : "claire")}, without one coming back the other way
-             — which is why the month reads ${summary.actual.claire}/${summary.actual.parent2}
+             — which is why ${grouped ? "the period" : "the month"} reads ${summary.actual.claire}/${summary.actual.parent2}
              rather than ${summary.usual.claire}/${summary.usual.parent2}.</p>`
-        : `<p class="nights-ok">The month balances — every departure from the rotation has a matching one the other way.</p>`
+        : `<p class="nights-ok">${grouped ? "The period balances" : "The month balances"} — every departure from the rotation has a matching one the other way.</p>`
     }`;
+
+  const shown = deviationsOnly ? nights.filter((n) => n.status !== "match") : nights;
 
   const emptyEl = document.getElementById("nights-empty");
   if (emptyEl) {
@@ -424,8 +435,30 @@ async function renderNights() {
     document.getElementById("nights-table").hidden = shown.length === 0;
   }
 
+  // Each month's own tally, for the heading rows in grouped mode.
+  const monthTally = new Map();
+  if (grouped) {
+    for (const n of shown) {
+      const k = n.date.slice(0, 7);
+      if (!monthTally.has(k)) monthTally.set(k, { claire: 0, parent2: 0 });
+      const t = monthTally.get(k);
+      if (t[n.actual] !== undefined) t[n.actual]++;
+    }
+  }
+
+  let lastMonth = null;
   document.querySelector("#nights-table tbody").innerHTML = shown
     .map((n) => {
+      const month = n.date.slice(0, 7);
+      let heading = "";
+      if (grouped && month !== lastMonth) {
+        const t = monthTally.get(month);
+        heading = `<tr class="month-break"><th colspan="4">
+            ${monthLabel(month)} ${month.slice(0, 4)}
+            <span class="month-break-tally">${names.claire} ${t.claire} / ${names.parent2} ${t.parent2}</span>
+          </th></tr>`;
+        lastMonth = month;
+      }
       const d = new Date(`${n.date}T00:00:00Z`);
       const when = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
       const flag =
@@ -437,7 +470,7 @@ async function renderNights() {
           ? `<span class="badge badge-warn">No calendar entry</span>`
           : "";
       const note = n.note ? `<div class="comment">${n.note}</div>` : "";
-      return `<tr class="${n.status === "unswapped" ? "row-unswapped" : ""}">
+      return `${heading}<tr class="${n.status === "unswapped" ? "row-unswapped" : ""}">
         <td class="date">${when}</td>
         <td>${badge(n.actual)}</td>
         <td>${badge(n.usual)}</td>
