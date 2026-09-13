@@ -53,6 +53,12 @@ window.REPORTS = [
       rowLabel: "+ 2025 carry over",
       totalLabel: "Total incl. 2025 carry over",
     },
+    // Every night of the year, month by month. This is the only report whose
+    // window covers all twelve months, so a night taken in one month and given
+    // back in another cancels out here - on the month and forecast reports the
+    // two halves fall in different windows and both show as unswapped.
+    nightsUrl: "../data/2026-nights.json",
+    nightsMode: "grouped",
     rangeNote:
       'Computed from the "Both of us" Google Calendar, covering all of 2026. Months that have already happened are settled; the rest of the year is what the calendar currently plans, so it moves as entries change.',
   },
