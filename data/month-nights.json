@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T09:12:40.374Z",
+  "generatedAt": "2026-09-13T12:33:24.240Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2026-10-01",
   "names": {
@@ -9,20 +9,24 @@
   "summary": {
     "nights": 30,
     "actual": {
-      "claire": 15,
-      "parent2": 15
+      "claire": 12,
+      "parent2": 18
     },
     "usual": {
       "claire": 15,
       "parent2": 15
     },
-    "matching": 24,
+    "matching": 21,
     "swapped": 6,
     "unassigned": 0,
     "unswapped": {
-      "count": 0,
-      "owner": null,
-      "dates": []
+      "count": 3,
+      "owner": "parent2",
+      "dates": [
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29"
+      ]
     }
   },
   "nights": [
@@ -190,21 +194,24 @@
     },
     {
       "date": "2026-09-27",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "unswapped",
+      "note": "Mats nights with the kids"
     },
     {
       "date": "2026-09-28",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "unswapped",
+      "note": "Mats nights with the kids"
     },
     {
       "date": "2026-09-29",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "unswapped",
+      "note": "Mats nights with the kids"
     },
     {
       "date": "2026-09-30",

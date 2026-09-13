@@ -1,13 +1,22 @@
 {
-  "generatedAt": "2026-09-06T09:12:40.526Z",
+  "generatedAt": "2026-09-13T12:33:24.478Z",
   "rangeStart": "2026-10-01",
   "rangeEnd": "2027-10-01",
   "summary": {
     "rangeStart": "2026-10-01",
     "rangeEnd": "2027-10-01",
     "totalDays": 365,
-    "gapDays": 0,
-    "gapRuns": 0
+    "gapDays": 1,
+    "gapRuns": 1
   },
-  "gaps": []
+  "gaps": [
+    {
+      "startDate": "2026-10-04",
+      "endDateExclusive": "2026-10-05",
+      "owner": "parent2",
+      "nights": 1,
+      "ownerLabel": "Mat",
+      "googleCalendarLink": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mats+nights&dates=20261004%2F20261005&details=Added+from+the+custody+split+tracker%27s+exception+report+-+matches+the+usual+3-2-2+rotation+for+this+date+range."
+    }
+  ]
 }

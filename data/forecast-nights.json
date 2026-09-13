@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T09:12:40.594Z",
+  "generatedAt": "2026-09-13T12:33:24.572Z",
   "rangeStart": "2026-10-01",
   "rangeEnd": "2027-10-01",
   "names": {
@@ -9,20 +9,22 @@
   "summary": {
     "nights": 365,
     "actual": {
-      "claire": 182,
-      "parent2": 183
+      "claire": 183,
+      "parent2": 181
     },
     "usual": {
       "claire": 182,
       "parent2": 183
     },
-    "matching": 343,
+    "matching": 341,
     "swapped": 22,
-    "unassigned": 0,
+    "unassigned": 1,
     "unswapped": {
-      "count": 0,
-      "owner": null,
-      "dates": []
+      "count": 1,
+      "owner": "claire",
+      "dates": [
+        "2027-01-10"
+      ]
     }
   },
   "nights": [
@@ -46,9 +48,9 @@
     },
     {
       "date": "2026-10-04",
-      "actual": "parent2",
+      "actual": null,
       "usual": "parent2",
-      "status": "match"
+      "status": "unassigned"
     },
     {
       "date": "2026-10-05",
@@ -130,9 +132,10 @@
     },
     {
       "date": "2026-10-18",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Claire’s Nights with the kids"
     },
     {
       "date": "2026-10-19",
@@ -657,7 +660,7 @@
       "date": "2027-01-10",
       "actual": "claire",
       "usual": "parent2",
-      "status": "swapped",
+      "status": "unswapped",
       "note": "Claire’s night - swaps"
     },
     {
