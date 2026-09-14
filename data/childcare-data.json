@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T14:59:49.675Z",
+  "generatedAt": "2026-09-14T08:08:25.494Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-07-01",
   "rates": {
@@ -14,9 +14,9 @@
     "afterSchoolWeekdays": 4
   },
   "source": {
-    "feedStart": "2026-01-20",
+    "feedStart": "2026-03-17",
     "feedEnd": "2028-08-31",
-    "events": 450
+    "events": 414
   },
   "months": [
     {
