@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T08:08:25.494Z",
+  "generatedAt": "2026-09-16T08:08:38.608Z",
   "rangeStart": "2026-09-01",
   "rangeEnd": "2027-07-01",
   "rates": {
@@ -16,7 +16,7 @@
   "source": {
     "feedStart": "2026-03-17",
     "feedEnd": "2028-08-31",
-    "events": 414
+    "events": 424
   },
   "months": [
     {
