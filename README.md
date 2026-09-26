@@ -27,6 +27,7 @@ Nothing else needs editing — the home page picks it up from the registry.
 | Path | What it is |
 |---|---|
 | `index.html` | blog home |
+| `lego-mosaic.html` | photo → 48 × 48 LEGO Mosaic Maker builder (runs entirely in the browser) |
 | `posts/` | blog posts, plus `_template.html` |
 | `assets/` | styles and the small scripts that render the pages |
 | `docs/` | notes on the rest of the site |

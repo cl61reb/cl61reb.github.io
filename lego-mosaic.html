@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>LEGO Mosaic Maker</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --page: #f6f5f2;
+    --surface: #fdfdfc;
+    --surface-2: #f0efeb;
+    --text: #141414;
+    --text-2: #4d4c48;
+    --muted: #85837d;
+    --border: rgba(20,20,20,0.12);
+    --accent: #d01012;
+    --accent-ink: #fff;
+    --focus: #2a78d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #151514;
+      --surface: #1e1e1c;
+      --surface-2: #272725;
+      --text: #efeee9;
+      --text-2: #bdbbb4;
+      --muted: #8d8b84;
+      --border: rgba(255,255,255,0.12);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+  header h1 { font-size: 1.45rem; margin: 0 0 4px; }
+  header p { margin: 0 0 18px; color: var(--text-2); font-size: 0.95rem; max-width: 70ch; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 0;
+  }
+  .card h2 { font-size: 0.95rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .step {
+    display: inline-grid; place-items: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: var(--accent-ink); font-size: 0.75rem;
+  }
+
+  /* Upload */
+  .drop {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 28px 16px;
+    text-align: center;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .drop.over { border-color: var(--accent); background: var(--surface-2); }
+  .drop strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+  .drop span { color: var(--text-2); font-size: 0.88rem; }
+  .drop.compact { padding: 10px 14px; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .drop.compact strong { display: inline; font-size: 0.92rem; margin: 0; }
+  #file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  .status { font-size: 0.85rem; color: var(--text-2); margin: 10px 2px 0; min-height: 1.3em; }
+  .status b { color: var(--text); }
+
+  /* Layout */
+  .app { display: none; margin-top: 16px; gap: 16px; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); }
+  .app.ready { display: grid; }
+  @media (max-width: 860px) { .app.ready { grid-template-columns: minmax(0, 1fr); } }
+  .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+  #cropView { width: 100%; display: block; border-radius: 8px; touch-action: none; cursor: grab; background: var(--surface-2); }
+  #cropView.dragging { cursor: grabbing; }
+  .hint { font-size: 0.78rem; color: var(--muted); margin: 6px 0 0; }
+
+  /* Controls */
+  .ctrl { margin: 0 0 12px; }
+  .ctrl:last-child { margin-bottom: 0; }
+  .ctrl-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.84rem; margin-bottom: 2px; }
+  .ctrl-top label { color: var(--text); font-weight: 550; }
+  .ctrl-top output { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 0.8rem; }
+  .ends { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-top: -2px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 4px 0; }
+  select {
+    width: 100%; padding: 6px 8px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.88rem;
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 0.86rem; margin: 6px 0; }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  .group-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 0 8px; }
+  .group-label:first-child { margin-top: 0; }
+
+  button, .btn {
+    font: inherit; font-size: 0.86rem;
+    padding: 7px 12px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  button:hover { border-color: var(--text-2); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  button:focus-visible, select:focus-visible, input:focus-visible, .drop:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* Preview */
+  .preview-wrap { position: relative; max-width: 640px; margin: 0 auto; }
+  #preview { width: 100%; display: block; border-radius: 6px; image-rendering: auto; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+  .preview-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; }
+  .seg-ctrl { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+  .seg-ctrl button { border: 0; border-radius: 0; background: transparent; }
+  .seg-ctrl button[aria-pressed=true] { background: var(--text); color: var(--page); }
+
+  /* Counts */
+  .stack { display: flex; height: 14px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; }
+  .stack i { display: block; height: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); }
+  th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tfoot td { font-weight: 650; border-bottom: 0; }
+  .chip {
+    display: inline-grid; place-items: center;
+    min-width: 20px; height: 20px; padding: 0 4px; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 700; border: 1px solid rgba(0,0,0,.25);
+    vertical-align: middle; font-variant-numeric: tabular-nums;
+  }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: -4px 0 14px; overflow-x: auto; }
+  .tabs button { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; padding: 8px 10px; color: var(--text-2); white-space: nowrap; }
+  .tabs button[aria-selected=true] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+  .tabpanel[hidden] { display: none; }
+  .grid-scroll { overflow: auto; max-width: 100%; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+  #gridCanvas { display: block; width: 100%; min-width: 620px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 0.84rem; margin: 0 0 12px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  ol.rows { list-style: none; margin: 0; padding: 0; font-size: 0.84rem; max-height: 560px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  ol.rows li { padding: 6px 10px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  ol.rows li:nth-child(odd) { background: var(--surface-2); }
+  ol.rows .rn { font-weight: 700; min-width: 54px; font-variant-numeric: tabular-nums; padding-top: 1px; }
+  ol.rows .segs { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  ol.rows .sg { display: inline-flex; flex-wrap: wrap; gap: 3px 6px; align-items: center; }
+  ol.rows .sg b { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-right: 2px; }
+  ol.rows .run { display: inline-flex; align-items: center; gap: 2px; font-variant-numeric: tabular-nums; }
+
+  .note { font-size: 0.8rem; color: var(--muted); margin: 10px 0 0; }
+  .err { color: #b3261e; }
+
+  .print-only { display: none; }
+  @media print {
+    @page { margin: 12mm; }
+    body { background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    :root { --text: #000; --text-2: #333; --muted: #555; --border: rgba(0,0,0,.25); --surface: #fff; --surface-2: #f3f3f3; --page: #fff; }
+    .no-print, header p, .drop, .status, #controlsCard, #cropCard, .tabs, .preview-tools { display: none !important; }
+    .app.ready { display: block; }
+    .card { border: 0; padding: 0; margin: 0 0 8mm; break-inside: avoid; }
+    .print-only { display: block; }
+    #buildCard { break-before: page; }
+    #panel-grid { display: block !important; }
+    #panel-rows { display: none !important; }
+    body.print-rows #panel-rows { display: block !important; break-before: page; }
+    .grid-scroll { border: 0; overflow: visible; }
+    #gridCanvas { min-width: 0; }
+    ol.rows { max-height: none; overflow: visible; border: 0; }
+    ol.rows li { break-inside: avoid; }
+    .preview-wrap { max-width: 120mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LEGO Mosaic Maker</h1>
+    <p>Turn a photo into a 48 × 48 mosaic using the five Mosaic Maker colours: black, dark grey, light grey, yellow and white.
+       Your photo stays on this device. The subject detection runs in your browser.</p>
+  </header>
+
+  <label class="drop" id="drop" tabindex="0">
+    <input type="file" id="file" accept="image/*" />
+    <strong>Choose a photo</strong>
+    <span>or drop / paste one here. Faces, people and pets work best.</span>
+  </label>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <div class="app" id="app">
+    <!-- Left column: crop + controls -->
+    <div class="col">
+      <section class="card" id="cropCard">
+        <h2><span class="step">1</span> Subject &amp; crop</h2>
+        <canvas id="cropView" width="600" height="450" aria-label="Photo with crop square. Drag to move the crop."></canvas>
+        <p class="hint">Drag the square to move it. Scroll or use the zoom slider to resize it.</p>
+        <div class="ctrl" style="margin-top:10px">
+          <div class="ctrl-top"><label for="zoom">Crop / zoom</label><output id="zoomOut"></output></div>
+          <input type="range" id="zoom" min="40" max="300" value="100" step="1" />
+          <div class="ends"><span>wider</span><span>closer</span></div>
+        </div>
+        <div class="btns">
+          <button type="button" id="recentre">Re-centre on subject</button>
+        </div>
+      </section>
+
+      <section class="card" id="controlsCard">
+        <h2><span class="step">2</span> Adjust</h2>
+
+        <div class="group-label">Tone</div>
+        <label class="check"><input type="checkbox" id="auto" checked /> Auto-enhance lighting &amp; contrast</label>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="bright">Lighter / darker</label><output id="brightOut"></output></div>
+          <input type="range" id="bright" min="-100" max="100" value="0" />
+          <div class="ends"><span>darker</span><span>lighter</span></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="contrast">Contrast</label><output id="contrastOut"></output></div>
+          <input type="range" id="contrast" min="-100" max="100" value="0" />
+          <div class="ends"><span>weaker</span><span>stronger</span></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="yellow">Yellow amount</label><output id="yellowOut"></output></div>
+          <input type="range" id="yellow" min="0" max="100" value="40" />
+          <div class="ends"><span>none</span><span>lots</span></div>
+        </div>
+
+        <div class="group-label">Detail</div>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="detail">Detail</label><output id="detailOut"></output></div>
+          <input type="range" id="detail" min="0" max="100" value="50" />
+          <div class="ends"><span>less (cleaner)</span><span>more (sharper)</span></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="dither">Shading texture</label></div>
+          <select id="dither">
+            <option value="0">Flat blocks</option>
+            <option value="0.45" selected>Soft dithering</option>
+            <option value="0.85">Strong dithering</option>
+          </select>
+        </div>
+
+        <div class="group-label">Subject</div>
+        <div class="ctrl">
+          <div class="ctrl-top"><label for="face">Face emphasis</label><output id="faceOut"></output></div>
+          <input type="range" id="face" min="0" max="100" value="50" />
+          <div class="ends"><span>off</span><span>strong</span></div>
+        </div>
+        <div class="row2 ctrl">
+          <div>
+            <div class="ctrl-top"><label for="bg">Background</label></div>
+            <select id="bg">
+              <option value="keep">Keep</option>
+              <option value="4">Remove → White</option>
+              <option value="0">Remove → Black</option>
+              <option value="2">Remove → Light grey</option>
+              <option value="1">Remove → Dark grey</option>
+              <option value="3">Remove → Yellow</option>
+              <option value="simplify">Simplify (fade)</option>
+            </select>
+          </div>
+          <div>
+            <div class="ctrl-top"><label for="edge">Cut-out edge</label><output id="edgeOut"></output></div>
+            <input type="range" id="edge" min="10" max="90" value="50" />
+          </div>
+        </div>
+
+        <div class="btns" style="margin-top:14px">
+          <button type="button" id="reset">Reset adjustments</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right column: outputs -->
+    <div class="col">
+      <section class="card" id="previewCard">
+        <h2><span class="step">3</span> LEGO preview <span style="font-weight:400;color:var(--muted);font-size:.8rem">48 × 48 studs</span></h2>
+        <div class="preview-wrap">
+          <canvas id="preview" width="624" height="624" aria-label="LEGO mosaic preview"></canvas>
+        </div>
+        <div class="preview-tools">
+          <div class="seg-ctrl" role="group" aria-label="Preview style">
+            <button type="button" data-view="studs" aria-pressed="true">Studs</button>
+            <button type="button" data-view="flat" aria-pressed="false">Flat</button>
+            <button type="button" data-view="photo" aria-pressed="false">Photo</button>
+          </div>
+          <div class="btns">
+            <button type="button" id="dlPreview">Save preview</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="countCard">
+        <h2>Colour count</h2>
+        <div class="stack" id="stack" aria-hidden="true"></div>
+        <table>
+          <thead><tr><th>No.</th><th>Colour</th><th class="num">Pieces</th><th class="num">Share</th></tr></thead>
+          <tbody id="counts"></tbody>
+          <tfoot><tr><td></td><td>Total</td><td class="num" id="total">2304</td><td class="num">100%</td></tr></tfoot>
+        </table>
+      </section>
+
+      <section class="card" id="buildCard">
+        <h2><span class="step">4</span> Build it</h2>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tab-grid" aria-controls="panel-grid" aria-selected="true">Numbered grid</button>
+          <button type="button" role="tab" id="tab-rows" aria-controls="panel-rows" aria-selected="false">Row-by-row instructions</button>
+        </div>
+        <div class="legend" id="legend"></div>
+
+        <div class="tabpanel" id="panel-grid" role="tabpanel" aria-labelledby="tab-grid">
+          <div class="no-print" style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:10px">
+            <label class="check" style="margin:0"><input type="checkbox" id="gridColour" checked /> Colour the cells</label>
+          </div>
+          <div class="grid-scroll"><canvas id="gridCanvas"></canvas></div>
+          <p class="note">Thick lines split the mosaic into nine 16 × 16 sections (A1–C3), read left to right, top to bottom.</p>
+        </div>
+
+        <div class="tabpanel" id="panel-rows" role="tabpanel" aria-labelledby="tab-rows" hidden>
+          <p class="note" style="margin:0 0 10px">Each row reads left to right and is split into its three 16-stud sections. <span class="chip" style="background:#6C6E68;color:#fff">2</span>×5 means five pieces of colour 2.</p>
+          <ol class="rows" id="rows"></ol>
+        </div>
+
+        <div class="no-print" style="margin-top:14px">
+          <label class="check"><input type="checkbox" id="printRows" /> Include the row-by-row sheet when printing</label>
+          <div class="btns">
+            <button type="button" class="primary" id="print">Print building sheet</button>
+            <button type="button" id="dlGrid">Save grid image</button>
+            <button type="button" id="dlText">Save instructions (.txt)</button>
+            <button type="button" id="dlCsv">Save grid (.csv)</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ---------------------------------------------------------------------------
+// Palette: the five LEGO Mosaic Maker (40179) colours, in tone order.
+// `tone` is where each colour sits on the 0 (black) – 1 (white) scale we
+// quantise against. Yellow sits between light grey and white.
+// ---------------------------------------------------------------------------
+const PALETTE = [
+  { no: 1, name: "Black",             hex: "#05131D", tone: 0.00, ink: "#fff" },
+  { no: 2, name: "Dark bluish grey",  hex: "#6C6E68", tone: 0.36, ink: "#fff" },
+  { no: 3, name: "Light bluish grey", hex: "#A0A5A9", tone: 0.64, ink: "#000" },
+  { no: 4, name: "Bright yellow",     hex: "#F2CD37", tone: 0.82, ink: "#000", yellow: true },
+  { no: 5, name: "White",             hex: "#FFFFFF", tone: 1.00, ink: "#000" },
+];
+const YELLOW = 3;
+const N = 48;
+const SECTION = 16;
+const RGB = PALETTE.map(p => [1, 3, 5].map(i => parseInt(p.hex.slice(i, i + 2), 16)));
+
+const MP_VERSION = "0.10.14";
+const MP_BASES = [
+  `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VERSION}`,
+  `https://unpkg.com/@mediapipe/tasks-vision@${MP_VERSION}`,
+];
+const MODELS = {
+  face: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+  object: "https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite",
+  seg: "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplab_v3/float32/1/deeplab_v3.tflite",
+};
+// DeepLab (PASCAL VOC) classes that count as "subject" for background removal.
+const SEG_SUBJECT = new Set([3, 8, 10, 12, 13, 15, 17]); // bird, cat, cow, dog, horse, person, sheep
+const SUBJECT_OBJECTS = ["person", "cat", "dog", "bird", "horse", "sheep", "cow", "teddy bear"];
+
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+const statusEl = $("status");
+const setStatus = (html, isErr) => { statusEl.innerHTML = html; statusEl.classList.toggle("err", !!isErr); };
+
+const state = {
+  src: null, W: 0, H: 0,         // working copy of the photo
+  faces: [],                     // [{x,y,w,h,score,eyes:[[x,y],[x,y]],mouth:[x,y]}] in src px
+  subject: null,                 // {x,y,w,h,kind,score}
+  maskCanvas: null, maskScale: 1, maskKind: "",
+  auto: null,                    // {cx,cy,s}
+  crop: null,                    // {cx,cy,s}
+  result: null,                  // Uint8Array N*N palette indices
+  photo48: null,                 // Float32Array N*N*4 of the cropped photo
+  view: "studs",
+};
+
+// ---------------------------------------------------------------------------
+// AI models (MediaPipe Tasks, loaded in the background, run on-device)
+// ---------------------------------------------------------------------------
+let aiPromise = null;
+function loadAI() {
+  if (aiPromise) return aiPromise;
+  aiPromise = (async () => {
+    let mp = null, base = null;
+    for (const b of MP_BASES) {
+      try { mp = await import(`${b}/vision_bundle.mjs`); base = b; break; } catch (e) { console.warn("MediaPipe load failed from", b, e); }
+    }
+    if (!mp) throw new Error("could not load the detection library");
+    const fileset = await mp.FilesetResolver.forVisionTasks(`${base}/wasm`);
+    const opts = path => ({ baseOptions: { modelAssetPath: path, delegate: "CPU" }, runningMode: "IMAGE" });
+    const [face, object, seg] = await Promise.all([
+      mp.FaceDetector.createFromOptions(fileset, { ...opts(MODELS.face), minDetectionConfidence: 0.5 })
+        .catch(e => (console.warn("face model", e), null)),
+      mp.ObjectDetector.createFromOptions(fileset, { ...opts(MODELS.object), scoreThreshold: 0.3, maxResults: 8, categoryAllowlist: SUBJECT_OBJECTS })
+        .catch(e => (console.warn("object model", e), null)),
+      mp.ImageSegmenter.createFromOptions(fileset, { ...opts(MODELS.seg), outputCategoryMask: true, outputConfidenceMasks: false })
+        .catch(e => (console.warn("segmentation model", e), null)),
+    ]);
+    if (!face && !object && !seg) throw new Error("no models could be loaded");
+    return { face, object, seg };
+  })();
+  return aiPromise;
+}
+loadAI().catch(() => {});
+
+// ---------------------------------------------------------------------------
+// Loading a photo
+// ---------------------------------------------------------------------------
+async function decode(file) {
+  try {
+    return await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      return img;
+    } finally { URL.revokeObjectURL(url); }
+  }
+}
+
+function toCanvas(img, maxSide) {
+  const w0 = img.width || img.naturalWidth, h0 = img.height || img.naturalHeight;
+  const k = Math.min(1, maxSide / Math.max(w0, h0));
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(w0 * k));
+  c.height = Math.max(1, Math.round(h0 * k));
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  if (!file.type.startsWith("image/") && !/\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(file.name || "")) {
+    setStatus("That doesn't look like an image file.", true);
+    return;
+  }
+  setStatus("Opening photo…");
+  let img;
+  try { img = await decode(file); }
+  catch { setStatus("Couldn't open that photo. If it's a HEIC from an iPhone, export it as JPEG first.", true); return; }
+
+  state.src = toCanvas(img, 1600);
+  state.W = state.src.width; state.H = state.src.height;
+  state.faces = []; state.subject = null; state.maskCanvas = null; state.maskKind = "";
+
+  $("drop").classList.add("compact");
+  $("drop").querySelector("strong").textContent = "Choose another photo";
+  $("app").classList.add("ready");
+
+  // Show something immediately while the AI works.
+  state.auto = autoCrop();
+  state.crop = { ...state.auto };
+  $("zoom").value = 100;
+  update();
+
+  setStatus("Finding the subject…");
+  let ai = null;
+  try { ai = await loadAI(); } catch (e) { console.warn(e); }
+  if (ai) {
+    try { detectWithAI(ai); }
+    catch (e) { console.warn("detection failed", e); ai = null; }
+  }
+  if (!state.maskCanvas) basicMask();
+  if (!state.subject) basicSubject();
+
+  state.auto = autoCrop();
+  state.crop = { ...state.auto };
+  $("zoom").value = 100;
+  syncLabels();
+  update();
+  describeDetection(!!ai);
+}
+
+function describeDetection(aiOK) {
+  const parts = [];
+  if (state.faces.length) {
+    parts.push(`Found <b>${state.faces.length === 1 ? "a face" : state.faces.length + " faces"}</b>`);
+  } else if (state.subject && state.subject.kind !== "centre") {
+    const k = state.subject.kind === "outline" ? "the main subject" : `a <b>${state.subject.kind}</b>`;
+    parts.push(`Found ${k}`);
+  } else {
+    parts.push("No clear subject found, so the crop starts in the centre");
+  }
+  parts.push(state.maskCanvas ? "background can be removed" : "background removal isn't available for this photo");
+  let msg = parts.join("; ") + ".";
+  if (!aiOK) msg += " <span class='err'>The AI models couldn't load, so this is using basic detection.</span>";
+  setStatus(msg);
+}
+
+// ---------------------------------------------------------------------------
+// Detection
+// ---------------------------------------------------------------------------
+function detectWithAI(ai) {
+  const det = toCanvas(state.src, 640);
+  const sx = state.W / det.width, sy = state.H / det.height;
+
+  if (ai.face) {
+    const res = ai.face.detect(det);
+    state.faces = (res.detections || [])
+      .filter(d => (d.categories?.[0]?.score ?? 1) >= 0.5)
+      .map(d => {
+        const b = d.boundingBox, kp = d.keypoints || [];
+        const pt = i => kp[i] ? [kp[i].x * state.W, kp[i].y * state.H] : null;
+        return {
+          x: b.originX * sx, y: b.originY * sy, w: b.width * sx, h: b.height * sy,
+          score: d.categories?.[0]?.score ?? 1,
+          eyes: [pt(0), pt(1)].filter(Boolean), mouth: pt(3),
+        };
+      })
+      .sort((a, b) => b.w * b.h - a.w * a.h);
+    // Keep faces that are at least 35% the size of the biggest (drops faces in the crowd).
+    if (state.faces.length) {
+      const big = state.faces[0].w * state.faces[0].h;
+      state.faces = state.faces.filter(f => f.w * f.h >= big * 0.35).slice(0, 6);
+    }
+  }
+
+  if (ai.object) {
+    const res = ai.object.detect(det);
+    const objs = (res.detections || []).map(d => ({
+      x: d.boundingBox.originX * sx, y: d.boundingBox.originY * sy,
+      w: d.boundingBox.width * sx, h: d.boundingBox.height * sy,
+      kind: d.categories?.[0]?.categoryName || "subject", score: d.categories?.[0]?.score ?? 0,
+    }));
+    // Score by size, confidence and closeness to the centre.
+    let best = null, bestScore = 0;
+    for (const o of objs) {
+      const cx = (o.x + o.w / 2) / state.W - 0.5, cy = (o.y + o.h / 2) / state.H - 0.5;
+      const s = o.score * Math.sqrt(o.w * o.h / (state.W * state.H)) * (1 - Math.min(0.6, Math.hypot(cx, cy)));
+      if (s > bestScore) { best = o; bestScore = s; }
+    }
+    if (best) state.subject = best;
+  }
+  if (state.faces.length) {
+    const u = unionBox(state.faces);
+    state.subject = { ...u, kind: "face", score: state.faces[0].score };
+  }
+
+  if (ai.seg) {
+    const res = ai.seg.segment(det);
+    const cm = res.categoryMask;
+    if (cm) {
+      const cls = cm.getAsUint8Array();
+      const w = cm.width, h = cm.height;
+      const present = new Set(cls);
+      // If there is a recognised subject class, keep just those; otherwise keep any non-background class.
+      const useSubjectSet = [...present].some(c => SEG_SUBJECT.has(c));
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      const img = ctx.createImageData(w, h);
+      let fg = 0;
+      for (let i = 0; i < cls.length; i++) {
+        const on = useSubjectSet ? SEG_SUBJECT.has(cls[i]) : cls[i] !== 0;
+        const v = on ? 255 : 0;
+        if (on) fg++;
+        img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v;
+        img.data[i * 4 + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      const cover = fg / cls.length;
+      if (cover > 0.01 && cover < 0.97) {
+        state.maskCanvas = c;
+        state.maskScale = w / state.W;
+        state.maskKind = "ai";
+        if (!state.subject) {
+          const bb = maskBox(cls, w, h, v => useSubjectSet ? SEG_SUBJECT.has(v) : v !== 0);
+          if (bb) state.subject = { x: bb.x / state.maskScale, y: bb.y / state.maskScale, w: bb.w / state.maskScale, h: bb.h / state.maskScale, kind: "outline", score: 0.5 };
+        }
+      }
+    }
+    res.close?.();
+  }
+}
+
+function unionBox(boxes) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const b of boxes) { x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.w); y1 = Math.max(y1, b.y + b.h); }
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
+
+function maskBox(arr, w, h, test) {
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (test(arr[y * w + x])) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  return x1 < 0 ? null : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+
+// Fallback when the AI isn't available: grow the background in from the edges
+// of the photo while colours stay close to the edge colours.
+function basicMask() {
+  const c = toCanvas(state.src, 200);
+  const w = c.width, h = c.height;
+  const d = c.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+  const px = i => [d[i * 4], d[i * 4 + 1], d[i * 4 + 2]];
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) / 441;
+  const border = [];
+  for (let x = 0; x < w; x++) { border.push(x, (h - 1) * w + x); }
+  for (let y = 0; y < h; y++) { border.push(y * w, y * w + w - 1); }
+  const med = [0, 1, 2].map(k => { const v = border.map(i => d[i * 4 + k]).sort((a, b) => a - b); return v[v.length >> 1]; });
+
+  const bg = new Uint8Array(w * h);
+  const queue = [];
+  for (const i of border) if (dist(px(i), med) < 0.3 && !bg[i]) { bg[i] = 1; queue.push(i); }
+  while (queue.length) {
+    const i = queue.pop(), x = i % w, y = (i / w) | 0, p = px(i);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+      const j = ny * w + nx;
+      if (bg[j]) continue;
+      const q = px(j);
+      if (dist(q, p) < 0.05 && dist(q, med) < 0.35) { bg[j] = 1; queue.push(j); }
+    }
+  }
+  let fg = 0;
+  for (let i = 0; i < bg.length; i++) if (!bg[i]) fg++;
+  const cover = fg / bg.length;
+  if (cover < 0.05 || cover > 0.92) return; // no useful separation
+  const mc = document.createElement("canvas");
+  mc.width = w; mc.height = h;
+  const mctx = mc.getContext("2d");
+  const img = mctx.createImageData(w, h);
+  for (let i = 0; i < bg.length; i++) {
+    const v = bg[i] ? 0 : 255;
+    img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v; img.data[i * 4 + 3] = 255;
+  }
+  mctx.putImageData(img, 0, 0);
+  state.maskCanvas = mc;
+  state.maskScale = w / state.W;
+  state.maskKind = "basic";
+  if (!state.subject) {
+    const bb = maskBox(bg, w, h, v => !v);
+    if (bb) state.subject = { x: bb.x / state.maskScale, y: bb.y / state.maskScale, w: bb.w / state.maskScale, h: bb.h / state.maskScale, kind: "outline", score: 0.3 };
+  }
+}
+
+function basicSubject() {
+  const s = Math.min(state.W, state.H);
+  state.subject = { x: (state.W - s) / 2, y: (state.H - s) / 2, w: s, h: s, kind: "centre", score: 0 };
+}
+
+// ---------------------------------------------------------------------------
+// Cropping
+// ---------------------------------------------------------------------------
+function autoCrop() {
+  const { W, H } = state;
+  const maxS = Math.min(W, H);
+  let cx = W / 2, cy = H / 2, s = maxS;
+  const sub = state.subject;
+  if (sub && sub.kind === "face") {
+    // Head-and-shoulders: the face box covers brows to chin, so give room for hair and shoulders.
+    s = Math.max(sub.h * 2.5, sub.w * (state.faces.length > 1 ? 1.35 : 2.6));
+    cx = sub.x + sub.w / 2;
+    cy = sub.y + sub.h / 2 + s * 0.07; // face sits a little above centre
+  } else if (sub && sub.kind !== "centre") {
+    s = Math.max(sub.w, sub.h) * 1.08;
+    cx = sub.x + sub.w / 2;
+    cy = sub.y + sub.h / 2;
+    // Tall people: favour the top of the body where the face will be.
+    if (sub.kind === "person" && sub.h > sub.w * 1.6) { s = Math.max(sub.w * 1.3, sub.h * 0.55); cy = sub.y + s * 0.5; }
+  }
+  return fitCrop({ cx, cy, s: Math.min(maxS, Math.max(s, 24)) });
+}
+
+function fitCrop(c) {
+  const s = clamp(c.s, 16, Math.min(state.W, state.H));
+  return { s, cx: clamp(c.cx, s / 2, state.W - s / 2), cy: clamp(c.cy, s / 2, state.H - s / 2) };
+}
+
+function setZoomFromSlider() {
+  const z = +$("zoom").value / 100;
+  state.crop = fitCrop({ ...state.crop, s: state.auto.s / z });
+  // If the square hit the photo edge the real zoom differs from the slider; show the true value.
+  $("zoomOut").textContent = Math.round(state.auto.s / state.crop.s * 100) + "%";
+}
+
+// Draw the crop square of `canvas` (in its own px) at k× then box-average to n×n.
+const scratch = document.createElement("canvas");
+function sampleSquare(canvas, sx, sy, ss, n, k = 4) {
+  const M = n * k;
+  scratch.width = M; scratch.height = M;
+  const ctx = scratch.getContext("2d", { willReadFrequently: true });
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.clearRect(0, 0, M, M);
+  ctx.drawImage(canvas, sx, sy, ss, ss, 0, 0, M, M);
+  const d = ctx.getImageData(0, 0, M, M).data;
+  const out = new Float32Array(n * n * 4);
+  const inv = 1 / (k * k * 255);
+  for (let y = 0; y < M; y++) {
+    const oy = (y / k) | 0;
+    for (let x = 0; x < M; x++) {
+      const o = (oy * n + ((x / k) | 0)) * 4, i = (y * M + x) * 4;
+      out[o] += d[i] * inv; out[o + 1] += d[i + 1] * inv; out[o + 2] += d[i + 2] * inv; out[o + 3] += d[i + 3] * inv;
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Image processing on the 48 × 48 grid
+// ---------------------------------------------------------------------------
+function blur3(a) {
+  const t = new Float32Array(a.length), o = new Float32Array(a.length);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const l = a[y * N + Math.max(0, x - 1)], r = a[y * N + Math.min(N - 1, x + 1)];
+    t[y * N + x] = (l + 2 * a[y * N + x] + r) / 4;
+  }
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const u = t[Math.max(0, y - 1) * N + x], d = t[Math.min(N - 1, y + 1) * N + x];
+    o[y * N + x] = (u + 2 * t[y * N + x] + d) / 4;
+  }
+  return o;
+}
+
+function weightedPercentile(vals, wts, ps) {
+  const bins = 512, hist = new Float64Array(bins);
+  let tot = 0;
+  for (let i = 0; i < vals.length; i++) { const w = wts[i]; if (w <= 0) continue; hist[Math.min(bins - 1, Math.max(0, (vals[i] * bins) | 0))] += w; tot += w; }
+  return ps.map(p => {
+    const target = tot * p;
+    let acc = 0;
+    for (let b = 0; b < bins; b++) { acc += hist[b]; if (acc >= target) return (b + 0.5) / bins; }
+    return 1;
+  });
+}
+
+// How "yellow-ish" a colour is (skin, blonde hair, gold): 0–1.
+function warmth(r, g, b) {
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+  if (mx <= 0 || d <= 0) return 0;
+  let h;
+  if (mx === r) h = 60 * (((g - b) / d) % 6);
+  else if (mx === g) h = 60 * ((b - r) / d + 2);
+  else h = 60 * ((r - g) / d + 4);
+  if (h < 0) h += 360;
+  const hue = h < 5 ? 0 : h < 15 ? (h - 5) / 10 : h <= 65 ? 1 : h < 80 ? (80 - h) / 15 : 0;
+  return hue * clamp((d / mx - 0.08) / 0.3) * clamp((mx - 0.2) / 0.3);
+}
+
+function readSettings() {
+  return {
+    auto: $("auto").checked,
+    bright: +$("bright").value / 100,
+    contrast: +$("contrast").value / 100,
+    yellow: +$("yellow").value / 100,
+    detail: +$("detail").value / 100,
+    dither: +$("dither").value,
+    face: +$("face").value / 100,
+    bg: $("bg").value,
+    edge: +$("edge").value / 100,
+  };
+}
+
+function process() {
+  const S = readSettings();
+  const { cx, cy, s } = state.crop;
+  const x0 = cx - s / 2, y0 = cy - s / 2;
+  const photo = sampleSquare(state.src, x0, y0, s, N);
+  state.photo48 = photo;
+  const P = N * N;
+
+  // Subject mask (1 = subject) sampled into the grid.
+  let mask = null;
+  if (state.maskCanvas) {
+    const k = state.maskScale;
+    const m = sampleSquare(state.maskCanvas, x0 * k, y0 * k, s * k, N, 2);
+    mask = new Float32Array(P);
+    for (let i = 0; i < P; i++) mask[i] = m[i * 4];
+  }
+
+  // Face ellipse weight + feature points, in grid coordinates.
+  const faceW = new Float32Array(P);
+  const features = [];
+  const toGrid = (px, py) => [(px - x0) / s * N, (py - y0) / s * N];
+  for (const f of state.faces) {
+    const [fx, fy] = toGrid(f.x + f.w / 2, f.y + f.h * 0.42);
+    const rx = f.w / s * N * 0.62, ry = f.h / s * N * 0.72;
+    if (rx < 0.5) continue;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const d = ((x + 0.5 - fx) / rx) ** 2 + ((y + 0.5 - fy) / ry) ** 2;
+      const i = y * N + x;
+      faceW[i] = Math.max(faceW[i], clamp((1.35 - d) / 0.6));
+    }
+    for (const p of [...f.eyes, f.mouth].filter(Boolean)) {
+      const [gx, gy] = toGrid(p[0], p[1]);
+      if (gx >= 0 && gy >= 0 && gx < N && gy < N) features.push({ x: gx | 0, y: gy | 0, eye: p !== f.mouth });
+    }
+  }
+  const hasFace = faceW.some(v => v > 0.5);
+
+  // Luminance and warmth.
+  let L = new Float32Array(P);
+  const warm = new Float32Array(P);
+  for (let i = 0; i < P; i++) {
+    const r = photo[i * 4], g = photo[i * 4 + 1], b = photo[i * 4 + 2];
+    L[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+    warm[i] = warmth(r, g, b);
+  }
+
+  const removeBg = mask && S.bg !== "keep" && S.bg !== "simplify";
+  const isBg = new Uint8Array(P);
+  if (removeBg) {
+    const thr = S.edge;
+    for (let i = 0; i < P; i++) isBg[i] = mask[i] < thr && faceW[i] < 0.6 ? 1 : 0;
+  }
+
+  // Less detail: soften before quantising so small noise doesn't become stray studs.
+  if (S.detail < 0.5) {
+    const a = (0.5 - S.detail) * 2 * 0.85, bl = blur3(L);
+    for (let i = 0; i < P; i++) L[i] += (bl[i] - L[i]) * a;
+  }
+
+  // Auto-enhance: stretch levels using the subject (and especially the face),
+  // then set gamma so the subject sits in the middle of the palette.
+  if (S.auto) {
+    const w = new Float32Array(P);
+    for (let i = 0; i < P; i++) {
+      if (isBg[i]) continue;
+      w[i] = (mask ? 0.4 + 0.6 * mask[i] : 1) + faceW[i];
+    }
+    let [lo, hi] = weightedPercentile(L, w, [0.01, 0.99]);
+    // Don't stretch a narrow range too hard, or mid tones collapse into black and white.
+    if (hi - lo < 0.4) { const m = (hi + lo) / 2; lo = Math.max(0, m - 0.2); hi = Math.min(1, lo + 0.4); }
+    for (let i = 0; i < P; i++) L[i] = clamp((L[i] - lo) / (hi - lo));
+    let sw = 0, sl = 0;
+    for (let i = 0; i < P; i++) {
+      const wt = hasFace ? faceW[i] : w[i];
+      sw += wt; sl += wt * L[i];
+    }
+    const mean = sw > 0 ? sl / sw : 0.5;
+    const target = hasFace ? 0.58 : 0.5;
+    const gamma = clamp(Math.log(target) / Math.log(clamp(mean, 0.02, 0.98)), 0.55, 1.8);
+    for (let i = 0; i < P; i++) L[i] = Math.pow(L[i], gamma);
+  }
+
+  // Lighter / darker.
+  if (S.bright) {
+    const g = Math.pow(2, -S.bright * 1.1);
+    for (let i = 0; i < P; i++) L[i] = Math.pow(L[i], g);
+  }
+  // Contrast around mid-grey.
+  if (S.contrast) {
+    const f = S.contrast > 0 ? 1 + S.contrast * 1.2 : 1 + S.contrast * 0.65;
+    for (let i = 0; i < P; i++) L[i] = clamp(0.5 + (L[i] - 0.5) * f);
+  }
+
+  // Face emphasis: local contrast inside the face, calmer background outside it.
+  if (S.face > 0) {
+    const bl = blur3(L);
+    let bs = 0, bw = 0;
+    const outW = new Float32Array(P);
+    for (let i = 0; i < P; i++) {
+      outW[i] = (mask ? 1 - mask[i] : hasFace ? 0.5 : 0) * (1 - faceW[i]);
+      bs += outW[i] * L[i]; bw += outW[i];
+    }
+    const bgMean = bw > 0 ? bs / bw : 0.5;
+    for (let i = 0; i < P; i++) {
+      L[i] += faceW[i] * S.face * 0.9 * (L[i] - bl[i]);
+      L[i] += outW[i] * S.face * 0.45 * (bgMean - L[i]);
+    }
+  }
+
+  // "Simplify" background: fade it towards a flat mid tone.
+  if (mask && S.bg === "simplify") {
+    const bl = blur3(blur3(L));
+    for (let i = 0; i < P; i++) {
+      const b = clamp((S.edge + 0.15 - mask[i]) / 0.3) * (1 - faceW[i]);
+      L[i] += (bl[i] * 0.4 + 0.6 * 0.82 - L[i]) * b * 0.85;
+    }
+  }
+
+  // More detail: sharpen.
+  if (S.detail > 0.5) {
+    const a = (S.detail - 0.5) * 2 * 1.1, bl = blur3(L);
+    for (let i = 0; i < P; i++) L[i] += (L[i] - bl[i]) * a;
+  }
+
+  // Protect facial features: keep highlights on skin from blowing out and make sure
+  // eyes and mouth stay darker than the skin around them.
+  const locked = new Uint8Array(P);
+  if (hasFace && S.auto) {
+    for (let i = 0; i < P; i++) if (faceW[i] > 0 && L[i] > 0.9) L[i] -= (L[i] - 0.9) * 0.6 * faceW[i];
+    let fs = 0, fw = 0;
+    for (let i = 0; i < P; i++) { fs += faceW[i] * L[i]; fw += faceW[i]; }
+    const fm = fw ? fs / fw : 0.6;
+    const strength = 0.4 + 0.6 * S.face;
+    for (const p of features) {
+      const i = p.y * N + p.x;
+      const target = Math.min(L[i], fm - (p.eye ? 0.38 : 0.26));
+      L[i] += (target - L[i]) * strength;
+      if (strength > 0.55) locked[i] = 1;
+    }
+  }
+
+  for (let i = 0; i < P; i++) L[i] = clamp(L[i], -0.2, 1.2);
+
+  // Quantise to the palette, with optional serpentine Floyd–Steinberg dithering on tone.
+  const out = new Uint8Array(P);
+  const yA = S.yellow;
+  const bgIndex = removeBg ? +S.bg : -1;
+  const err = new Float32Array(P);
+  for (let y = 0; y < N; y++) {
+    const ltr = y % 2 === 0;
+    for (let k = 0; k < N; k++) {
+      const x = ltr ? k : N - 1 - k, i = y * N + x;
+      if (isBg[i]) { out[i] = bgIndex; continue; }
+      const v = L[i] + err[i];
+      let best = 0, bestCost = Infinity;
+      for (let c = 0; c < PALETTE.length; c++) {
+        let cost = (v - PALETTE[c].tone) ** 2;
+        if (c === YELLOW) {
+          if (yA <= 0) continue;
+          cost += 0.1 * (1 - yA) * (1.3 - warm[i]) - 0.012 * yA;
+        }
+        if (cost < bestCost) { bestCost = cost; best = c; }
+      }
+      out[i] = best;
+      if (S.dither > 0) {
+        // Dither the subject fully but the background only lightly, so flat areas stay calm.
+        const e = (clamp(v, 0, 1) - PALETTE[best].tone) * S.dither * (mask ? 0.3 + 0.7 * Math.max(mask[i], faceW[i]) : 1);
+        const dx = ltr ? 1 : -1;
+        const push = (xx, yy, f) => { if (xx >= 0 && xx < N && yy < N) { const j = yy * N + xx; if (!isBg[j]) err[j] += e * f; } };
+        push(x + dx, y, 7 / 16); push(x - dx, y + 1, 3 / 16); push(x, y + 1, 5 / 16); push(x + dx, y + 1, 1 / 16);
+      }
+    }
+  }
+
+  // Less detail: remove isolated single studs.
+  const passes = S.detail < 0.2 ? 2 : S.detail < 0.45 ? 1 : 0;
+  for (let p = 0; p < passes; p++) {
+    const maxSame = p === 0 ? 0 : 1;
+    const src = out.slice();
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const i = y * N + x;
+      if (locked[i]) continue;
+      const cnt = [0, 0, 0, 0, 0];
+      let same = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const xx = x + dx, yy = y + dy;
+        if (xx < 0 || yy < 0 || xx >= N || yy >= N) continue;
+        const c = src[yy * N + xx];
+        cnt[c]++;
+        if (c === src[i]) same++;
+      }
+      if (same <= maxSame) {
+        let bc = src[i], bn = -1;
+        for (let c = 0; c < 5; c++) if (cnt[c] > bn) { bn = cnt[c]; bc = c; }
+        out[i] = bc;
+      }
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------------
+function shade(rgb, f) {
+  return f >= 0
+    ? `rgb(${rgb.map(v => Math.round(v + (255 - v) * f)).join(",")})`
+    : `rgb(${rgb.map(v => Math.round(v * (1 + f))).join(",")})`;
+}
+
+function drawMosaic(canvas, grid, cell, view) {
+  canvas.width = canvas.height = N * cell;
+  const ctx = canvas.getContext("2d");
+  if (view === "photo" && state.photo48) {
+    // The cropped photo as the mosaic sees it, before colour matching.
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(state.src, state.crop.cx - state.crop.s / 2, state.crop.cy - state.crop.s / 2, state.crop.s, state.crop.s, 0, 0, canvas.width, canvas.height);
+    return;
+  }
+  ctx.fillStyle = "#1b1b1b";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const c = grid[y * N + x], rgb = RGB[c];
+    const px = x * cell, py = y * cell;
+    ctx.fillStyle = PALETTE[c].hex;
+    if (view === "flat") { ctx.fillRect(px, py, cell, cell); continue; }
+    // Plate with a slight bevel.
+    ctx.fillRect(px, py, cell, cell);
+    ctx.fillStyle = shade(rgb, -0.28);
+    ctx.fillRect(px, py + cell - 1, cell, 1);
+    ctx.fillRect(px + cell - 1, py, 1, cell);
+    ctx.fillStyle = shade(rgb, 0.18);
+    ctx.fillRect(px, py, cell, 1);
+    ctx.fillRect(px, py, 1, cell);
+    // Stud: shadow, body, highlight.
+    const r = cell * 0.32, sx = px + cell / 2, sy = py + cell / 2;
+    ctx.beginPath(); ctx.arc(sx + cell * 0.05, sy + cell * 0.07, r, 0, Math.PI * 2);
+    ctx.fillStyle = shade(rgb, -0.35); ctx.fill();
+    ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2);
+    const g = ctx.createRadialGradient(sx - r * 0.4, sy - r * 0.4, r * 0.1, sx, sy, r);
+    g.addColorStop(0, shade(rgb, 0.3)); g.addColorStop(1, shade(rgb, -0.06));
+    ctx.fillStyle = g; ctx.fill();
+  }
+}
+
+function drawGrid(canvas, grid, cell, coloured) {
+  const pad = Math.round(cell * 1.4);
+  const size = N * cell + pad * 2;
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, size, size);
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+
+  // Axis labels.
+  ctx.fillStyle = "#555";
+  ctx.font = `${Math.round(cell * 0.42)}px system-ui, sans-serif`;
+  for (let i = 0; i < N; i++) {
+    const c = pad + i * cell + cell / 2;
+    ctx.fillText(String(i + 1), c, pad / 2);
+    ctx.fillText(String(i + 1), c, size - pad / 2);
+    ctx.fillText(String(i + 1), pad / 2, c);
+    ctx.fillText(String(i + 1), size - pad / 2, c);
+  }
+
+  ctx.font = `600 ${Math.round(cell * 0.52)}px system-ui, sans-serif`;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const c = grid[y * N + x], p = PALETTE[c];
+    const px = pad + x * cell, py = pad + y * cell;
+    if (coloured) { ctx.fillStyle = p.hex; ctx.fillRect(px, py, cell, cell); }
+    ctx.fillStyle = coloured ? p.ink : "#111";
+    ctx.fillText(String(p.no), px + cell / 2, py + cell / 2 + 0.5);
+  }
+
+  // Grid lines: thin every stud, medium every 4, thick every 16 (section edges).
+  for (let i = 0; i <= N; i++) {
+    const w = i % SECTION === 0 ? Math.max(2, cell * 0.12) : i % 4 === 0 ? Math.max(1, cell * 0.05) : Math.max(0.5, cell * 0.025);
+    ctx.strokeStyle = i % SECTION === 0 ? "#000" : i % 4 === 0 ? "rgba(0,0,0,.55)" : "rgba(0,0,0,.28)";
+    ctx.lineWidth = w;
+    const p = pad + i * cell;
+    ctx.beginPath(); ctx.moveTo(p, pad); ctx.lineTo(p, pad + N * cell); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad, p); ctx.lineTo(pad + N * cell, p); ctx.stroke();
+  }
+
+  // Section labels A1–C3 in the corner of each 16 × 16 block.
+  ctx.font = `700 ${Math.round(cell * 0.5)}px system-ui, sans-serif`;
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  for (let sy = 0; sy < 3; sy++) for (let sx = 0; sx < 3; sx++) {
+    const label = "ABC"[sy] + (sx + 1);
+    const px = pad + sx * SECTION * cell + 3, py = pad + sy * SECTION * cell + 3;
+    const w = ctx.measureText(label).width + 6;
+    ctx.fillStyle = "rgba(208,16,18,.92)";
+    ctx.fillRect(px, py, w, cell * 0.62);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(label, px + 3, py + cell * 0.06);
+  }
+}
+
+function drawCropView() {
+  const cv = $("cropView");
+  const box = cv.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = box.width || 300;
+  const scale = cssW / state.W;
+  const cssH = state.H * scale;
+  cv.style.height = cssH + "px";
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
+  ctx.drawImage(state.src, 0, 0);
+  const { cx, cy, s } = state.crop;
+  // Dim everything outside the crop.
+  ctx.fillStyle = "rgba(0,0,0,.55)";
+  ctx.beginPath();
+  ctx.rect(0, 0, state.W, state.H);
+  ctx.rect(cx - s / 2, cy + s / 2, s, -s);
+  ctx.fill("evenodd");
+  const lw = 1 / scale;
+  ctx.strokeStyle = "#fff"; ctx.lineWidth = 2 * lw;
+  ctx.strokeRect(cx - s / 2, cy - s / 2, s, s);
+  // Thirds guide lines at the section boundaries.
+  ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = lw;
+  for (let i = 1; i < 3; i++) {
+    const o = -s / 2 + s * i / 3;
+    ctx.beginPath(); ctx.moveTo(cx + o, cy - s / 2); ctx.lineTo(cx + o, cy + s / 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - s / 2, cy + o); ctx.lineTo(cx + s / 2, cy + o); ctx.stroke();
+  }
+  // Detected faces / subject.
+  ctx.setLineDash([6 * lw, 4 * lw]);
+  ctx.lineWidth = 1.5 * lw;
+  ctx.strokeStyle = "#F2CD37";
+  for (const f of state.faces) ctx.strokeRect(f.x, f.y, f.w, f.h);
+  if (state.subject && !state.faces.length && state.subject.kind !== "centre") {
+    const b = state.subject;
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+  }
+  ctx.setLineDash([]);
+}
+
+function renderOutputs() {
+  const grid = state.result;
+  drawMosaic($("preview"), grid, 13, state.view);
+  drawGrid($("gridCanvas"), grid, 22, $("gridColour").checked);
+
+  // Counts.
+  const counts = [0, 0, 0, 0, 0];
+  for (const c of grid) counts[c]++;
+  const P = N * N;
+  $("counts").innerHTML = PALETTE.map((p, c) => `
+    <tr><td><span class="chip" style="background:${p.hex};color:${p.ink}">${p.no}</span></td>
+        <td>${p.name}</td><td class="num">${counts[c].toLocaleString()}</td>
+        <td class="num">${(counts[c] / P * 100).toFixed(1)}%</td></tr>`).join("");
+  $("total").textContent = P.toLocaleString();
+  $("stack").innerHTML = PALETTE.map((p, c) => counts[c] ? `<i style="width:${counts[c] / P * 100}%;background:${p.hex}" title="${p.name}: ${counts[c]}"></i>` : "").join("");
+
+  // Legend.
+  $("legend").innerHTML = PALETTE.map((p, c) => `<span><span class="chip" style="background:${p.hex};color:${p.ink}">${p.no}</span>${p.name} <span style="color:var(--muted)">(${counts[c].toLocaleString()})</span></span>`).join("");
+
+  // Row-by-row.
+  $("rows").innerHTML = rowRuns(grid).map((segs, y) => `
+    <li><span class="rn">Row ${y + 1}</span><span class="segs">${segs.map((runs, s) => `
+      <span class="sg"><b>${"ABC"[Math.floor(y / SECTION)]}${s + 1}</b>${runs.map(([c, n]) =>
+        `<span class="run"><span class="chip" style="background:${PALETTE[c].hex};color:${PALETTE[c].ink}">${PALETTE[c].no}</span>×${n}</span>`).join("")}</span>`).join("")}
+    </span></li>`).join("");
+}
+
+// For each row: three sections, each a list of [colourIndex, runLength].
+function rowRuns(grid) {
+  const rows = [];
+  for (let y = 0; y < N; y++) {
+    const segs = [];
+    for (let s = 0; s < N / SECTION; s++) {
+      const runs = [];
+      for (let x = s * SECTION; x < (s + 1) * SECTION; x++) {
+        const c = grid[y * N + x];
+        if (runs.length && runs[runs.length - 1][0] === c) runs[runs.length - 1][1]++;
+        else runs.push([c, 1]);
+      }
+      segs.push(runs);
+    }
+    rows.push(segs);
+  }
+  return rows;
+}
+
+let raf = 0;
+function update() {
+  if (!state.src) return;
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(() => {
+    setZoomFromSlider();
+    drawCropView();
+    state.result = process();
+    renderOutputs();
+  });
+}
+
+// ---------------------------------------------------------------------------
+// UI wiring
+// ---------------------------------------------------------------------------
+const fileInput = $("file"), drop = $("drop");
+fileInput.addEventListener("change", () => { handleFile(fileInput.files[0]); fileInput.value = ""; });
+drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInput.click(); } });
+for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); });
+for (const ev of ["dragleave", "drop"]) drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); });
+drop.addEventListener("drop", e => handleFile(e.dataTransfer.files[0]));
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", e => { e.preventDefault(); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+window.addEventListener("paste", e => {
+  const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith("image/"));
+  if (item) handleFile(item.getAsFile());
+});
+
+const DEFAULTS = { auto: true, bright: 0, contrast: 0, yellow: 40, detail: 50, dither: "0.45", face: 50, bg: "keep", edge: 50 };
+const labels = {
+  bright: v => (v > 0 ? "+" : "") + v,
+  contrast: v => (v > 0 ? "+" : "") + v,
+  yellow: v => v + "%",
+  detail: v => v + "%",
+  face: v => v + "%",
+  edge: v => v < 40 ? "loose" : v > 60 ? "tight" : "normal",
+};
+function syncLabels() {
+  for (const [k, f] of Object.entries(labels)) $(k + "Out").textContent = f(+$(k).value);
+  $("edge").disabled = !state.maskCanvas || $("bg").value === "keep";
+  $("bg").disabled = !state.maskCanvas && !!state.src;
+}
+for (const id of ["auto", "bright", "contrast", "yellow", "detail", "dither", "face", "bg", "edge", "gridColour"]) {
+  $(id).addEventListener("input", () => { syncLabels(); update(); });
+}
+$("zoom").addEventListener("input", update);
+$("recentre").addEventListener("click", () => { state.crop = { ...state.auto }; $("zoom").value = 100; update(); });
+$("reset").addEventListener("click", () => {
+  for (const [k, v] of Object.entries(DEFAULTS)) { if (typeof v === "boolean") $(k).checked = v; else $(k).value = v; }
+  syncLabels(); update();
+});
+
+document.querySelectorAll(".seg-ctrl button").forEach(b => b.addEventListener("click", () => {
+  state.view = b.dataset.view;
+  document.querySelectorAll(".seg-ctrl button").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+  update();
+}));
+
+document.querySelectorAll('[role=tab]').forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll('[role=tab]').forEach(o => {
+    const on = o === t;
+    o.setAttribute("aria-selected", String(on));
+    $(o.getAttribute("aria-controls")).hidden = !on;
+  });
+}));
+
+// Dragging / wheel-zooming the crop square.
+const cv = $("cropView");
+let drag = null;
+cv.addEventListener("pointerdown", e => {
+  if (!state.src) return;
+  cv.setPointerCapture(e.pointerId);
+  const k = state.W / cv.getBoundingClientRect().width;
+  drag = { x: e.clientX, y: e.clientY, cx: state.crop.cx, cy: state.crop.cy, k };
+  cv.classList.add("dragging");
+});
+cv.addEventListener("pointermove", e => {
+  if (!drag) return;
+  state.crop = fitCrop({ s: state.crop.s, cx: drag.cx + (e.clientX - drag.x) * drag.k, cy: drag.cy + (e.clientY - drag.y) * drag.k });
+  update();
+});
+const endDrag = () => { drag = null; cv.classList.remove("dragging"); };
+cv.addEventListener("pointerup", endDrag);
+cv.addEventListener("pointercancel", endDrag);
+cv.addEventListener("wheel", e => {
+  if (!state.src) return;
+  e.preventDefault();
+  const z = $("zoom");
+  z.value = clamp(+z.value * (e.deltaY < 0 ? 1.06 : 1 / 1.06), +z.min, +z.max);
+  update();
+}, { passive: false });
+new ResizeObserver(() => state.src && drawCropView()).observe(cv);
+
+// Downloads & printing.
+function download(name, blobOrUrl) {
+  const a = document.createElement("a");
+  const url = typeof blobOrUrl === "string" ? blobOrUrl : URL.createObjectURL(blobOrUrl);
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  if (typeof blobOrUrl !== "string") setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+$("dlPreview").addEventListener("click", () => {
+  const c = document.createElement("canvas");
+  drawMosaic(c, state.result, 24, state.view === "photo" ? "studs" : state.view);
+  c.toBlob(b => download("lego-mosaic-preview.png", b));
+});
+$("dlGrid").addEventListener("click", () => {
+  const c = document.createElement("canvas");
+  drawGrid(c, state.result, 32, $("gridColour").checked);
+  c.toBlob(b => download("lego-mosaic-grid.png", b));
+});
+$("dlText").addEventListener("click", () => {
+  const counts = [0, 0, 0, 0, 0];
+  for (const c of state.result) counts[c]++;
+  const lines = [
+    "LEGO Mosaic Maker — 48 × 48 building instructions",
+    "",
+    "Colours:",
+    ...PALETTE.map((p, c) => `  ${p.no} = ${p.name.padEnd(18)} ${String(counts[c]).padStart(5)} pieces`),
+    `      ${"Total".padEnd(18)} ${String(N * N).padStart(5)} pieces`,
+    "",
+    "Each row reads left to right, split into its three 16-stud sections.",
+    "\"5×3\" means five pieces of colour 5, then \"2×1\" means two of colour 2, and so on.",
+    "",
+  ];
+  rowRuns(state.result).forEach((segs, y) => {
+    lines.push(`Row ${String(y + 1).padStart(2)}  ` + segs.map((runs, s) =>
+      `[${"ABC"[Math.floor(y / SECTION)]}${s + 1}] ` + runs.map(([c, n]) => `${PALETTE[c].no}×${n}`).join(" ")).join("  "));
+  });
+  download("lego-mosaic-instructions.txt", new Blob([lines.join("\n")], { type: "text/plain" }));
+});
+$("dlCsv").addEventListener("click", () => {
+  const rows = [];
+  for (let y = 0; y < N; y++) rows.push(Array.from(state.result.slice(y * N, (y + 1) * N), c => PALETTE[c].no).join(","));
+  download("lego-mosaic-grid.csv", new Blob([rows.join("\n") + "\n"], { type: "text/csv" }));
+});
+$("print").addEventListener("click", () => {
+  document.body.classList.toggle("print-rows", $("printRows").checked);
+  window.print();
+});
+
+syncLabels();
+</script>
+</body>
+</html>
