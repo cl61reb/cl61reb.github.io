@@ -10,6 +10,12 @@
 // `summary` is what shows on the home page — one or two sentences.
 
 window.POSTS = [
+  {
+    slug: "beginners-guide-to-investing",
+    title: "A Beginner's Guide to Investing",
+    date: "2026-10-10",
+    summary: "ISAs, pensions and trading accounts; shares, bonds and funds; risk levels, where in the world your money goes, Acc vs Inc, and what the charges really cost.",
+  },
   // {
   //   slug: "first-post",
   //   title: "A title",
