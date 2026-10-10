@@ -1,0 +1,40 @@
+/* Shared purple "terminal" theme for the home page, posts and tools.
+   Tokens only — each page adds its own layout on top. */
+:root {
+  color-scheme: dark;
+  --bg:        #0c0a14;
+  --bg-2:      #120f1d;
+  --surface:   #171325;
+  --surface-2: #1f1a31;
+  --line:      rgba(167, 139, 250, 0.16);
+  --line-2:    rgba(167, 139, 250, 0.32);
+  --text:      #ece9f7;
+  --text-2:    #b4aed0;
+  --muted:     #7f7899;
+  --violet:    #a78bfa;
+  --violet-2:  #8b5cf6;
+  --violet-3:  #6d28d9;
+  --cyan:      #5eead4;
+  --glow:      0 0 0 1px var(--line-2), 0 0 24px rgba(139, 92, 246, 0.25);
+  --mono: ui-monospace, "JetBrains Mono", "Fira Code", SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--text);
+  background:
+    radial-gradient(900px 480px at 85% -10%, rgba(109, 40, 217, 0.28), transparent 70%),
+    radial-gradient(700px 400px at -10% 10%, rgba(94, 234, 212, 0.06), transparent 70%),
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--violet); }
+a:hover { color: #c4b5fd; }
+::selection { background: var(--violet-3); color: #fff; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
