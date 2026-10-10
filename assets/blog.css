@@ -4,6 +4,14 @@
 .blog-header h1 { font-size: 1.75rem; margin: 0 0 4px; }
 .blog-tagline { margin: 0; color: var(--text-secondary); font-size: 0.95rem; }
 
+/* Tools links on the home page */
+.tools { padding: 20px 0 8px; border-bottom: 1px solid var(--gridline); }
+.tools h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin: 0 0 10px; }
+.tool-link { display: block; padding: 10px 0 14px; text-decoration: none; }
+.tool-link strong { display: block; color: var(--text-primary); font-size: 1.05rem; }
+.tool-link:hover strong { color: var(--series-claire); }
+.tool-link span { color: var(--text-secondary); font-size: 0.9rem; }
+
 .post-item { padding: 26px 0; border-bottom: 1px solid var(--gridline); }
 .post-item:last-child { border-bottom: none; }
 .post-item h2 { font-size: 1.2rem; margin: 0 0 4px; }
