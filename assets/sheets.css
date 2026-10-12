@@ -1,0 +1,41 @@
+/* Printable homework sheets. Tokens come from theme.css.
+   Each sheet is a white A4 page (794 x 1122 px, i.e. 210 x 297 mm at 96 dpi)
+   that sheet-fit.js shrinks to fit narrow screens. Printing drops the bar
+   and prints the page at full size. */
+
+.sheet-bar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 16px; background: rgba(12, 10, 20, 0.92);
+  border-bottom: 1px solid var(--line-2);
+  font-family: var(--mono); font-size: 0.85rem;
+  backdrop-filter: blur(6px);
+}
+.sheet-bar a { text-decoration: none; white-space: nowrap; }
+.sheet-bar-title { flex: 1; min-width: 0; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-bar button {
+  font: inherit; font-weight: 600; color: #fff; cursor: pointer;
+  background: var(--violet-3); border: 1px solid var(--violet); border-radius: 8px;
+  padding: 8px 16px; min-height: 40px;
+}
+.sheet-bar button:hover { background: var(--violet-2); }
+
+.sheet-stage { display: flex; justify-content: center; padding: 24px 16px 48px; }
+.paper {
+  width: 794px; background: #fff; color: #1c2740;
+  box-shadow: 0 0 0 1px var(--line-2), 0 18px 48px rgba(0, 0, 0, 0.5);
+}
+.paper > div { overflow: hidden; }
+
+/* A sheet that runs over several pages (flows rather than fixed A4). */
+.paper.flow > div { overflow: visible; }
+
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { background: #fff !important; }
+  .sheet-bar { display: none; }
+  .sheet-stage { display: block; padding: 0; }
+  .sheet-scale { zoom: 1 !important; }
+  .paper { box-shadow: none; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

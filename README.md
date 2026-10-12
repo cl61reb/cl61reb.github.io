@@ -22,6 +22,16 @@ To add a post:
 
 Nothing else needs editing — the home page picks it up from the registry.
 
+## Homework sheets
+
+`homework/index.html` lists printable A4 spelling and maths sheets from
+`assets/sheets.js`; the home page shows a card for each group. Each sheet is
+its own page in `homework/`, sized to print on one A4 page (or, for a longer
+pack, to flow across pages).
+
+To add a sheet: copy a sheet of the same kind to `homework/your-slug.html`,
+change its words or sums, and add one entry to the top of `assets/sheets.js`.
+
 ## Layout
 
 | Path | What it is |
@@ -29,5 +39,6 @@ Nothing else needs editing — the home page picks it up from the registry.
 | `index.html` | home: posts and tools, side by side |
 | `lego-mosaic.html` | photo → 48 × 48 LEGO Mosaic Maker builder (runs entirely in the browser) |
 | `posts/` | blog posts, plus `_template.html` |
+| `homework/` | printable spelling and maths sheets, plus their index page |
 | `assets/` | purple theme (`theme.css`), styles and the small scripts that render the pages |
 | `docs/` | notes on the rest of the site |
