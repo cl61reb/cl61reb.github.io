@@ -28,8 +28,9 @@ Nothing else needs editing — the home page picks it up from the registry.
 page shows a card linking to it. Each set of notes is its own page in
 `lecture-notes/`, styled like a post.
 
-To add notes: copy an existing page to `lecture-notes/your-slug.html`, write
-it, and add one entry to the top of `assets/lectures.js`.
+To add notes: copy `lecture-notes/_template.html` to
+`lecture-notes/your-slug.html` (it carries the section's own light theme,
+`assets/lecture-notes.css`), write it, and add one entry to the top of `assets/lectures.js`.
 
 ## Homework sheets
 

@@ -2,8 +2,9 @@
 // exist: lecture-notes/index.html and the home page are both built from it.
 //
 // TO ADD LECTURE NOTES:
-//   1. Write lecture-notes/<slug>.html. Copy an existing one, or start from
-//      the shape in posts/_template.html (adjust the ../ paths as there).
+//   1. Copy lecture-notes/_template.html to lecture-notes/<slug>.html and
+//      write it. The template carries the section's theme, so every set of
+//      notes looks the same.
 //   2. Add an entry here, newest first.
 //
 // `date` is ISO (YYYY-MM-DD).
