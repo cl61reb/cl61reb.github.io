@@ -22,6 +22,15 @@ To add a post:
 
 Nothing else needs editing — the home page picks it up from the registry.
 
+## Lecture notes
+
+`lecture-notes/index.html` lists notes from `assets/lectures.js`, and the home
+page shows a card linking to it. Each set of notes is its own page in
+`lecture-notes/`, styled like a post.
+
+To add notes: copy an existing page to `lecture-notes/your-slug.html`, write
+it, and add one entry to the top of `assets/lectures.js`.
+
 ## Homework sheets
 
 `homework/index.html` lists printable A4 spelling and maths sheets from
@@ -39,6 +48,7 @@ change its words or sums, and add one entry to the top of `assets/sheets.js`.
 | `index.html` | home: posts and tools, side by side |
 | `lego-mosaic.html` | photo → 48 × 48 LEGO Mosaic Maker builder (runs entirely in the browser) |
 | `posts/` | blog posts, plus `_template.html` |
+| `lecture-notes/` | lecture notes, plus their index page |
 | `homework/` | printable spelling and maths sheets, plus their index page |
 | `assets/` | purple theme (`theme.css`), styles and the small scripts that render the pages |
 | `docs/` | notes on the rest of the site |
