@@ -21,10 +21,10 @@
   if (list) {
     list.innerHTML = items.length
       ? items.map(function (n) {
-          return '<article class="post-item">' +
+          return '<article class="ln-item">' +
             '<h2><a href="' + esc(n.slug) + '.html">' + esc(n.title) + "</a></h2>" +
-            '<p class="post-date">' + fmtDate(n.date) + "</p>" +
-            (n.summary ? '<p class="post-summary">' + esc(n.summary) + "</p>" : "") +
+            '<p class="ln-date">' + fmtDate(n.date) + "</p>" +
+            (n.summary ? '<p class="ln-lead">' + esc(n.summary) + "</p>" : "") +
             "</article>";
         }).join("")
       : '<p class="empty">No lecture notes yet.</p>';
