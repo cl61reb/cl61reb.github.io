@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>SQL Server on a Mac: Setup Guide — Claire Bailey</title>
+<link rel="stylesheet" href="../assets/theme.css" />
+<link rel="stylesheet" href="../assets/blog.css" />
+</head>
+<body>
+<div class="wrap-blog post-page">
+  <a class="post-back" href="../index.html">← All posts</a>
+  <article>
+    <h1>SQL Server on a Mac: Setup Guide</h1>
+    <p class="post-date">4 November 2026</p>
+    <div class="post-body">
+<p>You can run a full Microsoft SQL Server on your Mac for free in about 20 minutes, using Docker and VS Code.</p>
+<p><strong>What you&#39;ll end up with:</strong> SQL Server Developer edition (free, full featured) running in the background, and VS Code to write and run your SQL scripts.</p>
+<p><strong>Works on:</strong> Apple Silicon Macs (M1, M2, M3, M4, M5) and older Intel Macs. To check yours, click the Apple menu &gt; About This Mac and look at &quot;Chip&quot; or &quot;Processor&quot;.</p>
+<p><strong>You&#39;ll need:</strong> an internet connection, your Mac login password, and about 10GB of free disk space.</p>
+
+<h2 id="step-1-install-rosetta">Step 1: Install Rosetta (Apple Silicon only)</h2>
+<p>SQL Server is only built for Intel chips, so Apple Silicon Macs need Rosetta to translate it. Intel Mac users can skip this step.</p>
+<ol>
+<li><p>Open Terminal (press Cmd + Space, type Terminal, press Enter)</p></li>
+<li><p>Copy and paste this, then press Enter:</p></li>
+</ol>
+<pre><code>softwareupdate --install-rosetta --agree-to-license</code></pre>
+<ol start="3">
+<li><p>You should see <code>Install of Rosetta 2 finished successfully</code>. If you also see a &quot;Package Authoring Error&quot; line, ignore it; it&#39;s a harmless Apple warning.</p></li>
+</ol>
+
+<h2 id="step-2-install-docker-desktop">Step 2: Install Docker Desktop</h2>
+<p>Docker runs SQL Server in a sealed box (a &quot;container&quot;) on your Mac. It&#39;s free for personal and education use.</p>
+<ol>
+<li><p>Go to <a href="https://www.docker.com/products/docker-desktop/">docker.com/products/docker-desktop</a> and click <strong>Download Docker Desktop</strong></p></li>
+<li><p>Choose <strong>Mac with Apple Silicon</strong> (or <strong>Mac with Intel chip</strong> if that&#39;s what you have)</p></li>
+<li><p>Open the downloaded <code>.dmg</code> file and drag Docker into Applications</p></li>
+<li><p>Open Docker from Applications. Accept the terms; you can skip signing in and the survey</p></li>
+<li><p>Wait until the whale icon in the menu bar stops moving and Docker says <strong>Engine running</strong></p></li>
+<li><p>Check two settings (click the gear icon). They&#39;re usually already right:</p>
+<ul>
+<li><p><strong>General:</strong> &quot;Use Rosetta for x86_64/amd64 emulation on Apple Silicon&quot; is ticked</p></li>
+<li><p><strong>Resources:</strong> Memory is 4GB or more</p></li>
+</ul></li>
+<li><p>If you changed anything, click <strong>Apply &amp; Restart</strong></p></li>
+<li><p>Open a new Terminal window and check it works:</p></li>
+</ol>
+<pre><code>docker --version</code></pre>
+<p>You should see something like <code>Docker version 28.x.x</code>. If you get &quot;command not found&quot;, see Troubleshooting below.</p>
+
+<h2 id="step-3-install-vs-code">Step 3: Install VS Code and the SQL Server extension</h2>
+<p>VS Code is a free editor from Microsoft where you&#39;ll write and run your SQL. (Azure Data Studio has been retired, so use this instead.)</p>
+<ol>
+<li><p>Download VS Code from <a href="https://code.visualstudio.com/">code.visualstudio.com</a>, then drag it into Applications and open it</p></li>
+<li><p>Click the <strong>Extensions</strong> icon in the left sidebar (four small squares)</p></li>
+<li><p>Search for <strong>SQL Server (mssql)</strong>, choose the one published by Microsoft, and click <strong>Install</strong></p></li>
+<li><p>A new SQL Server icon appears in the left sidebar</p></li>
+</ol>
+<p>If VS Code asks you to sign in to GitHub, you can skip it. It&#39;s only for extra features you don&#39;t need here.</p>
+
+<h2 id="step-4-create-your-sql-server">Step 4: Create your SQL Server</h2>
+<p>Make sure Docker Desktop is open and running first.</p>
+<ol>
+<li><p>In VS Code, click the SQL Server icon in the left sidebar</p></li>
+<li><p>In the Connections panel, open the menu (the <strong>...</strong> or <strong>+</strong> button) and choose <strong>Create Local SQL Container</strong></p></li>
+<li><p>Click <strong>Get Started</strong> and follow the prompts:</p>
+<ul>
+<li><p><strong>Version:</strong> pick the newest SQL Server (2025)</p></li>
+<li><p><strong>Password:</strong> at least 8 characters, with upper case, lower case, a number and a symbol (for example <code>Uni!Sql2026</code>). Write it down</p></li>
+<li><p><strong>Name:</strong> anything you like, such as <code>sqlserver</code></p></li>
+<li><p>Tick to accept the licence</p></li>
+</ul></li>
+<li><p>Click <strong>Create</strong>. The first time, it downloads about 1.5GB, so allow 5 to 10 minutes</p></li>
+<li><p>When it finishes, VS Code connects to your new server automatically</p></li>
+</ol>
+<h3 id="prefer-terminal">Prefer Terminal?</h3>
+<p>This does the same thing (change the password to your own):</p>
+<pre><code>docker run -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD='Uni!Sql2026' \
+  -p 1433:1433 --name sqlserver --platform linux/amd64 \
+  -d mcr.microsoft.com/mssql/server:2025-latest</code></pre>
+<p>Then in VS Code add a connection with server <code>localhost,1433</code>, authentication <strong>SQL Login</strong>, user <code>sa</code> and your password. Tick <strong>Trust server certificate</strong> if asked.</p>
+
+<h2 id="step-5-test-it">Step 5: Test it and create your first database</h2>
+<ol>
+<li><p>In the SQL Server panel, right click your connection and choose <strong>New Query</strong></p></li>
+<li><p>Paste this and click <strong>Execute</strong> (the play button at the top right), or press Cmd + Shift + E:</p></li>
+</ol>
+<pre><code>SELECT @@VERSION;</code></pre>
+<ol start="3">
+<li><p>If you see a line starting <code>Microsoft SQL Server 2025</code>, it&#39;s working</p></li>
+<li><p>Now create a database and a test table:</p></li>
+</ol>
+<pre><code>CREATE DATABASE TestDB;
+GO
+
+USE TestDB;
+GO
+
+CREATE TABLE Customer (
+    CustomerID INT IDENTITY(1,1) PRIMARY KEY,
+    FullName   NVARCHAR(100) NOT NULL,
+    Email      NVARCHAR(255) UNIQUE
+);
+
+INSERT INTO Customer (FullName, Email)
+VALUES ('Alex Smith', 'alex@example.com'),
+       ('Sam Jones',  'sam@example.com');
+
+SELECT * FROM Customer;</code></pre>
+<ol start="5">
+<li><p>You should see two rows. Refresh the connection in the sidebar and <code>TestDB</code> appears under Databases</p></li>
+</ol>
+
+<h2 id="day-to-day-use">Day to day use</h2>
+<ul>
+<li><p><strong>Starting up next time:</strong> open Docker Desktop first, then VS Code. If the server is stopped, VS Code offers to start it when you connect</p></li>
+<li><p><strong>Stopping it:</strong> close Docker Desktop, or stop the container from the Containers tab in Docker. Your databases are kept</p></li>
+<li><p><strong>Keep your scripts as files:</strong> save your work as <code>.sql</code> files (for example <code>01_create_database.sql</code>, <code>02_create_tables.sql</code>, <code>03_populate_tables.sql</code>, <code>04_queries.sql</code>). If you ever delete the container, its databases go with it, but you can rebuild everything in seconds by running the files in order</p></li>
+<li><p><strong>Re-runnable scripts:</strong> start your create script with <code>DROP DATABASE IF EXISTS YourDB;</code> so you can run it again from scratch</p></li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<div class="table-scroll"><table><thead><tr><th>Problem</th><th>Fix</th></tr></thead><tbody>
+<tr><td><code>zsh: command not found: docker</code></td><td>Make sure Docker Desktop is open and says Engine running, then open a new Terminal window. Still failing? Docker Settings &gt; Advanced &gt; choose System, then Apply &amp; Restart</td></tr>
+<tr><td>Container starts then stops straight away</td><td>Usually a weak password or too little memory. Use a stronger password and give Docker 4GB or more in Settings &gt; Resources</td></tr>
+<tr><td>VS Code can&#39;t connect</td><td>Check the container is running in Docker&#39;s Containers tab. Use <code>localhost,1433</code>, user <code>sa</code>, and tick Trust server certificate</td></tr>
+<tr><td>&quot;Port 1433 is already allocated&quot;</td><td>Another SQL Server is already running. Stop it in Docker, or use <code>-p 1434:1433</code> and connect to <code>localhost,1434</code></td></tr>
+<tr><td><code>DROP DATABASE</code> says the database is in use</td><td>Run <code>USE master;</code> first, then drop it</td></tr>
+<tr><td>Rosetta &quot;Package Authoring Error&quot;</td><td>Harmless; ignore it if the last line says it finished successfully</td></tr>
+</tbody></table></div>
+
+<p>Sources: <a href="https://learn.microsoft.com/en-us/sql/tools/visual-studio-code-extensions/mssql/mssql-local-container">Local SQL Server container, Microsoft Learn</a>; <a href="https://database.guide/">How to Install SQL Server on a Mac in 2026, Database.Guide</a>; <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop download</a>.</p>
+    </div>
+  </article>
+</div>
+</body>
+</html>

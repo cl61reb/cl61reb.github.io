@@ -11,6 +11,12 @@
 
 window.POSTS = [
   {
+    slug: "sql-server-on-a-mac",
+    title: "SQL Server on a Mac: Setup Guide",
+    date: "2026-11-04",
+    summary: "Run a free, full featured SQL Server on your Mac in about 20 minutes using Docker and VS Code, with a first test database and a troubleshooting table.",
+  },
+  {
     slug: "beginners-guide-to-investing",
     title: "A Beginner's Guide to Investing",
     date: "2026-10-10",
