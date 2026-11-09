@@ -1,15 +1,42 @@
 {
-  "generatedAt": "2026-09-16T08:08:37.622Z",
-  "rangeStart": "2026-10-01",
-  "rangeEnd": "2027-10-01",
+  "generatedAt": "2026-11-09T21:36:53.941Z",
+  "rangeStart": "2026-12-01",
+  "rangeEnd": "2027-12-01",
   "names": {
     "claire": "Claire",
     "parent2": "Mat"
   },
   "summary": {
     "daysChecked": 365,
-    "conflictDays": 0,
-    "conflictRuns": 0
+    "conflictDays": 2,
+    "conflictRuns": 1
   },
-  "conflicts": []
+  "conflicts": [
+    {
+      "startDate": "2027-07-21",
+      "endDateExclusive": "2027-07-23",
+      "days": 2,
+      "resolvedTo": "claire",
+      "resolvedToName": "Claire",
+      "resolvedBy": "Away in Prestatyn - Claires nights with the kids",
+      "competing": [
+        {
+          "owner": "parent2",
+          "summary": "Mats nights",
+          "updated": "2026-08-05T20:36:14Z",
+          "start": "2027-07-21",
+          "end": "2027-07-23",
+          "ownerName": "Mat"
+        },
+        {
+          "owner": "claire",
+          "summary": "Away in Prestatyn - Claires nights with the kids",
+          "updated": "2026-10-17T14:54:21Z",
+          "start": "2027-07-19",
+          "end": "2027-07-23",
+          "ownerName": "Claire"
+        }
+      ]
+    }
+  ]
 }

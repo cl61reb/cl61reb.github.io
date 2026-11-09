@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-16T08:08:37.253Z",
-  "rangeStart": "2026-09-01",
-  "rangeEnd": "2026-10-01",
+  "generatedAt": "2026-11-09T21:36:53.504Z",
+  "rangeStart": "2026-11-01",
+  "rangeEnd": "2026-12-01",
   "names": {
     "claire": "Claire",
     "parent2": "Mat"
   },
   "months": [
     {
-      "month": "2026-09",
+      "month": "2026-11",
       "claire": 12,
       "parent2": 18,
       "unassigned": 0,

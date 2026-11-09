@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-16T08:08:36.931Z",
+  "generatedAt": "2026-11-09T21:36:53.185Z",
   "rangeStart": "2026-01-01",
   "rangeEnd": "2027-01-01",
   "names": {
@@ -9,20 +9,22 @@
   "summary": {
     "nights": 365,
     "actual": {
-      "claire": 182,
-      "parent2": 183
+      "claire": 180,
+      "parent2": 185
     },
     "usual": {
       "claire": 183,
       "parent2": 182
     },
-    "matching": 306,
+    "matching": 304,
     "swapped": 58,
     "unassigned": 0,
     "unswapped": {
-      "count": 1,
+      "count": 3,
       "owner": "parent2",
       "dates": [
+        "2026-12-26",
+        "2026-12-30",
         "2026-12-31"
       ]
     }
@@ -2029,19 +2031,21 @@
       "actual": "parent2",
       "usual": "claire",
       "status": "swapped",
-      "note": "Mats nights"
+      "note": "Mats’s nights (swapped)"
     },
     {
       "date": "2026-11-23",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat’s Nights ( Swapped)"
     },
     {
       "date": "2026-11-24",
-      "actual": "claire",
+      "actual": "parent2",
       "usual": "claire",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat’s Nights ( Swapped)"
     },
     {
       "date": "2026-11-25",
@@ -2066,7 +2070,7 @@
       "actual": "parent2",
       "usual": "claire",
       "status": "swapped",
-      "note": "Mats night - swap for 6th Nov"
+      "note": "Mats Nights (Claire drops off at 4pm) - swapped as Claire has a wedding"
     },
     {
       "date": "2026-11-29",
@@ -2239,7 +2243,7 @@
       "date": "2026-12-26",
       "actual": "parent2",
       "usual": "claire",
-      "status": "swapped",
+      "status": "unswapped",
       "note": "Mats Nights"
     },
     {
@@ -2267,7 +2271,7 @@
       "date": "2026-12-30",
       "actual": "parent2",
       "usual": "claire",
-      "status": "swapped",
+      "status": "unswapped",
       "note": "Mats Nights -Claire away"
     },
     {

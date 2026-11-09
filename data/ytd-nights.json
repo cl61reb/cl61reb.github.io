@@ -1,31 +1,28 @@
 {
-  "generatedAt": "2026-09-16T08:08:37.160Z",
+  "generatedAt": "2026-11-09T21:36:53.402Z",
   "rangeStart": "2026-01-01",
-  "rangeEnd": "2026-09-01",
+  "rangeEnd": "2026-11-01",
   "names": {
     "claire": "Claire",
     "parent2": "Mat"
   },
   "summary": {
-    "nights": 243,
+    "nights": 304,
     "actual": {
-      "claire": 124,
-      "parent2": 119
+      "claire": 153,
+      "parent2": 151
     },
     "usual": {
-      "claire": 122,
-      "parent2": 121
+      "claire": 153,
+      "parent2": 151
     },
-    "matching": 211,
-    "swapped": 30,
+    "matching": 262,
+    "swapped": 42,
     "unassigned": 0,
     "unswapped": {
-      "count": 2,
-      "owner": "claire",
-      "dates": [
-        "2026-08-09",
-        "2026-08-23"
-      ]
+      "count": 0,
+      "owner": null,
+      "dates": []
     }
   },
   "nights": [
@@ -1383,7 +1380,7 @@
       "date": "2026-08-09",
       "actual": "claire",
       "usual": "parent2",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Claire away with children -Mat drop off for 9am Friday, Claire drop off approx 4pm on Monday - no planned swap"
     },
     {
@@ -1468,7 +1465,7 @@
       "date": "2026-08-23",
       "actual": "claire",
       "usual": "parent2",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Claire’s nights - no planned swap"
     },
     {
@@ -1515,6 +1512,382 @@
     },
     {
       "date": "2026-08-31",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-01",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-02",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-03",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-04",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-05",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-06",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-07",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-08",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-09",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-10",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-11",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-12",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-13",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mat has kids - swaps"
+    },
+    {
+      "date": "2026-09-14",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mat has kids - swaps"
+    },
+    {
+      "date": "2026-09-15",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mat has kids - swaps"
+    },
+    {
+      "date": "2026-09-16",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-17",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-18",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-19",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-20",
+      "actual": "claire",
+      "usual": "parent2",
+      "status": "swapped",
+      "note": "Claire has kids - Mat away"
+    },
+    {
+      "date": "2026-09-21",
+      "actual": "claire",
+      "usual": "parent2",
+      "status": "swapped",
+      "note": "Claire has kids - Mat away"
+    },
+    {
+      "date": "2026-09-22",
+      "actual": "claire",
+      "usual": "parent2",
+      "status": "swapped",
+      "note": "Claire has kids - Mat away"
+    },
+    {
+      "date": "2026-09-23",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-24",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-25",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-26",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-09-27",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mats nights with the kids - swap for Aug 16"
+    },
+    {
+      "date": "2026-09-28",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mat has kids - swap for Aug 30th"
+    },
+    {
+      "date": "2026-09-29",
+      "actual": "parent2",
+      "usual": "claire",
+      "status": "swapped",
+      "note": "Mat has kids - swap for Oct 4th"
+    },
+    {
+      "date": "2026-09-30",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-01",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-02",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-03",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-04",
+      "actual": "claire",
+      "usual": "parent2",
+      "status": "swapped",
+      "note": "Claire’s Nights with the kids Claire’s Nights with the kids swap for Sep 30"
+    },
+    {
+      "date": "2026-10-05",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-06",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-07",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-08",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-09",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-10",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-11",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-12",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-13",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-14",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-15",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-16",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-17",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-18",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-19",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-20",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-21",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-22",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-23",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-24",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-25",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-26",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-27",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-28",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-29",
+      "actual": "parent2",
+      "usual": "parent2",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-30",
+      "actual": "claire",
+      "usual": "claire",
+      "status": "match"
+    },
+    {
+      "date": "2026-10-31",
       "actual": "claire",
       "usual": "claire",
       "status": "match"
