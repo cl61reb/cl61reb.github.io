@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T21:36:53.185Z",
+  "generatedAt": "2026-11-09T21:47:08.123Z",
   "rangeStart": "2026-01-01",
   "rangeEnd": "2027-01-01",
   "names": {
@@ -9,24 +9,20 @@
   "summary": {
     "nights": 365,
     "actual": {
-      "claire": 180,
-      "parent2": 185
+      "claire": 183,
+      "parent2": 182
     },
     "usual": {
       "claire": 183,
       "parent2": 182
     },
-    "matching": 304,
-    "swapped": 58,
+    "matching": 301,
+    "swapped": 64,
     "unassigned": 0,
     "unswapped": {
-      "count": 3,
-      "owner": "parent2",
-      "dates": [
-        "2026-12-26",
-        "2026-12-30",
-        "2026-12-31"
-      ]
+      "count": 0,
+      "owner": null,
+      "dates": []
     }
   },
   "nights": [
@@ -1985,21 +1981,24 @@
     },
     {
       "date": "2026-11-15",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-16",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-17",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-18",
@@ -2243,7 +2242,7 @@
       "date": "2026-12-26",
       "actual": "parent2",
       "usual": "claire",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Mats Nights"
     },
     {
@@ -2271,14 +2270,14 @@
       "date": "2026-12-30",
       "actual": "parent2",
       "usual": "claire",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Mats Nights -Claire away"
     },
     {
       "date": "2026-12-31",
       "actual": "parent2",
       "usual": "claire",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Mats Nights -Claire away"
     }
   ]

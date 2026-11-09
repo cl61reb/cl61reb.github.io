@@ -51,6 +51,18 @@ const WITH_CHILDREN = /kids|children/i;
 // Matching on "weekend" alone did exactly that to 8 Nov 2026.
 const ROTA_WEEKEND_EVENT = /^\s*(?:claire|mat)['’]?s?\s+weekends?\b/i;
 
+// Is this parent the one going away? True when their name is followed by
+// "away" with only possessives, spaces or punctuation in between - "Mat Away",
+// "-Claire away", "(Mat away)" - but NOT "away with kids/children", which
+// means they are away *with* the children and so have them.
+function AWAY_PARENT(summary, nameRe) {
+  const name = nameRe.source.replace(/^\\b|\\b$/g, "");
+  return new RegExp(
+    `${name}\\b['’s]*\\s*[-–—,(:]*\\s*away\\b(?!\\s+with\\s+(?:kids|children))`,
+    "i"
+  ).test(summary);
+}
+
 function toDateOnly(value) {
   // "2026-07-01" or "2026-07-26T00:00:00+01:00" -> "2026-07-01"
   return value.slice(0, 10);
@@ -70,9 +82,22 @@ export function classifyOwner(summary) {
     if (claireMatch && !parent2Match) return "claire";
     if (parent2Match && !claireMatch) return "parent2";
     if (claireMatch && parent2Match) {
-      // Both names appear (e.g. "Mats nights Claire Away..." or "Claire have
-      // kids (Mat away)") - the parent whose name is mentioned first owns
-      // the event; the other name is incidental context.
+      // Both names appear. A parent named immediately before "away" is the one
+      // going away, so the children are with the OTHER parent - that is the
+      // standing rule ("Mats away means it's Claire's nights"), and it holds
+      // whichever order the two names fall in.
+      //
+      // This has to be checked before the first-name rule below, because
+      // "Mat Away - Claire's Nights" names the away parent first and the
+      // first-name rule alone reads it backwards. "away with kids/children"
+      // is the opposite case - away together - so it is excluded.
+      const claireAway = AWAY_PARENT(summary, CLAIRE_NAME);
+      const parent2Away = AWAY_PARENT(summary, PARENT2_NAME);
+      if (claireAway !== parent2Away) return claireAway ? "parent2" : "claire";
+
+      // Neither or both marked away: the parent named first owns the event and
+      // the other name is incidental context ("Mats Nights (Claire drops off
+      // at 4pm)").
       return claireMatch.index < parent2Match.index ? "claire" : "parent2";
     }
     return null; // neither name mentioned

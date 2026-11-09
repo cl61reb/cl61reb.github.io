@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T21:36:53.504Z",
+  "generatedAt": "2026-11-09T21:47:08.458Z",
   "rangeStart": "2026-11-01",
   "rangeEnd": "2026-12-01",
   "names": {
@@ -9,19 +9,19 @@
   "months": [
     {
       "month": "2026-11",
-      "claire": 12,
-      "parent2": 18,
+      "claire": 15,
+      "parent2": 15,
       "unassigned": 0,
       "totalDays": 30,
-      "clairePct": 40,
-      "parent2Pct": 60
+      "clairePct": 50,
+      "parent2Pct": 50
     }
   ],
   "totals": {
-    "claire": 12,
-    "parent2": 18,
+    "claire": 15,
+    "parent2": 15,
     "unassigned": 0,
-    "clairePct": 40,
-    "parent2Pct": 60
+    "clairePct": 50,
+    "parent2Pct": 50
   }
 }

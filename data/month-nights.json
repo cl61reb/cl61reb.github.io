@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T21:36:53.644Z",
+  "generatedAt": "2026-11-09T21:47:08.574Z",
   "rangeStart": "2026-11-01",
   "rangeEnd": "2026-12-01",
   "names": {
@@ -9,22 +9,21 @@
   "summary": {
     "nights": 30,
     "actual": {
-      "claire": 12,
-      "parent2": 18
+      "claire": 15,
+      "parent2": 15
     },
     "usual": {
       "claire": 14,
       "parent2": 16
     },
-    "matching": 22,
-    "swapped": 6,
+    "matching": 19,
+    "swapped": 10,
     "unassigned": 0,
     "unswapped": {
-      "count": 2,
-      "owner": "parent2",
+      "count": 1,
+      "owner": "claire",
       "dates": [
-        "2026-11-24",
-        "2026-11-28"
+        "2026-11-20"
       ]
     }
   },
@@ -118,21 +117,24 @@
     },
     {
       "date": "2026-11-15",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-16",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-17",
-      "actual": "parent2",
+      "actual": "claire",
       "usual": "parent2",
-      "status": "match"
+      "status": "swapped",
+      "note": "Mat Away - Claire’s Nights"
     },
     {
       "date": "2026-11-18",
@@ -150,7 +152,7 @@
       "date": "2026-11-20",
       "actual": "claire",
       "usual": "parent2",
-      "status": "swapped",
+      "status": "unswapped",
       "note": "Claire’s nights with the kids"
     },
     {
@@ -177,7 +179,7 @@
       "date": "2026-11-24",
       "actual": "parent2",
       "usual": "claire",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Mat’s Nights ( Swapped)"
     },
     {
@@ -202,7 +204,7 @@
       "date": "2026-11-28",
       "actual": "parent2",
       "usual": "claire",
-      "status": "unswapped",
+      "status": "swapped",
       "note": "Mats Nights (Claire drops off at 4pm) - swapped as Claire has a wedding"
     },
     {
